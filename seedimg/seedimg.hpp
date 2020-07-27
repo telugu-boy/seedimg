@@ -10,12 +10,16 @@ namespace seedimg {
 
 	class img {
 	public:
-		uint32_t width;
-		uint32_t height;
+		img(uint32_t w, uint32_t h) : width_(w), height_(h) {};
+		uint32_t width() const { return width_; }
+		uint32_t height() const { return height_; }
 		//stored in row major order
 		//width amount of pixels in a row
 		//height amount of rows.
 		std::vector<std::vector<pixel> > data;
+	private:
+		uint32_t width_;
+		uint32_t height_;
 	};
 
 	namespace modules {};

@@ -9,7 +9,7 @@
 
 namespace seedimg::modules {
 	namespace png {
-		std::optional<std::unique_ptr<seedimg::img> > to(std::string filename);
+		bool to(std::string filename);
 		std::optional<std::unique_ptr<seedimg::img> > from(std::string filename);
 	}
 }
