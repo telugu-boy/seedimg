@@ -37,9 +37,8 @@ namespace seedimg {
             return {};
 
           for (size_t x = 0; x < image.width(); ++x) {
-            // scale 8-bit pixels upto 16-bit to match seedimg schemes.
-            #define P(ch) (uint16_t)((float)rowbuffer[3*x + ch] / 255.0 * 65335.0)
-            image.data[y][x] = std::make_tuple(P(0), P(1), P(2), 65535);
+            #define P(ch) rowbuffer[3*x + ch]
+            image.data[y][x] = pixel { P(0), P(1), P(2), 255 };
           }
         }
 
@@ -82,11 +81,10 @@ namespace seedimg {
         for (size_t y = 0; y < image->height(); ++y) {
           for (size_t x = 0; x < image->width(); ++x) {
             auto pix = image->data[y][x];
-            #define P(ch) (uint8_t)((float)std::get<ch>(pix) / 65535.0 * 255.0)
             #define I(ch) (4 * x + ch)
 
-            rowbuffer[I(0)] = P(0), rowbuffer[I(1)] = P(1),
-            rowbuffer[I(2)] = P(2), rowbuffer[I(3)] = P(3);
+            rowbuffer[I(0)] = pix.r, rowbuffer[I(1)] = pix.g,
+            rowbuffer[I(2)] = pix.g, rowbuffer[I(3)] = pix.b;
           }
 
           if (jpeg_write_scanlines(&jenc, &rowbuffer, 1) != 1)

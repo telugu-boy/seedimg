@@ -1,17 +1,13 @@
-/*#ifndef _SEEDIMG_PNG_H
+#ifndef _SEEDIMG_PNG_H
 #define _SEEDIMG_PNG_H
-
-#include <string>
-#include <memory>
-#include <optional>
 
 #include <seedimg/seedimg.hpp>
 
 namespace seedimg::modules {
 	namespace png {
-		std::optional<std::unique_ptr<seedimg::img> > to(std::string filename);
+		bool to(std::string filename, std::unique_ptr<seedimg::img>& inp_img);
 		std::optional<std::unique_ptr<seedimg::img> > from(std::string filename);
 	}
 }
 
-#endif*/
+#endif

@@ -23,5 +23,8 @@
     <Image Include="violeur.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="violeur.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
