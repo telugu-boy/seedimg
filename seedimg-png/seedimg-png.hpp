@@ -1,4 +1,4 @@
-#ifndef _SEEDIMG_PNG_H
+/*#ifndef _SEEDIMG_PNG_H
 #define _SEEDIMG_PNG_H
 
 #include <string>
@@ -14,4 +14,4 @@ namespace seedimg::modules {
 	}
 }
 
-#endif
+#endif*/

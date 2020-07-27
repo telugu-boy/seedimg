@@ -4,11 +4,12 @@
 #include "pch.h"
 #include "framework.h"
 
-#include <iostream>
+/*#include <iostream>
 
 #include <libpng16/png.h>
 
-#include "seedimg-png.hpp"
+#include "../seedimg/seedimg.hpp"
+#include <optional>
 
 #pragma warning(disable:4996)
 
@@ -110,3 +111,4 @@ finalise:
 		return res_img;
 	}
 }
+*/
