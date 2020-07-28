@@ -1,92 +1,63 @@
 #ifndef _SEEDIMG_CORE_H
 #define _SEEDIMG_CORE_H
 
+#include <cinttypes>
 #include <vector>
 #include <string>
 #include <optional>
 #include <memory>
 
-
 namespace seedimg {
-  /**
-   * @brief A pixel is a building-block of an image, which consists of RGBA components.
-   */
-  struct pixel {
-    uint8_t r, g, b, a;
 
-    pixel() : r(0), g(0), b(0), a(0) {}
-    pixel(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a) : r(_r), g(_g), b(_b), a(_a) {};
-    bool operator==(const pixel& o) { return std::tie(r, g, b, a) == std::tie(o.r, o.g, o.b, o.a); }
-  };
+	template <typename T>
+	class vector_fixed {
+	public:
+		vector_fixed(std::size_t l) : vec_(l) {}
+		vector_fixed(std::size_t l, T elem) : vec_(l, elem) {}
+		std::size_t size(void) const noexcept { return vec_.size(); }
 
-  /**
-   * @brief A variant of std::vector whose elements mutable but size is fixed.
-   * @tparam T type of element to initialise the vector with.
-   */
-  template <typename T>
-  class vector_fixed {
-  public:
-    vector_fixed(std::size_t length) : memory(length) {}
-    vector_fixed(std::size_t length, T value) : memory(length, value) {}
-    
-    std::size_t size(void) const noexcept { return memory.size(); }
-    T& operator[](std::size_t index)      { return memory[index]; }
-    T* data() noexcept                    { return memory.data(); }
+		T& operator[](std::size_t e) {
+			return vec_[e];
+		}
+		T* data(void) {
+			return vec_.data();
+		}
+	protected:
+		std::vector<T> vec_;
+	};
 
-    // TODO: find out why can't use a range thing here.
-    // auto begin() const noexcept { return memory.begin(); }
-    // auto end()   const noexcept { return memory.end(); }
-  protected:
-    std::vector<T> memory;
-  };
+	struct pixel {
+		std::uint8_t r;
+		std::uint8_t g;
+		std::uint8_t b;
+		std::uint8_t a;
+		pixel(std::uint8_t r_ = 0, std::uint8_t g_ = 0, std::uint8_t b_ = 0, std::uint8_t a_ = 0) noexcept
+			: r(r_), g(g_), b(b_), a(a_)
+		{}
+		bool operator==(const pixel& other) const noexcept {
+			return std::tie(r, g, b, a) == std::tie(other.r, other.g, other.b, other.a);
+		}
+	};
 
-  /**
-   * @brief An image is a collection of RGBA pixels in a 2D space, where the dimensions are:
-   * horizontal and vertical.
-   */
-  struct img {
-  public:
-    /**
-     * @param width number of horizontal pixels
-     * @param height number of vertical pixels
-    */
-    img(std::size_t width=0, std::size_t height=0) noexcept : buffer(height, vector_fixed<pixel>(width)) {}
-    img(img&& image) noexcept : buffer(image.height(), vector_fixed<pixel>(image.width())) {}
-    // please please make this constructor not weird, im begging yuo.
+	class img {
+	public:
+		std::size_t const width;
+		std::size_t const height;
+		img(std::size_t w = 0, std::size_t h = 0) noexcept : width(w), height(h), data(h, seedimg::vector_fixed<seedimg::pixel>(w)) {}
+		seedimg::pixel& get_pixel(std::size_t x, std::size_t y) { return data[y][x]; }
+		auto& get_row(std::size_t y) { return data[y]; }
+		auto& get_data(void) { return data; }
+	private:
+		//stored in row major order
+		//width amount of pixels in a row
+		//height amount of rows.
+		seedimg::vector_fixed<seedimg::vector_fixed<seedimg::pixel> > data;
+	};
 
-    std::size_t width() { return buffer.size() ? buffer[0].size() : 0; }
-    std::size_t height() { return buffer.size(); }
+	bool to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) noexcept;
+	std::optional<std::unique_ptr<seedimg::img> > from(std::string filename) noexcept;
 
-    /**
-      * @brief A 2D plane of pixels which define a image, layout of this plane is row-major,
-      * which means: this is a collection of rows, each row is a collection of pixels.
-      */
-    auto& data() { return buffer; }
-
-    /**
-     * @brief Get a row of horizontal pixels by index.
-     * @param row index of row
-     * @return 
-    */
-    auto& get(std::size_t row)              { return buffer[row];  }
-
-    /**
-     * @brief Get a pixel at a 2D coordinate from the plane.
-     * @param x horizontal axis
-     * @param y vertical axis
-     * @return 
-    */
-    auto& get(std::size_t x, std::size_t y) { return buffer[y][x]; }
-  private:
-    vector_fixed<vector_fixed<pixel>> buffer;
-  };
-
-  std::optional<std::unique_ptr<img>> from(std::string filename);
-  bool to(std::string, std::unique_ptr<img>& image);
-
-  /**
-   * @brief Internal modules that do I/O operations with file-formats providing unified interface to each.
-   */
-  namespace modules {};
+	namespace modules {};
 }
+
 #endif
