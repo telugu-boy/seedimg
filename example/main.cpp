@@ -11,6 +11,6 @@ int main() {
 			seedimg::modules::png::to("seedviol.png", *seedimage);
 		}
 		// bool success = seedimg::modules::png::to("seedviol.png", a.value());
-		std::cout << a.value()->height << ' ' << a.value()->width << std::endl;
+		std::cout << (*a)->height << ' ' << (*a)->width << std::endl;
 	}
 }

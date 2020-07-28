@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#include <libpng16/png.h>
+#include <png.h>
 
 #include "seedimg-png.hpp"
 
