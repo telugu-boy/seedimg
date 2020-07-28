@@ -12,12 +12,11 @@
 
 #pragma warning(disable:4996)
 
-std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::png::from(std::string filename) {
+std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::png::from(std::string filename) noexcept {
 
 	std::unique_ptr<seedimg::img> res_img = NULL;
 	png_structp png_ptr = NULL;
 	png_infop info_ptr = NULL;
-	png_bytepp row_pointers = NULL;
 	// chosen 127 as 0 is already taken as a type.
 	uint8_t color_type = 127;
 	uint8_t bit_depth = 0;
@@ -74,8 +73,7 @@ std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::png::from(std::s
 	res_img = std::make_unique<seedimg::img>(
 		png_get_image_width(png_ptr, info_ptr),
 		png_get_image_height(png_ptr, info_ptr)
-		);
-	res_img->data.resize(res_img->height());
+	);
 
 	if (bit_depth == 16)
 		png_set_strip_16(png_ptr);
@@ -100,20 +98,9 @@ std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::png::from(std::s
 
 	png_read_update_info(png_ptr, info_ptr);
 
-	row_pointers = (png_bytepp)malloc(sizeof(png_bytep) * res_img->width());
-	for (size_t i = 0; i < res_img->height(); i++) {
-		row_pointers[i] = (png_bytep)malloc(png_get_rowbytes(png_ptr, info_ptr));
-	}
-	png_read_image(png_ptr, row_pointers);
-
 	//This will load the png into the vectors.
-	for (size_t y = 0; y < res_img->height(); y++) {
-		png_bytep row = row_pointers[y];
-		res_img->data[y].resize(res_img->width());
-		for (size_t x = 0; x < res_img->width(); x++) {
-			png_byte* pix = &(row[x * 4]);
-			res_img->data[y][x] = { pix[0], pix[1], pix[2], pix[3] };
-		}
+	for (size_t y = 0; y < res_img->height; y++) {
+		png_read_row(png_ptr, reinterpret_cast<png_bytep>(res_img->get_row(y).data()), NULL);
 	}
 
 finalise:
@@ -123,11 +110,6 @@ finalise:
 		png_destroy_info_struct(png_ptr, &info_ptr);
 	if (png_ptr != NULL)
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
-	if (row_pointers != NULL) {
-		for (size_t y = 0; y < res_img->height(); y++)
-			free(row_pointers[y]);
-		free(row_pointers);
-	}
 
 	if (errcode != 0 || res_img == NULL) {
 		return std::nullopt;
@@ -137,16 +119,10 @@ finalise:
 	}
 }
 
-bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) {
-
-	if (inp_img->data.size() != inp_img->height() && inp_img->data[0].size() != inp_img->width()) {
-		std::cerr << "Input seedimg dimensions do not match" << std::endl;
-		return false;
-	}
+bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) noexcept {
 
 	png_structp png_ptr = NULL;
 	png_infop info_ptr = NULL;
-	png_bytepp row_pointers = NULL;
 
 	int errcode = 0;
 
@@ -187,7 +163,7 @@ bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::im
 	png_set_IHDR(
 		png_ptr,
 		info_ptr,
-		inp_img->width(), inp_img->height(),
+		inp_img->width, inp_img->height,
 		8,
 		PNG_COLOR_TYPE_RGBA,
 		PNG_INTERLACE_NONE,
@@ -196,20 +172,9 @@ bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::im
 	);
 	png_write_info(png_ptr, info_ptr);
 
-	row_pointers = (png_bytepp)malloc(sizeof(png_bytep) * inp_img->width());
-
-	for (size_t y = 0; y < inp_img->height(); y++) {
-		png_bytep row = row_pointers[y] = (png_bytep)malloc(png_get_rowbytes(png_ptr, info_ptr));
-		for (size_t x = 0; x < inp_img->width(); x++) {
-			png_byte* pix = &(row[x * 4]);
-			pix[0] = inp_img->data[y][x].r;
-			pix[1] = inp_img->data[y][x].g;
-			pix[2] = inp_img->data[y][x].b;
-			pix[3] = inp_img->data[y][x].a;
-		}
+	for (size_t y = 0; y < inp_img->height; y++) {
+		png_write_row(png_ptr, reinterpret_cast<png_bytep>(inp_img->get_row(y).data()));
 	}
-
-	png_write_image(png_ptr, row_pointers);
 	png_write_end(png_ptr, NULL);
 
 finalise:
@@ -219,10 +184,6 @@ finalise:
 		png_destroy_info_struct(png_ptr, &info_ptr);
 	if (png_ptr != NULL)
 		png_destroy_write_struct(&png_ptr, NULL);
-	if (row_pointers != NULL) {
-		for (size_t y = 0; y < inp_img->height(); y++)
-			free(row_pointers[y]);
-		free(row_pointers);
-	}
+
 	return errcode == 0;
 }

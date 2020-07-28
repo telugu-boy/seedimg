@@ -8,38 +8,54 @@
 #include <memory>
 
 namespace seedimg {
+
+	template <typename T>
+	class vector_fixed {
+	public:
+		vector_fixed(std::size_t l) : vec_(l) {}
+		vector_fixed(std::size_t l, T elem) : vec_(l, elem) {}
+		std::size_t size(void) const noexcept { return vec_.size(); }
+
+		T& operator[](std::size_t e) {
+			return vec_[e];
+		}
+		T* data(void) {
+			return vec_.data();
+		}
+	protected:
+		std::vector<T> vec_;
+	};
+
 	struct pixel {
-		uint8_t r;
-		uint8_t g;
-		uint8_t b;
-		uint8_t a;
-		pixel() : r(0), g(0), b(0), a(0) {};
-		pixel(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_)
+		std::uint8_t r;
+		std::uint8_t g;
+		std::uint8_t b;
+		std::uint8_t a;
+		pixel(std::uint8_t r_ = 0, std::uint8_t g_ = 0, std::uint8_t b_ = 0, std::uint8_t a_ = 0) noexcept
 			: r(r_), g(g_), b(b_), a(a_)
 		{}
-		bool operator==(const pixel& other) const {
+		bool operator==(const pixel& other) const noexcept {
 			return std::tie(r, g, b, a) == std::tie(other.r, other.g, other.b, other.a);
 		}
 	};
 
 	class img {
 	public:
-		img(uint32_t w, uint32_t h) : width_(w), height_(h) {};
-		img() : width_(0), height_(0) {};
-		uint32_t width() const { return width_; }
-		uint32_t height() const { return height_; }
+		std::size_t const width;
+		std::size_t const height;
+		img(std::size_t w = 0, std::size_t h = 0) noexcept : width(w), height(h), data(h, seedimg::vector_fixed<seedimg::pixel>(w)) {}
+		seedimg::pixel& get_pixel(std::size_t x, std::size_t y) { return data[y][x]; }
+		auto& get_row(std::size_t y) { return data[y]; }
+		auto& get_data(void) { return data; }
+	private:
 		//stored in row major order
 		//width amount of pixels in a row
 		//height amount of rows.
-		std::vector<std::vector<pixel> > data;
-
-		bool to(std::string filename);
-	private:
-		uint32_t width_;
-		uint32_t height_;
+		seedimg::vector_fixed<seedimg::vector_fixed<seedimg::pixel> > data;
 	};
 
-	std::optional<std::unique_ptr<seedimg::img> > from(std::string filename);
+	bool to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) noexcept;
+	std::optional<std::unique_ptr<seedimg::img> > from(std::string filename) noexcept;
 
 	namespace modules {};
 }
