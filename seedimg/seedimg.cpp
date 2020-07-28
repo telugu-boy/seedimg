@@ -28,7 +28,7 @@ std::optional<std::unique_ptr<seedimg::img> > seedimg::from(std::string filename
 	if (ec != std::error_code{})
 		return std::nullopt;
 	// stupid compiler warnings '-'
-	if (size != 4 * w * unsigned long long(h) + unsigned long long(sizeof(w) + sizeof(h))) {
+	if (size != 4 * unsigned long long(w) * unsigned long long(h) + unsigned long long(sizeof(w) + sizeof(h))) {
 		std::cerr << filename << " is not a valid SEEDIMG file" << std::endl;
 		return std::nullopt;
 	}
@@ -49,7 +49,7 @@ bool seedimg::to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) n
 	outfile.write(reinterpret_cast<const char*>(&h), sizeof(h));
 	auto data = inp_img->get_data();
 	for (std::size_t y = 0; y < inp_img->height; y++) {
-		outfile.write(reinterpret_cast<const char*>(inp_img->get_row(y).data()), std::size_t(sizeof(seedimg::pixel)) * inp_img->width);
+		outfile.write(reinterpret_cast<const char*>(inp_img->get_row(y).data()), sizeof(seedimg::pixel) * inp_img->width);
 	}
 	outfile.close();
 	return true;
