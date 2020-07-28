@@ -79,15 +79,8 @@ namespace seedimg {
         JSAMPROW rowbuffer = new JSAMPLE[jenc.image_width * 4];
 
         for (size_t y = 0; y < image->height(); ++y) {
-          for (size_t x = 0; x < image->width(); ++x) {
-            auto pix = image->data[y][x];
-            #define I(ch) (4 * x + ch)
-
-            rowbuffer[I(0)] = pix.r, rowbuffer[I(1)] = pix.g,
-            rowbuffer[I(2)] = pix.g, rowbuffer[I(3)] = pix.b;
-          }
-
-          if (jpeg_write_scanlines(&jenc, &rowbuffer, 1) != 1)
+          auto row = reinterpret_cast<JSAMPROW>(image->data[y].data());
+          if (jpeg_write_scanlines(&jenc, &row, 1) != 1)
             return false;
         }
 
