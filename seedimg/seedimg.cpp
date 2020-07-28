@@ -53,6 +53,5 @@ bool seedimg::to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) n
 		outfile.write(reinterpret_cast<const char*>(inp_img->get_row(y).data()),
 			unsigned long long(sizeof(seedimg::pixel)) * unsigned long long(inp_img->width));
 	}
-	outfile.close();
 	return true;
 }
