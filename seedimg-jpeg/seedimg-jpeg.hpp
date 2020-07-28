@@ -8,17 +8,15 @@
 #include <memory>
 #include <string>
 
-namespace seedimg {
-  namespace modules {
-    namespace jpeg {
-      std::optional<std::unique_ptr<seedimg::img>> from(std::string filename);
+namespace seedimg::modules {
+  namespace jpeg {
+    std::optional<std::unique_ptr<seedimg::img> > from(std::string filename) noexcept;
 
-      /**
-       * @param quality quality of JPEG encoding (0-100)
-       * @param progressive whether to make JPEG progresssive
-       */
-      bool to(std::string filename, std::unique_ptr<seedimg::img>& image, uint8_t quality = 100, bool progressive = false);
-    }
+    /**
+      * @param quality quality of JPEG encoding (0-100)
+      * @param progressive whether to make JPEG progresssive
+      */
+    bool to(std::string filename, std::unique_ptr<seedimg::img>& image, uint8_t quality = 100, bool progressive = false) noexcept;
   }
 }
 #endif

@@ -2,21 +2,18 @@
 #include <iostream>
 
 int main() {
-	auto a = seedimg::modules::png::from("violeur.png");
-	if (a != std::nullopt) {
-		a.value()->to("rawviol.seedimg");
-		auto seedimage = seedimg::from("rawviol.seedimg");
-		if (seedimage != std::nullopt) {
-			for (int i = 0; i < a.value()->height(); i++) {
-				for (int j = 0; j < a.value()->width(); j++) {
-					if ((*seedimage)->data[j][i] == (*a)->data[j][i]) {
-						std::cout << j << ' ' << i << std::endl;
-					}
-				}
+	{
+		auto a = seedimg::modules::png::from("violeur.png");
+		//bool b = seedimg::modules::png::to("seedviol.png", *a);
+		if (a != std::nullopt) {
+			seedimg::to("rawviol.seedimg", *a);
+			auto seedimage = seedimg::from("rawviol.seedimg");
+			if (seedimage != std::nullopt) {
+				seedimg::modules::png::to("seedviol.png", *seedimage);
 			}
-			seedimg::modules::png::to("seedviol.png", seedimage.value());
+			// bool success = seedimg::modules::png::to("seedviol.png", a.value());
+			std::cout << (*a)->height << ' ' << (*a)->width << std::endl;
 		}
-		bool success = seedimg::modules::png::to("seedviol.png", a.value());
-		std::cout << a.value()->height() << ' ' << a.value()->width() << std::endl;
 	}
+	std::cout << "done";
 }

@@ -18,6 +18,9 @@
     <ClCompile Include="jpeg-test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="png-test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="violeur.png">
