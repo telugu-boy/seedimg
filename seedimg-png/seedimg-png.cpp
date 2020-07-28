@@ -12,7 +12,7 @@
 
 #pragma warning(disable:4996)
 
-std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::png::from(std::string filename) noexcept {
+std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(std::string filename) noexcept {
 
 	std::unique_ptr<seedimg::img> res_img = NULL;
 	png_structp png_ptr = NULL;
@@ -73,7 +73,7 @@ std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::png::from(std::s
 	res_img = std::make_unique<seedimg::img>(
 		png_get_image_width(png_ptr, info_ptr),
 		png_get_image_height(png_ptr, info_ptr)
-	);
+		);
 
 	if (bit_depth == 16)
 		png_set_strip_16(png_ptr);
@@ -99,8 +99,8 @@ std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::png::from(std::s
 	png_read_update_info(png_ptr, info_ptr);
 
 	//This will load the png into the vectors.
-	for (size_t y = 0; y < res_img->height; y++) {
-		png_read_row(png_ptr, reinterpret_cast<png_bytep>(res_img->get_row(y).data()), NULL);
+	for (std::size_t y = 0; y < res_img->height(); ++y) {
+		png_read_row(png_ptr, reinterpret_cast<png_bytep>(res_img->get(y).data()), NULL);
 	}
 
 finalise:
@@ -163,7 +163,7 @@ bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::im
 	png_set_IHDR(
 		png_ptr,
 		info_ptr,
-		inp_img->width, inp_img->height,
+		inp_img->width(), inp_img->height(),
 		8,
 		PNG_COLOR_TYPE_RGBA,
 		PNG_INTERLACE_NONE,
@@ -172,9 +172,10 @@ bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::im
 	);
 	png_write_info(png_ptr, info_ptr);
 
-	for (size_t y = 0; y < inp_img->height; y++) {
-		png_write_row(png_ptr, reinterpret_cast<png_bytep>(inp_img->get_row(y).data()));
+	for (std::size_t y = 0; y < inp_img->height(); ++y) {
+		png_write_row(png_ptr, reinterpret_cast<png_bytep>(inp_img->get(y).data()));
 	}
+
 	png_write_end(png_ptr, NULL);
 
 finalise:
