@@ -35,7 +35,8 @@ std::optional<std::unique_ptr<seedimg::img> > seedimg::from(std::string filename
 
 	auto res_img = std::make_unique<seedimg::img>(w, h);
 	for (std::size_t y = 0; y < h; y++) {
-		infile.read(reinterpret_cast<char*>(res_img->get_row(y).data()), sizeof(seedimg::pixel) * w);
+		infile.read(reinterpret_cast<char*>(res_img->get_row(y).data()),
+			unsigned long long(sizeof(seedimg::pixel)) * unsigned long long(w));
 	}
 	return res_img;
 }
@@ -49,7 +50,8 @@ bool seedimg::to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) n
 	outfile.write(reinterpret_cast<const char*>(&h), sizeof(h));
 	auto data = inp_img->get_data();
 	for (std::size_t y = 0; y < inp_img->height; y++) {
-		outfile.write(reinterpret_cast<const char*>(inp_img->get_row(y).data()), sizeof(seedimg::pixel) * inp_img->width);
+		outfile.write(reinterpret_cast<const char*>(inp_img->get_row(y).data()),
+			unsigned long long(sizeof(seedimg::pixel)) * unsigned long long(inp_img->width));
 	}
 	outfile.close();
 	return true;
