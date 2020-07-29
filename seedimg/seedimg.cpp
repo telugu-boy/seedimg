@@ -24,7 +24,7 @@ std::optional<std::unique_ptr<seedimg::img>> seedimg::from(std::string filename)
 
 	// check if the data size is equal to the retrieved rectangular area.
 	// if not, then just don't return any results, partial data isn't supported.
-	if (ec != std::error_code{} || size != 4 * width * height + sizeof(width) + sizeof(height))
+	if (ec != std::error_code{} || size != sizeof(seedimg::pixel) * width * height + sizeof(width) + sizeof(height))
 		return std::nullopt;
 
 	auto image = std::make_unique<seedimg::img>(width, height);
