@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\USer\source\repos\seedimg</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -109,7 +109,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\USer\source\repos\seedimg</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -126,7 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\USer\source\repos\seedimg</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -143,7 +143,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\USer\source\repos\seedimg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\USer\source\repos\seedimg</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -155,10 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="jpeg-test.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\;%(AdditionalIncludeDirectories);$(VcpkgCurrentInstalledDir)include</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="png-test.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="violeur.jpg" />
@@ -168,11 +165,30 @@
     <ProjectReference Include="..\seedimg-jpeg\seedimg-jpeg.vcxproj">
       <Project>{4ecc222b-e2c2-40f7-98a6-ba455aaa60e5}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\seedimg-png\seedimg-png.vcxproj">
+      <Project>{9593c868-88b0-4da1-b622-0fb18fedd8a7}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\seedimg\seedimg.vcxproj">
       <Project>{e083e297-ad00-40ec-bdb0-c1a39e92b7dd}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="jpeg-test.hpp" />
+    <ClInclude Include="png-test.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\libjpeg-msvc-x86.9.1.0.8807\build\native\libjpeg-msvc-x86.targets" Condition="Exists('..\packages\libjpeg-msvc-x86.9.1.0.8807\build\native\libjpeg-msvc-x86.targets')" />
+    <Import Project="..\packages\libpng-msvc-x86.1.6.33.8807\build\native\libpng-msvc-x86.targets" Condition="Exists('..\packages\libpng-msvc-x86.1.6.33.8807\build\native\libpng-msvc-x86.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\libjpeg-msvc-x86.9.1.0.8807\build\native\libjpeg-msvc-x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libjpeg-msvc-x86.9.1.0.8807\build\native\libjpeg-msvc-x86.targets'))" />
+    <Error Condition="!Exists('..\packages\libpng-msvc-x86.1.6.33.8807\build\native\libpng-msvc-x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libpng-msvc-x86.1.6.33.8807\build\native\libpng-msvc-x86.targets'))" />
+  </Target>
 </Project>

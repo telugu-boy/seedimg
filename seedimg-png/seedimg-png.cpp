@@ -6,7 +6,9 @@
 
 #include <iostream>
 
+extern "C" {
 #include <png.h>
+}
 
 #include "seedimg-png.hpp"
 
@@ -23,7 +25,7 @@ std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(std::st
 
 	int errcode = 0;
 
-	FILE* fp = fopen(filename.c_str(), "rb");
+	auto fp = std::fopen(filename.c_str(), "rb");
 
 	if (!fp) {
 		std::cerr << "File " << filename << " could not be opened" << std::endl;
@@ -99,8 +101,8 @@ std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(std::st
 	png_read_update_info(png_ptr, info_ptr);
 
 	//This will load the png into the vectors.
-	for (std::size_t y = 0; y < res_img->height(); ++y) {
-		png_read_row(png_ptr, reinterpret_cast<png_bytep>(res_img->get(y).data()), NULL);
+	for (std::size_t y = 0; y < res_img->height; ++y) {
+		png_read_row(png_ptr, reinterpret_cast<png_bytep>(res_img->get_row(y).data()), NULL);
 	}
 
 finalise:
@@ -126,7 +128,7 @@ bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::im
 
 	int errcode = 0;
 
-	FILE* fp = fopen(filename.c_str(), "wb");
+	auto fp = std::fopen(filename.c_str(), "wb");
 
 	if (!fp) {
 		std::cerr << "File " << filename << " could not be opened" << std::endl;
@@ -163,7 +165,7 @@ bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::im
 	png_set_IHDR(
 		png_ptr,
 		info_ptr,
-		inp_img->width(), inp_img->height(),
+		inp_img->width, inp_img->height,
 		8,
 		PNG_COLOR_TYPE_RGBA,
 		PNG_INTERLACE_NONE,
@@ -172,8 +174,8 @@ bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::im
 	);
 	png_write_info(png_ptr, info_ptr);
 
-	for (std::size_t y = 0; y < inp_img->height(); ++y) {
-		png_write_row(png_ptr, reinterpret_cast<png_bytep>(inp_img->get(y).data()));
+	for (std::size_t y = 0; y < inp_img->height; ++y) {
+		png_write_row(png_ptr, reinterpret_cast<png_bytep>(inp_img->get_row(y).data()));
 	}
 
 	png_write_end(png_ptr, NULL);
