@@ -10,12 +10,13 @@ int main() {
 	{
 		//test_png_module();
 		//test_jpeg_module();
-		test_webp_module();
+		//test_webp_module();
 	}
 	{
 		auto a = seedimg::modules::png::from("violeur.png");
+
 		if (a != std::nullopt) {
-			bool b = seedimg::modules::jpeg::to("bioleur.jpg", *a, 1);
+			bool b = seedimg::modules::jpeg::to("bioleur.jpg", *a, 100);
 		}
 		std::cout << "done";
 	}
