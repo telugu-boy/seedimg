@@ -5,6 +5,7 @@
 #include "webp-test.hpp"
 
 #include <seedimg/seedimg.hpp>
+#include <seedimg-filters-core/seedimg-filters-core.hpp>
 
 int main() {
 	{
@@ -14,7 +15,7 @@ int main() {
 	}
 	{
 		auto a = seedimg::modules::png::from("violeur.png");
-
+		seedimg::filters::grayscale(*a);
 		if (a != std::nullopt) {
 			bool b = seedimg::modules::jpeg::to("bioleur.jpg", *a, 100);
 		}

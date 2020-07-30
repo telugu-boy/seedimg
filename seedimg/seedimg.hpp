@@ -59,6 +59,7 @@ namespace seedimg {
 	std::optional<std::unique_ptr<seedimg::img> > from(std::string filename) noexcept;
 
 	namespace modules {};
+	namespace filters {};
 }
 
 #endif

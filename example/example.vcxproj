@@ -162,6 +162,9 @@
     <Image Include="violeur.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\seedimg-filters-core\seedimg-filters-core.vcxproj">
+      <Project>{a1e5cbef-4555-48f5-9098-3283ccdc3bf8}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\seedimg-jpeg\seedimg-jpeg.vcxproj">
       <Project>{4ecc222b-e2c2-40f7-98a6-ba455aaa60e5}</Project>
     </ProjectReference>
