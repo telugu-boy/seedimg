@@ -36,7 +36,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <EnableASAN>false</EnableASAN>
@@ -51,7 +51,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <EnableASAN>false</EnableASAN>
@@ -168,6 +168,9 @@
     <ProjectReference Include="..\seedimg-png\seedimg-png.vcxproj">
       <Project>{9593c868-88b0-4da1-b622-0fb18fedd8a7}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\seedimg-webp\seedimg-webp.vcxproj">
+      <Project>{b5d0895b-2076-48eb-83fc-5d12c53fd0b5}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\seedimg\seedimg.vcxproj">
       <Project>{e083e297-ad00-40ec-bdb0-c1a39e92b7dd}</Project>
     </ProjectReference>
@@ -175,6 +178,7 @@
   <ItemGroup>
     <ClInclude Include="jpeg-test.hpp" />
     <ClInclude Include="png-test.hpp" />
+    <ClInclude Include="webp-test.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -183,6 +187,7 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\libjpeg-msvc-x86.9.1.0.8807\build\native\libjpeg-msvc-x86.targets" Condition="Exists('..\packages\libjpeg-msvc-x86.9.1.0.8807\build\native\libjpeg-msvc-x86.targets')" />
     <Import Project="..\packages\libpng-msvc-x86.1.6.33.8807\build\native\libpng-msvc-x86.targets" Condition="Exists('..\packages\libpng-msvc-x86.1.6.33.8807\build\native\libpng-msvc-x86.targets')" />
+    <Import Project="..\packages\libwebp.v140.redist.0.5.0.1\build\native\libwebp.v140.redist.targets" Condition="Exists('..\packages\libwebp.v140.redist.0.5.0.1\build\native\libwebp.v140.redist.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -190,5 +195,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\libjpeg-msvc-x86.9.1.0.8807\build\native\libjpeg-msvc-x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libjpeg-msvc-x86.9.1.0.8807\build\native\libjpeg-msvc-x86.targets'))" />
     <Error Condition="!Exists('..\packages\libpng-msvc-x86.1.6.33.8807\build\native\libpng-msvc-x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libpng-msvc-x86.1.6.33.8807\build\native\libpng-msvc-x86.targets'))" />
+    <Error Condition="!Exists('..\packages\libwebp.v140.redist.0.5.0.1\build\native\libwebp.v140.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libwebp.v140.redist.0.5.0.1\build\native\libwebp.v140.redist.targets'))" />
   </Target>
 </Project>

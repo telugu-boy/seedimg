@@ -1,15 +1,22 @@
+#include <iostream>
+
 #include "jpeg-test.hpp"
 #include "png-test.hpp"
-#include <iostream>
+#include "webp-test.hpp"
+
+#include <seedimg/seedimg.hpp>
 
 int main() {
 	{
 		//test_png_module();
 		//test_jpeg_module();
+		test_webp_module();
 	}
-	auto pngimg = seedimg::modules::png::from("violeur.png");
-	bool convjpg = seedimg::modules::jpeg::to("biolejpg.jpg", *pngimg, 1);
-	auto jpegimg = seedimg::modules::jpeg::from("biolejpg.jpg");
-	bool convpng = seedimg::modules::png::to("violfromjpg.png", *jpegimg);
-	std::cout << "done";
+	{
+		auto a = seedimg::modules::png::from("violeur.png");
+		if (a != std::nullopt) {
+			bool b = seedimg::modules::jpeg::to("bioleur.jpg", *a, 1);
+		}
+		std::cout << "done";
+	}
 }
