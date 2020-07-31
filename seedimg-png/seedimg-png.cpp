@@ -25,7 +25,7 @@ bool seedimg::modules::png::check(const std::string& filename) noexcept {
 	std::uint8_t cmp[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
 	std::uint8_t header[8] = {};
 	file.read(reinterpret_cast<char*>(header), 8);
-	return !memcmp(cmp, header, 8);
+	return !std::memcmp(cmp, header, 8);
 }
 
 std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(const std::string& filename) noexcept {
