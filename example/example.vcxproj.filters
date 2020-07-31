@@ -18,6 +18,12 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="seedimg-autodetect.hpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="seedimg-autodetect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="violeur.png">

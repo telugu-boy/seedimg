@@ -5,6 +5,8 @@
 #include "framework.h"
 
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 
 extern "C" {
 #include <png.h>
@@ -14,7 +16,19 @@ extern "C" {
 
 #pragma warning(disable:4996)
 
-std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(std::string filename) noexcept {
+bool seedimg::modules::png::check(const std::string& filename) noexcept {
+	std::error_code ec;
+	std::size_t size = std::filesystem::file_size(filename, ec);
+	if (ec != std::error_code{} || size < 8) return false;
+
+	std::ifstream file(filename, std::ios::binary);
+	std::uint8_t cmp[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+	std::uint8_t header[8] = {};
+	file.read(reinterpret_cast<char*>(header), 8);
+	return !memcmp(cmp, header, 8);
+}
+
+std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(const std::string& filename) noexcept {
 
 	std::unique_ptr<seedimg::img> res_img = NULL;
 	png_structp png_ptr = NULL;
@@ -121,7 +135,7 @@ finalise:
 	}
 }
 
-bool seedimg::modules::png::to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) noexcept {
+bool seedimg::modules::png::to(const std::string& filename, std::unique_ptr<seedimg::img>& inp_img) noexcept {
 
 	png_structp png_ptr = NULL;
 	png_infop info_ptr = NULL;

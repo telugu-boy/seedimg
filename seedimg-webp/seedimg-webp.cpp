@@ -15,7 +15,22 @@ extern "C" {
 #include "seedimg-webp.hpp"
 
 // TODO: This is an example of a library function
-bool seedimg::modules::webp::to(std::string filename, std::unique_ptr<seedimg::img>& inp_img, uint8_t quality) noexcept {
+bool seedimg::modules::webp::check(const std::string& filename) noexcept {
+	std::error_code ec;
+	std::size_t size = std::filesystem::file_size(filename, ec);
+	if (ec != std::error_code{} || size < 8) return false;
+	// this does not check the full header as
+	// the length is little endian and that would require more code
+	std::uint8_t cmp[8] = { 'R','I','F','F','W','E','B','P' };
+	std::uint8_t header[8] = {};
+	std::ifstream file(filename, std::ios::binary);
+	file.read(reinterpret_cast<char*>(header), 4);
+	file.ignore(4);
+	file.read(reinterpret_cast<char*>(header+4), 4);
+	return !std::memcmp(cmp, header, 8);
+}
+
+bool seedimg::modules::webp::to(const std::string& filename, std::unique_ptr<seedimg::img>& inp_img, uint8_t quality) noexcept {
 	uint8_t* output = NULL;
 	uint8_t* data = new uint8_t[inp_img->height * inp_img->width * sizeof(seedimg::pixel)];
 	for (size_t y = 0; y < inp_img->height; y++) {
@@ -30,7 +45,7 @@ bool seedimg::modules::webp::to(std::string filename, std::unique_ptr<seedimg::i
 	WebPFree(output);
 	return true;
 }
-std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::webp::from(std::string filename) noexcept {
+std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::webp::from(const std::string& filename) noexcept {
 	std::error_code ec;
 	size_t size = std::filesystem::file_size(filename, ec);
 	if (ec != std::error_code{})

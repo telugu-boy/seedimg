@@ -5,7 +5,7 @@
 #include <seedimg/seedimg.hpp>
 
 namespace seedimg::filters {
-	void grayscale(std::unique_ptr<seedimg::img>& inp_img) noexcept;
+	void grayscale(std::unique_ptr<seedimg::img>& inp_img, bool lightness = false) noexcept;
 }
 
 #endif

@@ -5,6 +5,7 @@
 #include "framework.h"
 
 #include <iostream>
+#include <fstream>
 #include <csetjmp>
 
 extern "C" {
@@ -25,10 +26,18 @@ char jpegLastErrorMsg[JMSG_LENGTH_MAX];
 void jpegErrorExit(j_common_ptr cinfo) {
 	seedimg_jpeg_error_mgr* err = (seedimg_jpeg_error_mgr*)cinfo->err;
 	(*(cinfo->err->format_message))(cinfo, jpegLastErrorMsg);
-	longjmp(err->setjmp_buffer, 1);
+	std::longjmp(err->setjmp_buffer, 1);
 }
 
-std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::jpeg::from(std::string filename) noexcept {
+bool seedimg::modules::jpeg::check(const std::string& filename) noexcept {
+	std::ifstream file(filename, std::ios::binary);
+	std::uint8_t cmp[3] = { 0xFF, 0xD8, 0xFF };
+	std::uint8_t header[3] = {};
+	file.read(reinterpret_cast<char*>(header), 3);
+	return !std::memcmp(cmp, header, 3);
+}
+
+std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::jpeg::from(const std::string& filename) noexcept {
 	auto input = std::fopen(filename.c_str(), "rb");
 	if (input == NULL) return std::nullopt;
 
@@ -41,7 +50,7 @@ std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::jpeg::from(std::
 	jdec.err = jpeg_std_error(&jerr.pub);
 	jerr.pub.error_exit = jpegErrorExit;
 
-	if (setjmp(jerr.setjmp_buffer)) {
+	if (std::setjmp(jerr.setjmp_buffer)) {
 		std::cerr << jpegLastErrorMsg << std::endl;
 		errcode = -1;
 		goto finalise;
@@ -85,7 +94,7 @@ finalise:
   * @param progressive whether to make JPEG progresssive
   */
   // quality default param = 100, progressive = false
-bool seedimg::modules::jpeg::to(std::string filename, std::unique_ptr<seedimg::img>& image, uint8_t quality, bool progressive) noexcept {
+bool seedimg::modules::jpeg::to(const std::string& filename, std::unique_ptr<seedimg::img>& image, uint8_t quality, bool progressive) noexcept {
 
 	auto output = std::fopen(filename.c_str(), "wb");
 	if (output == NULL) return false;

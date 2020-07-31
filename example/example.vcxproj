@@ -156,6 +156,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="seedimg-autodetect.cpp" />
+    <ClCompile Include="seedimg-autodetect.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="violeur.jpg" />

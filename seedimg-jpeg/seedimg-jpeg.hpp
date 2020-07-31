@@ -10,8 +10,9 @@ namespace seedimg::modules {
 		  * @param quality quality of JPEG encoding (0-100)
 		  * @param progressive whether to make JPEG progresssive
 		  */
-		bool to(std::string filename, std::unique_ptr<seedimg::img>& image, uint8_t quality = 100, bool progressive = false) noexcept;
-		std::optional<std::unique_ptr<seedimg::img> > from(std::string filename) noexcept;
+		bool check(const std::string& filename) noexcept;
+		bool to(const std::string& filename, std::unique_ptr<seedimg::img>& image, uint8_t quality = 100, bool progressive = false) noexcept;
+		std::optional<std::unique_ptr<seedimg::img> > from(const std::string& filename) noexcept;
 	}
 }
 #endif

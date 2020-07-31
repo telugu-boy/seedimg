@@ -6,8 +6,9 @@
 
 namespace seedimg::modules {
 	namespace png {
-		bool to(std::string filename, std::unique_ptr<seedimg::img>& inp_img) noexcept;
-		std::optional<std::unique_ptr<seedimg::img> > from(std::string filename) noexcept;
+		bool check(const std::string& filename) noexcept;
+		bool to(const std::string& filename, std::unique_ptr<seedimg::img>& inp_img) noexcept;
+		std::optional<std::unique_ptr<seedimg::img> > from(const std::string& filename) noexcept;
 	}
 }
 

@@ -11,7 +11,7 @@
 #include "seedimg.hpp"
 
 
-std::optional<std::unique_ptr<seedimg::img>> seedimg::from(std::string filename) noexcept {
+std::optional<std::unique_ptr<seedimg::img>> seedimg::from(const std::string& filename) noexcept {
 	std::ifstream infile(filename, std::ios::binary);
 	if (infile.fail()) return std::nullopt;
 
@@ -36,7 +36,7 @@ std::optional<std::unique_ptr<seedimg::img>> seedimg::from(std::string filename)
 	return image;
 }
 
-bool seedimg::to(std::string filename, std::unique_ptr<seedimg::img>& image) noexcept {
+bool seedimg::to(const std::string& filename, std::unique_ptr<seedimg::img>& image) noexcept {
 	std::ofstream outfile(filename, std::ios::binary);
 	if (outfile.fail())
 		return false;

@@ -4,8 +4,9 @@
 #include "png-test.hpp"
 #include "webp-test.hpp"
 
-#include <seedimg/seedimg.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
+
+#include "seedimg-autodetect.hpp"
 
 int main() {
 	{
@@ -14,10 +15,11 @@ int main() {
 		//test_webp_module();
 	}
 	{
-		auto a = seedimg::modules::png::from("violeur.png");
-		seedimg::filters::grayscale(*a);
+		std::string name = "violeur.png";
+		auto a = seedimg_autodetect_from(name);
+		seedimg::filters::grayscale(*a, false);
 		if (a != std::nullopt) {
-			bool b = seedimg::modules::jpeg::to("bioleur.jpg", *a, 100);
+			bool b = seedimg_autodetect_to("boileur.jpg", *a);
 		}
 		std::cout << "done";
 	}
