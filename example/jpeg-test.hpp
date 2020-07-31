@@ -1,5 +1,5 @@
 #pragma once
-#include <seedimg-jpeg/seedimg-jpeg.hpp>
+#include "../seedimg-jpeg/seedimg-jpeg.hpp"
 
 void test_jpeg_module() {
 	auto img = seedimg::modules::jpeg::from("violeur.jpg");

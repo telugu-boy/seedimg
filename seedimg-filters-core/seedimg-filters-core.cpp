@@ -12,10 +12,13 @@ void seedimg::filters::grayscale(std::unique_ptr<seedimg::img>& inp_img, bool li
 	if (lightness) {
 		for (auto& row : inp_img->get_data()) {
 			for (auto& pix : row) {
+				uint8_t linear = (0.2126 * (pix.r / 255.0) +
+					0.7152 * (pix.g / 255.0) +
+					0.0722 * (pix.b / 255.0)) * 255;
 				pix = {
-					static_cast<uint8_t>(0.299 * pix.r),
-					static_cast<uint8_t>(0.587 * pix.g),
-					static_cast<uint8_t>(0.114 * pix.b),
+					linear,
+					linear,
+					linear,
 					pix.a
 				};
 			}

@@ -2,7 +2,9 @@
 #define _SEEDIMG_AUTODETECT_H
 
 #include <string>
-#include <seedimg/seedimg.hpp>
+#include <optional>
+#include <memory>
+#include "../seedimg/seedimg.hpp"
 
 enum img_type { unknown = 0, png, jpeg, webp };
 

@@ -2,7 +2,9 @@
 #define _SEEDIMG_JPEG_H
 
 #include "pch.h"
-#include <seedimg/seedimg.hpp>
+#include <optional>
+#include <memory>
+#include "../seedimg/seedimg.hpp"
 
 namespace seedimg::modules {
 	namespace jpeg {

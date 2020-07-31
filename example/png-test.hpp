@@ -1,5 +1,5 @@
 #pragma once
-#include <seedimg-png/seedimg-png.hpp>
+#include "../seedimg-png/seedimg-png.hpp"
 
 void test_png_module() {
 	auto a = seedimg::modules::png::from("violeur.png");

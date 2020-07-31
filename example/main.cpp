@@ -4,7 +4,7 @@
 #include "png-test.hpp"
 #include "webp-test.hpp"
 
-#include <seedimg-filters-core/seedimg-filters-core.hpp>
+#include "../seedimg-filters-core/seedimg-filters-core.hpp"
 
 #include "seedimg-autodetect.hpp"
 
@@ -15,10 +15,9 @@ int main() {
 		//test_webp_module();
 	}
 	{
-		std::string name = "violeur.png";
-		auto a = seedimg_autodetect_from(name);
-		seedimg::filters::grayscale(*a, false);
+		auto a = seedimg_autodetect_from("violeur.png");
 		if (a != std::nullopt) {
+			seedimg::filters::grayscale(*a, true);
 			bool b = seedimg_autodetect_to("boileur.jpg", *a);
 		}
 		std::cout << "done";
