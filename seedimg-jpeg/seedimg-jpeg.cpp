@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <csetjmp>
+#include <filesystem>
 
 extern "C" {
 #include <jpeglib.h>
@@ -30,6 +31,10 @@ void jpegErrorExit(j_common_ptr cinfo) {
 }
 
 bool seedimg::modules::jpeg::check(const std::string& filename) noexcept {
+	std::error_code ec;
+	std::size_t size = std::filesystem::file_size(filename, ec);
+	if (ec != std::error_code{} || size < 3) return false;
+	
 	std::ifstream file(filename, std::ios::binary);
 	std::uint8_t cmp[3] = { 0xFF, 0xD8, 0xFF };
 	std::uint8_t header[3] = {};
