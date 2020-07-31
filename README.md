@@ -8,4 +8,5 @@
 Please install all libraries via vcpkg, to allow for easier transfer to other IDEs.
 
 Linux: vcpkg install libpng:x86-linux libjpeg-turbo:x86-linux libwebp:x86-linux
+
 Windows: vcpkg install libpng:x86-windows libjpeg-turbo:x86-windows libwebp:x86-windows
