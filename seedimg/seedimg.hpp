@@ -4,6 +4,7 @@
 #include <cinttypes>
 #include <vector>
 #include <string>
+#include <cstring> // just for memset '-'
 #include <optional>
 #include <memory>
 
@@ -43,7 +44,7 @@ namespace seedimg {
 		std::size_t const width;
 		std::size_t const height;
 		img(std::size_t w = 0, std::size_t h = 0) noexcept : width(w), height(h), data(h, seedimg::vector_fixed<seedimg::pixel>(w)) {
-			for (auto& row : data) memset(row.data(), 0, sizeof(seedimg::pixel) * row.size());
+			for (auto& row : data) std::memset(row.data(), 0, sizeof(seedimg::pixel) * row.size());
 		}
 		seedimg::pixel& get_pixel(std::size_t x, std::size_t y) { return data[y][x]; }
 		auto& get_row(std::size_t y) { return data[y]; }

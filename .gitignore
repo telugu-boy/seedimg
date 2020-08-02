@@ -345,3 +345,6 @@ example/*.jpeg
 example/*.jpg
 example/*.seedimg
 example/*.webp
+
+#other editor files - feel free to add
+.vscode/**

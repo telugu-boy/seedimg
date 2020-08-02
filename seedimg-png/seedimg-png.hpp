@@ -1,7 +1,7 @@
 #ifndef _SEEDIMG_PNG_H
 #define _SEEDIMG_PNG_H
 
-#include "pch.h"
+
 #include "../seedimg/seedimg.hpp"
 
 namespace seedimg::modules {

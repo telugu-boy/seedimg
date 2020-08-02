@@ -1,7 +1,7 @@
 #ifndef _SEEDIMG_WEBP_H
 #define _SEEDIMG_WEBP_H
 
-#include "pch.h"
+
 #include <optional>
 #include <memory>
 #include "../seedimg/seedimg.hpp"
