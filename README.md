@@ -5,8 +5,10 @@
 
 ~~libwebp must be installed through vcpkg as an up to date version is not in Nuget.~~
 
-Please install all libraries via vcpkg, to allow for easier transfer to other IDEs.
+Please install all libraries via vcpkg on Windows, it's the easiest solution ever.
 
-Linux: vcpkg install libpng:x86-linux libjpeg-turbo:x86-linux libwebp:x86-linux
+~~Linux: vcpkg install libpng:x86-linux libjpeg-turbo:x86-linux libwebp:x86-linux~~
+
+just use your package manager
 
 Windows: vcpkg install libpng:x86-windows libjpeg-turbo:x86-windows libwebp:x86-windows
