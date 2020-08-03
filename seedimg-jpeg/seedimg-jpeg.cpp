@@ -55,7 +55,7 @@ std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::jpeg::from(const
 	jdec.err = jpeg_std_error(&jerr.pub);
 	jerr.pub.error_exit = jpegErrorExit;
 
-	if (std::setjmp(jerr.setjmp_buffer)) {
+	if (setjmp(jerr.setjmp_buffer)) {
 		std::cerr << jpegLastErrorMsg << std::endl;
 		errcode = -1;
 		goto finalise;
