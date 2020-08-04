@@ -7,8 +7,6 @@
 
 Please install all libraries via vcpkg on Windows, it's the easiest solution ever.
 
-~~Linux: vcpkg install libpng:x86-linux libjpeg-turbo:x86-linux libwebp:x86-linux~~
-
-just use your package manager: libpng-dev, libjpeg-dev, libwebp-dev for all three image modules.
+Linux: vcpkg install libpng libjpeg-turbo libwebp
 
 Windows: vcpkg install libpng:x86-windows libjpeg-turbo:x86-windows libwebp:x86-windows
