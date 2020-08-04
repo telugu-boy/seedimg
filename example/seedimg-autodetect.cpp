@@ -4,7 +4,7 @@
 #include "../seedimg-jpeg/seedimg-jpeg.hpp"
 #include "../seedimg-webp/seedimg-webp.hpp"
 
-#include "seedimg-autodetect.hpp"
+#include "./seedimg-autodetect.hpp"
 
 enum img_type seedimg_match_ext(const std::string& ext) noexcept {
 	if (ext == "png") return img_type::png;

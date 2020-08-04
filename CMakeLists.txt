@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.13)
 # edit this to wherever your vcpkg is
 set(CMAKE_TOOLCHAIN_FILE ../vcpkg/scripts/buildsystems/vcpkg.cmake)
 project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
-include_directories(../vcpkg/installed/x64-linux/include)
+include_directories(../vcpkg/installed/x64-linux/include ${CMAKE_SOURCE_DIR})
 
 set(CMAKE_CXX_STANDARD 17)
 
