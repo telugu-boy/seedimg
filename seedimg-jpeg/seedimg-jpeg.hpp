@@ -4,7 +4,7 @@
 
 #include <optional>
 #include <memory>
-#include "../seedimg/seedimg.hpp"
+#include <seedimg/seedimg.hpp>
 
 namespace seedimg::modules {
 	namespace jpeg {

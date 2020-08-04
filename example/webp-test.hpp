@@ -1,5 +1,5 @@
 #pragma once
-#include "../seedimg-webp/seedimg-webp.hpp"
+#include <seedimg-webp/seedimg-webp.hpp>
 
 void test_webp_module() {
 	auto a = seedimg::modules::webp::from("tripulse.webp");

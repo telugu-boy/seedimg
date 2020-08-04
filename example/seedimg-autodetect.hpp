@@ -4,7 +4,8 @@
 #include <string>
 #include <optional>
 #include <memory>
-#include "../seedimg/seedimg.hpp"
+
+#include <seedimg/seedimg.hpp>
 
 enum class img_type { unknown = 0, png, jpeg, webp };
 

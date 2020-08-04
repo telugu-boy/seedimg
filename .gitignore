@@ -351,3 +351,6 @@ example/*.webp
 
 #cmake generated folder
 build/**
+CMakeFiles/**
+
+#external libs in libs folder.

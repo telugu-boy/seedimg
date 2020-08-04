@@ -4,7 +4,7 @@
 #include "png-test.hpp"
 #include "webp-test.hpp"
 
-#include "../seedimg-filters-core/seedimg-filters-core.hpp"
+#include <seedimg-filters-core/seedimg-filters-core.hpp>
 
 #include "seedimg-autodetect.hpp"
 

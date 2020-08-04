@@ -2,7 +2,7 @@
 #define _SEEDIMG_FILTERS_CORE_H
 
 
-#include "../seedimg/seedimg.hpp"
+#include <seedimg/seedimg.hpp>
 
 namespace seedimg::filters {
 	void grayscale(std::unique_ptr<seedimg::img>& inp_img, bool lightness = false) noexcept;

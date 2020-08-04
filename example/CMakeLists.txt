@@ -8,3 +8,5 @@ target_link_libraries(${APP_EXE}
     seedimg-webp 
     seedimg-filters-core
 )
+
+include_directories(../)
