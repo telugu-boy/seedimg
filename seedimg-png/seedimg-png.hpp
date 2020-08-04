@@ -2,7 +2,7 @@
 #define _SEEDIMG_PNG_H
 
 
-#include "../seedimg/seedimg.hpp"
+#include <seedimg/seedimg.hpp>
 
 namespace seedimg::modules {
 	namespace png {
