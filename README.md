@@ -11,4 +11,4 @@ Linux: vcpkg install libpng libjpeg-turbo libwebp
 
 Windows: vcpkg install libpng:x86-windows libjpeg-turbo:x86-windows libwebp:x86-windows
 
-Then add the include path `vcpkg/installed/<triplet>/include`.
+Then add the include path `vcpkg/installed/<triplet>/include`, as well as into the top level CMakeLists.txt (line 6)
