@@ -9,7 +9,7 @@ set(CMAKE_TOOLCHAIN_FILE ${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
 include_directories(${VCPKG_DIR}/installed/${VCPKG_TRIPLET}/include ${CMAKE_SOURCE_DIR})
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # core
 add_subdirectory(seedimg)
