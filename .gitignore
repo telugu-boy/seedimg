@@ -355,5 +355,8 @@ example/*.webp
 build/**
 CMakeFiles/**
 
-#external libs in libs folder.
+#dolphin directory config file
 .directory
+
+#test png
+!violeur.png
