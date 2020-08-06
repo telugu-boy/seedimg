@@ -22,5 +22,8 @@ add_subdirectory(seedimg-webp)
 # filter modules
 add_subdirectory(seedimg-filters-core)
 
+# automatic detection of image types:
+add_subdirectory(seedimg-autodetect)
+
 # dependent project
 add_subdirectory(example)

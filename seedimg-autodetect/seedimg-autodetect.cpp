@@ -1,5 +1,10 @@
 #include <filesystem>
 
+#include <seedimg/seedimg.hpp>
+#include <seedimg-png/seedimg-png.hpp>
+#include <seedimg-jpeg/seedimg-jpeg.hpp>
+#include <seedimg-webp/seedimg-webp.hpp>
+
 #include "seedimg-autodetect.hpp"
 
 enum img_type seedimg_match_ext(const std::string& ext) noexcept {
