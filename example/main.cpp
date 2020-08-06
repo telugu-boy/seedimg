@@ -6,7 +6,7 @@
 #include <filesystem>
 
 int main() {
-	std::cout << "Current path is " << std::filesystem::current_path() << '\n';
+    std::cout << "Current path is " << std::filesystem::current_path() << std::endl;
 	{
 		auto a = seedimg_autodetect_from("violeur.png");
 		if (a != std::nullopt) {

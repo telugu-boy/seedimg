@@ -29,7 +29,7 @@ namespace seedimg {
 		std::vector<T> vec_;
 	};
 
-	struct pixel {
+    struct pixel {
 		std::uint8_t r;
 		std::uint8_t g;
 		std::uint8_t b;
