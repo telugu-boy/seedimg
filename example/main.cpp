@@ -1,9 +1,8 @@
 #include <iostream>
+#include <filesystem>
 
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
-
-#include <filesystem>
 
 int main() {
   std::cout << "Current path is " << std::filesystem::current_path()
