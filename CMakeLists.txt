@@ -17,7 +17,7 @@ add_subdirectory(seedimg)
 # image modules
 add_subdirectory(seedimg-jpeg)
 add_subdirectory(seedimg-png)
-#add_subdirectory(seedimg-webp)
+add_subdirectory(seedimg-webp)
 
 # filter modules
 add_subdirectory(seedimg-filters-core)

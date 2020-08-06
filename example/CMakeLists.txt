@@ -1,6 +1,6 @@
 set(APP_EXE example)
 
-add_executable(${APP_EXE} main.cpp)
+add_executable(${APP_EXE} main.cpp seedimg-autodetect.cpp)
 
 target_link_libraries(${APP_EXE}
     seedimg-png 
