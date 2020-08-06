@@ -348,6 +348,8 @@ example/*.webp
 
 #other editor files - feel free to add
 .vscode/**
+**/*.pro
+**/*.autosave
 
 #cmake generated folder
 build/**

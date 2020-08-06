@@ -27,9 +27,9 @@ bool seedimg::modules::png::check(const std::string& filename) noexcept {
 
 std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(const std::string& filename) noexcept {
 
-	std::unique_ptr<seedimg::img> res_img = NULL;
-	png_structp png_ptr = NULL;
-	png_infop info_ptr = NULL;
+    std::unique_ptr<seedimg::img> res_img = nullptr;
+    png_structp png_ptr = nullptr;
+    png_infop info_ptr = nullptr;
 	// chosen 127 as 0 is already taken as a type.
 	uint8_t color_type = 127;
 	uint8_t bit_depth = 0;
@@ -41,7 +41,7 @@ std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(const s
 	if (!fp) {
 		std::cerr << "File " << filename << " could not be opened" << std::endl;
 		errcode = -1;
-		return std::nullopt;
+        return std::nullopt;
 	}
 
 	uint8_t sig[8];
@@ -55,7 +55,7 @@ std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(const s
 
 	//validation done: initialize info structs.
 
-	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (!png_ptr) {
 		std::cerr << "Failed to create read struct for " << filename << std::endl;
 		errcode = -1;
@@ -113,29 +113,29 @@ std::optional<std::unique_ptr<seedimg::img>> seedimg::modules::png::from(const s
 
 	//This will load the png into the vectors.
 	for (std::size_t y = 0; y < res_img->height; ++y) {
-		png_read_row(png_ptr, reinterpret_cast<png_bytep>(res_img->get_row(y).data()), NULL);
+        png_read_row(png_ptr, reinterpret_cast<png_bytep>(res_img->get_row(y).data()), nullptr);
 	}
 
 finalise:
-	if (fp != NULL)
+    if (fp != nullptr)
 		fclose(fp);
-	if (info_ptr != NULL)
+    if (info_ptr != nullptr)
 		png_destroy_info_struct(png_ptr, &info_ptr);
-	if (png_ptr != NULL)
-		png_destroy_read_struct(&png_ptr, NULL, NULL);
+    if (png_ptr != nullptr)
+        png_destroy_read_struct(&png_ptr, nullptr, nullptr);
 
-	if (errcode != 0 || res_img == NULL) {
-		return std::nullopt;
+    if (errcode != 0 || res_img == nullptr) {
+        return std::nullopt;
 	}
 	else {
-		return res_img;
+        return res_img;
 	}
 }
 
 bool seedimg::modules::png::to(const std::string& filename, std::unique_ptr<seedimg::img>& inp_img) noexcept {
 
-	png_structp png_ptr = NULL;
-	png_infop info_ptr = NULL;
+    png_structp png_ptr = nullptr;
+    png_infop info_ptr = nullptr;
 
 	int errcode = 0;
 
@@ -149,7 +149,7 @@ bool seedimg::modules::png::to(const std::string& filename, std::unique_ptr<seed
 
 	//validation done: initialize info structs.
 
-	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (!png_ptr) {
 		std::cerr << "Failed to create write struct for " << filename << std::endl;
 		errcode = -1;
@@ -189,15 +189,15 @@ bool seedimg::modules::png::to(const std::string& filename, std::unique_ptr<seed
 		png_write_row(png_ptr, reinterpret_cast<png_bytep>(inp_img->get_row(y).data()));
 	}
 
-	png_write_end(png_ptr, NULL);
+    png_write_end(png_ptr, nullptr);
 
 finalise:
-	if (fp != NULL)
+    if (fp != nullptr)
 		fclose(fp);
-	if (info_ptr != NULL)
+    if (info_ptr != nullptr)
 		png_destroy_info_struct(png_ptr, &info_ptr);
-	if (png_ptr != NULL)
-		png_destroy_write_struct(&png_ptr, NULL);
+    if (png_ptr != nullptr)
+        png_destroy_write_struct(&png_ptr, nullptr);
 
 	return errcode == 0;
 }

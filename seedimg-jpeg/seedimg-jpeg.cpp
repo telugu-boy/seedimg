@@ -23,10 +23,10 @@ struct seedimg_jpeg_error_mgr {
 	/* for return to caller */
 	jmp_buf setjmp_buffer;
 };
-char jpegLastErrorMsg[JMSG_LENGTH_MAX];
-void jpegErrorExit(j_common_ptr cinfo) {
-	seedimg_jpeg_error_mgr* err = (seedimg_jpeg_error_mgr*)cinfo->err;
-	(*(cinfo->err->format_message))(cinfo, jpegLastErrorMsg);
+static char jpeg_last_error_msg[JMSG_LENGTH_MAX];
+[[noreturn]] void jpeg_error_exit(j_common_ptr cinfo) {
+    seedimg_jpeg_error_mgr* err = reinterpret_cast<seedimg_jpeg_error_mgr*>(cinfo->err);
+    (*(cinfo->err->format_message))(cinfo, jpeg_last_error_msg);
 	std::longjmp(err->setjmp_buffer, 1);
 }
 
@@ -44,19 +44,19 @@ bool seedimg::modules::jpeg::check(const std::string& filename) noexcept {
 
 std::optional<std::unique_ptr<seedimg::img> > seedimg::modules::jpeg::from(const std::string& filename) noexcept {
 	auto input = std::fopen(filename.c_str(), "rb");
-	if (input == NULL) return std::nullopt;
+    if (input == nullptr) return std::nullopt;
 
 	jpeg_decompress_struct jdec;
 	seedimg_jpeg_error_mgr jerr;
 	std::unique_ptr<seedimg::img> image;
-	JSAMPROW rowbuffer = NULL;
+    JSAMPROW rowbuffer = nullptr;
 	int errcode = 0;
 
 	jdec.err = jpeg_std_error(&jerr.pub);
-	jerr.pub.error_exit = jpegErrorExit;
+    jerr.pub.error_exit = jpeg_error_exit;
 
 	if (setjmp(jerr.setjmp_buffer)) {
-		std::cerr << jpegLastErrorMsg << std::endl;
+        std::cerr << jpeg_last_error_msg << std::endl;
 		errcode = -1;
 		goto finalise;
 	}
@@ -87,10 +87,10 @@ finalise:
 		jpeg_finish_decompress(&jdec);
 	jpeg_destroy_decompress(&jdec);
 	std::fclose(input);
-	if(rowbuffer!=NULL)
+    if(rowbuffer!=nullptr)
 		delete[] rowbuffer;
 	if (errcode == 0)
-		return image;
+        return image;
 	else return std::nullopt;
 }
 
@@ -102,18 +102,18 @@ finalise:
 bool seedimg::modules::jpeg::to(const std::string& filename, std::unique_ptr<seedimg::img>& image, uint8_t quality, bool progressive) noexcept {
 
 	auto output = std::fopen(filename.c_str(), "wb");
-	if (output == NULL) return false;
+    if (output == nullptr) return false;
 
 	jpeg_compress_struct jenc;
 	seedimg_jpeg_error_mgr jerr;
-	JSAMPROW rowbuffer = NULL;
+    JSAMPROW rowbuffer = nullptr;
 	int errcode = 0;
 
 	jenc.err = jpeg_std_error(&jerr.pub);
-	jerr.pub.error_exit = jpegErrorExit;
+    jerr.pub.error_exit = jpeg_error_exit;
 
 	if (setjmp(jerr.setjmp_buffer)) {
-		std::cerr << jpegLastErrorMsg << std::endl;
+        std::cerr << jpeg_last_error_msg << std::endl;
 		errcode = -1;
 		goto finalise;
 	}
@@ -131,7 +131,7 @@ bool seedimg::modules::jpeg::to(const std::string& filename, std::unique_ptr<see
 	if (progressive) jpeg_simple_progression(&jenc);
 	jpeg_start_compress(&jenc, TRUE);
 
-	 rowbuffer = new JSAMPLE[jenc.image_width * jenc.input_components];
+    rowbuffer = new JSAMPLE[jenc.image_width * jenc.input_components];
 
 	for (std::size_t y = 0; y < image->height; ++y) {
 		for (std::size_t x = 0; x < image->width; ++x) {
@@ -150,7 +150,7 @@ finalise:
 	jpeg_destroy_compress(&jenc);
 	std::fclose(output);
 	
-	if(rowbuffer!=NULL)
+    if(rowbuffer!=nullptr)
 		delete[] rowbuffer;
 	return errcode == 0;
 }
