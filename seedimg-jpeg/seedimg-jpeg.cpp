@@ -12,7 +12,9 @@ extern "C" {
 
 #include "seedimg-jpeg.hpp"
 
+#ifdef _MSC_VER
 #pragma warning(disable : 4996)
+#endif
 
 struct seedimg_jpeg_error_mgr {
   /* "public" fields */
@@ -49,7 +51,7 @@ seedimg::modules::jpeg::from(const std::string &filename) noexcept {
 
   jpeg_decompress_struct jdec;
   seedimg_jpeg_error_mgr jerr;
-  std::unique_ptr<seedimg::img> image;
+  std::unique_ptr<seedimg::img> res_img;
   JSAMPROW rowbuffer = nullptr;
   int errcode = 0;
 
@@ -62,25 +64,28 @@ seedimg::modules::jpeg::from(const std::string &filename) noexcept {
     goto finalise;
   }
 
-  jpeg_create_decompress(&jdec);
+  jpeg_CreateDecompress(
+      &jdec, JPEG_LIB_VERSION,
+      static_cast<size_t>(sizeof(struct jpeg_decompress_struct)));
   jpeg_stdio_src(&jdec, input);
   jpeg_read_header(&jdec, TRUE);
   jpeg_start_decompress(&jdec);
 
-  image = std::make_unique<seedimg::img>(jdec.output_width, jdec.output_height);
+  res_img =
+      std::make_unique<seedimg::img>(jdec.output_width, jdec.output_height);
 
   // libjpeg doesn't allow colorspace conversion while decoding for some weird
   // reason, it's set static to produce an RGB image at the end, thus conversion
   // is done manually.
   rowbuffer = new JSAMPLE[jdec.output_width * 3];
 
-  for (std::size_t y = 0; y < image->height; ++y) {
+  for (std::size_t y = 0; y < res_img->height; ++y) {
     if (jpeg_read_scanlines(&jdec, &rowbuffer, 1) != 1)
       return std::nullopt;
 
-    for (std::size_t x = 0; x < image->width; ++x) {
+    for (std::size_t x = 0; x < res_img->width; ++x) {
 #define P(ch) rowbuffer[3 * x + ch]
-      image->get_pixel(x, y) = {P(0), P(1), P(2), 0xFF};
+      res_img->get_pixel(x, y) = {P(0), P(1), P(2), 0xFF};
     }
   }
 
@@ -92,7 +97,7 @@ finalise:
   if (rowbuffer != nullptr)
     delete[] rowbuffer;
   if (errcode == 0)
-    return image;
+    return std::move(res_img);
   else
     return std::nullopt;
 }
@@ -124,11 +129,12 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
     goto finalise;
   }
 
-  jpeg_create_compress(&jenc);
+  jpeg_CreateCompress(&jenc, JPEG_LIB_VERSION,
+                      static_cast<size_t>(sizeof(struct jpeg_compress_struct)));
   jpeg_stdio_dest(&jenc, output);
 
-  jenc.image_width = image->width;
-  jenc.image_height = image->height;
+  jenc.image_width = static_cast<JDIMENSION>(image->width);
+  jenc.image_height = static_cast<JDIMENSION>(image->height);
   jenc.input_components = 3;
   jenc.in_color_space = JCS_RGB;
 
@@ -138,7 +144,8 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
     jpeg_simple_progression(&jenc);
   jpeg_start_compress(&jenc, TRUE);
 
-  rowbuffer = new JSAMPLE[jenc.image_width * jenc.input_components];
+  rowbuffer = new JSAMPLE[jenc.image_width *
+                          static_cast<unsigned int>(jenc.input_components)];
 
   for (std::size_t y = 0; y < image->height; ++y) {
     for (std::size_t x = 0; x < image->width; ++x) {

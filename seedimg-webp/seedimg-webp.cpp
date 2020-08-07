@@ -30,7 +30,7 @@ bool seedimg::modules::webp::check(const std::string &filename) noexcept {
 
 bool seedimg::modules::webp::to(const std::string &filename,
                                 std::unique_ptr<seedimg::img> &inp_img,
-                                uint8_t quality) noexcept {
+                                float quality) noexcept {
   uint8_t *output = nullptr;
   uint8_t *data =
       new uint8_t[inp_img->height * inp_img->width * sizeof(seedimg::pixel)];
@@ -41,15 +41,16 @@ bool seedimg::modules::webp::to(const std::string &filename,
   }
   // this is the amount of bytes output has been allocated, 0 if failure
   // '''''-'''''
-  long success =
-      WebPEncodeRGBA(data, inp_img->width, inp_img->height,
-                     inp_img->width * sizeof(seedimg::pixel), quality, &output);
+  std::size_t success = WebPEncodeRGBA(
+      data, static_cast<int>(inp_img->width), static_cast<int>(inp_img->height),
+      static_cast<int>(inp_img->width * sizeof(seedimg::pixel)), quality,
+      &output);
   delete[] data;
   data = nullptr;
   if (success == 0)
     return false;
   std::ofstream file(filename, std::ios::binary);
-  file.write(reinterpret_cast<char *>(output), success);
+  file.write(reinterpret_cast<char *>(output), static_cast<int>(success));
   WebPFree(output);
   return true;
 }
@@ -79,5 +80,5 @@ seedimg::modules::webp::from(const std::string &filename) noexcept {
                 static_cast<unsigned long>(width) * sizeof(seedimg::pixel));
   }
   WebPFree(inp_img);
-  return res_img;
+  return std::move(res_img);
 }

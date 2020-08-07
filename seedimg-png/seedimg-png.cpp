@@ -11,7 +11,9 @@ extern "C" {
 
 #include "seedimg-png.hpp"
 
+#ifdef _MSC_VER
 #pragma warning(disable : 4996)
+#endif
 
 bool seedimg::modules::png::check(const std::string &filename) noexcept {
   std::error_code ec;
@@ -35,7 +37,6 @@ seedimg::modules::png::from(const std::string &filename) noexcept {
   uint8_t color_type = 127;
   uint8_t bit_depth = 0;
   uint8_t interlace_type = 127;
-
   int errcode = 0;
 
   auto fp = std::fopen(filename.c_str(), "rb");
@@ -122,10 +123,10 @@ seedimg::modules::png::from(const std::string &filename) noexcept {
                    nullptr);
     }
   } else {
-    png_bytepp row_pointers =
-        (png_bytep *)malloc(sizeof(png_bytep) * res_img->height);
-    for (int y = 0; y < res_img->height; y++) {
-      row_pointers[y] = (png_bytep)malloc(png_get_rowbytes(png_ptr, info_ptr));
+    png_bytepp row_pointers = new png_bytep[res_img->height];
+    for (std::size_t y = 0; y < res_img->height; y++) {
+      row_pointers[y] =
+          static_cast<png_bytep>(malloc(png_get_rowbytes(png_ptr, info_ptr)));
     }
     png_read_image(png_ptr, row_pointers);
     for (std::size_t y = 0; y < res_img->height; ++y) {
@@ -134,9 +135,7 @@ seedimg::modules::png::from(const std::string &filename) noexcept {
         png_bytep px = &(row[x * 4]);
         res_img->get_pixel(x, y) = {px[0], px[1], px[2], px[3]};
       }
-    }
-    for (int y = 0; y < res_img->height; y++) {
-      free(row_pointers[y]);
+      free(row);
     }
     free(row_pointers);
   }
@@ -152,7 +151,7 @@ finalise:
   if (errcode != 0 || res_img == nullptr) {
     return std::nullopt;
   } else {
-    return res_img;
+    return std::move(res_img);
   }
 }
 
@@ -161,7 +160,6 @@ bool seedimg::modules::png::to(
     std::unique_ptr<seedimg::img> &inp_img) noexcept {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
-
   int errcode = 0;
 
   auto fp = std::fopen(filename.c_str(), "wb");
@@ -199,7 +197,8 @@ bool seedimg::modules::png::to(
   png_init_io(png_ptr, fp);
 
   // Output is 8bit depth, RGBA format.
-  png_set_IHDR(png_ptr, info_ptr, inp_img->width, inp_img->height, 8,
+  png_set_IHDR(png_ptr, info_ptr, static_cast<png_uint_32>(inp_img->width),
+               static_cast<png_uint_32>(inp_img->height), 8,
                PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_write_info(png_ptr, info_ptr);
