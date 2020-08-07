@@ -29,10 +29,11 @@ seedimg::from(const std::string &filename) noexcept {
     return std::nullopt;
 
   auto image = std::make_unique<seedimg::img>(width, height);
-  const long stride = sizeof(seedimg::pixel) * image->width;
+  const auto stride = sizeof(seedimg::pixel) * image->width;
 
   for (std::size_t y = 0; y < image->height; ++y)
-    infile.read(reinterpret_cast<char *>(image->get_row(y).data()), stride);
+    infile.read(reinterpret_cast<char *>(image->get_row(y).data()),
+                static_cast<long>(stride));
 
   return std::optional<decltype(image)>();
 }
@@ -48,11 +49,11 @@ bool seedimg::to(const std::string &filename,
   outfile.write(reinterpret_cast<const char *>(image->height),
                 sizeof(image->height));
 
-  const long stride = sizeof(seedimg::pixel) * image->width;
+  const auto stride = sizeof(seedimg::pixel) * image->width;
 
   for (std::size_t y = 0; y < image->height; ++y)
     outfile.write(reinterpret_cast<const char *>(image->get_row(y).data()),
-                  stride);
+                  static_cast<long>(stride));
 
   return true;
 }

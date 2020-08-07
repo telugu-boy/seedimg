@@ -10,8 +10,9 @@ int main() {
   {
     auto a = seedimg_autodetect_from("violeur.png");
     if (a != std::nullopt) {
-      // seedimg::filters::grayscale(*a, true);
-      bool b = seedimg_autodetect_to("boileur.png", *a);
+      seedimg::filters::grayscale(*a, true);
+      seedimg::filters::invert(*a);
+      bool b = seedimg_autodetect_to("boileur.jpg", *a);
     }
     std::cout << "done" << std::endl;
   }

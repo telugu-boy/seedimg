@@ -2,10 +2,12 @@
 //
 
 #include "seedimg-filters-core.hpp"
+#include <seedimg/seedimg.hpp>
 
 // TODO: This is an example of a library function
-void seedimg::filters::grayscale(std::unique_ptr<seedimg::img> &inp_img,
-                                 bool lightness) noexcept {
+namespace seedimg::filters {
+void grayscale(std::unique_ptr<seedimg::img> &inp_img,
+               bool lightness) noexcept {
   // would rather check once if it's in lightness mode than width*height times.
   if (lightness) {
     for (auto &row : inp_img->get_data()) {
@@ -26,3 +28,27 @@ void seedimg::filters::grayscale(std::unique_ptr<seedimg::img> &inp_img,
     }
   }
 }
+
+void invert(std::unique_ptr<seedimg::img> &inp_img,
+            bool invert_alpha) noexcept {
+  if (invert_alpha) {
+    for (auto &row : inp_img->get_data()) {
+      for (auto &pix : row) {
+        pix = {static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.r),
+               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.g),
+               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.b),
+               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.a)};
+      }
+    }
+  } else {
+    for (auto &row : inp_img->get_data()) {
+      for (auto &pix : row) {
+        pix = {static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.r),
+               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.g),
+               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.b),
+               pix.a};
+      }
+    }
+  }
+}
+} // namespace seedimg::filters
