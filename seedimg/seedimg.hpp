@@ -10,6 +10,8 @@
 
 namespace seedimg {
 
+typedef std::pair<std::uint32_t, std::uint32_t> point;
+
 template <typename T> class vector_fixed {
 public:
   vector_fixed(std::size_t l = 0) : vec_(l) {}
@@ -38,15 +40,17 @@ struct pixel {
 class img {
 public:
   static constexpr std::uint8_t MAX_PIXEL_VALUE = UINT8_MAX;
-  std::size_t const width;
-  std::size_t const height;
-  img(std::size_t w = 0, std::size_t h = 0) noexcept
+  std::uint32_t const width;
+  std::uint32_t const height;
+  img(std::uint32_t w = 0, std::uint32_t h = 0) noexcept
       : width(w), height(h), data(h, seedimg::vector_fixed<seedimg::pixel>(w)) {
     for (auto &row : data)
       std::memset(row.data(), 0, sizeof(seedimg::pixel) * row.size());
   }
-  seedimg::pixel &get_pixel(std::size_t x, std::size_t y) { return data[y][x]; }
-  auto &get_row(std::size_t y) { return data[y]; }
+  seedimg::pixel &get_pixel(std::uint32_t x, std::uint32_t y) {
+    return data[y][x];
+  }
+  auto &get_row(std::uint32_t y) { return data[y]; }
   auto &get_data(void) { return data; }
 
 private:

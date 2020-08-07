@@ -2,9 +2,20 @@
 //
 
 #include "seedimg-filters-core.hpp"
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <memory>
 #include <seedimg/seedimg.hpp>
 
 // TODO: This is an example of a library function
+
+inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
+                       seedimg::point point) {
+  return xy1.first <= point.first && point.first <= xy2.first &&
+         xy1.second <= point.second && point.second <= xy2.second;
+}
+
 namespace seedimg::filters {
 void grayscale(std::unique_ptr<seedimg::img> &inp_img,
                bool lightness) noexcept {
@@ -51,5 +62,31 @@ void invert(std::unique_ptr<seedimg::img> &inp_img,
       }
     }
   }
+}
+
+bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
+          seedimg::point p2) noexcept {
+  if (!(is_on_rect({0, 0}, {inp_img->width, inp_img->height}, p1) &&
+        is_on_rect({0, 0}, {inp_img->width, inp_img->height}, p2)))
+    return false;
+  auto ordered_crop_x = std::minmax(p1.first, p2.first);
+  auto ordered_crop_y = std::minmax(p1.second, p2.second);
+  auto cropped_img = std::make_unique<seedimg::img>(
+      ordered_crop_x.second - ordered_crop_x.first,
+      ordered_crop_y.second - ordered_crop_y.first);
+  // ordered_crop_points.first is the minimum distance from the left, so we
+  // offset the memcpy src by it
+  for (std::size_t y = 0; y < (ordered_crop_y.second - ordered_crop_y.first);
+       ++y) {
+    std::memcpy(
+        cropped_img->get_row(static_cast<uint32_t>(y)).data(),
+        inp_img->get_row(static_cast<uint32_t>(y + ordered_crop_y.first))
+                .data() +
+            (ordered_crop_x.first * sizeof(seedimg::pixel)),
+        (ordered_crop_x.second - ordered_crop_x.first) *
+            sizeof(seedimg::pixel));
+  }
+  inp_img = std::move(cropped_img);
+  return true;
 }
 } // namespace seedimg::filters
