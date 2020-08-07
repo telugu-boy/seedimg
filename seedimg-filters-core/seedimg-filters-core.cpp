@@ -34,18 +34,19 @@ void invert(std::unique_ptr<seedimg::img> &inp_img,
   if (invert_alpha) {
     for (auto &row : inp_img->get_data()) {
       for (auto &pix : row) {
-        pix = {static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.r),
-               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.g),
-               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.b),
-               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.a)};
+        pix = {
+            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
+            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
+            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b),
+            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.a)};
       }
     }
   } else {
     for (auto &row : inp_img->get_data()) {
       for (auto &pix : row) {
-        pix = {static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.r),
-               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.g),
-               static_cast<std::uint8_t>(seedimg::img::max_pix_val - pix.b),
+        pix = {static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
+               static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
+               static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b),
                pix.a};
       }
     }

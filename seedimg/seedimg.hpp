@@ -37,7 +37,7 @@ struct pixel {
 
 class img {
 public:
-  static constexpr std::uint8_t max_pix_val = UINT8_MAX;
+  static constexpr std::uint8_t MAX_PIXEL_VALUE = UINT8_MAX;
   std::size_t const width;
   std::size_t const height;
   img(std::size_t w = 0, std::size_t h = 0) noexcept
