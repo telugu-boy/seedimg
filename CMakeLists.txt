@@ -7,6 +7,10 @@ set(VCPKG_TRIPLET x64-linux CACHE PATH "installed img lib triplet")
 set(CMAKE_TOOLCHAIN_FILE ${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 
 project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
+
+option(BUILD_TESTING "" OFF)
+include(CTest)
+
 include_directories(${VCPKG_DIR}/installed/${VCPKG_TRIPLET}/include ${CMAKE_SOURCE_DIR})
 
 set(CMAKE_CXX_STANDARD 20)
@@ -35,3 +39,8 @@ add_subdirectory(seedimg-autodetect)
 
 # dependent project
 add_subdirectory(example)
+
+# tests
+if (${BUILD_TESTING})
+    add_subdirectory(tests)
+endif()
