@@ -89,4 +89,6 @@ bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
   inp_img = std::move(cropped_img);
   return true;
 }
+void blur(std::unique_ptr<seedimg::img> &inp_img,
+          std::uint8_t blur_level) noexcept {}
 } // namespace seedimg::filters
