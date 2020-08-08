@@ -125,22 +125,19 @@ seedimg::modules::png::from(const std::string &filename) noexcept {
     }
   } else {
     png_bytepp row_pointers = new png_bytep[res_img->height];
+    std::size_t *row_bytes = new size_t[res_img->height];
     for (std::size_t y = 0; y < res_img->height; y++) {
-      row_pointers[y] =
-          static_cast<png_bytep>(malloc(png_get_rowbytes(png_ptr, info_ptr)));
+      row_bytes[y] = png_get_rowbytes(png_ptr, info_ptr);
+      row_pointers[y] = static_cast<png_bytep>(malloc(row_bytes[y]));
     }
     png_read_image(png_ptr, row_pointers);
+    png_read_image(png_ptr, row_pointers);
     for (std::size_t y = 0; y < res_img->height; ++y) {
-      png_bytep row = row_pointers[y];
-      for (std::size_t x = 0; x < res_img->width; ++x) {
-        png_bytep px = &(row[x * 4]);
-        res_img->get_pixel(static_cast<uint32_t>(x),
-                           static_cast<uint32_t>(y)) = {px[0], px[1], px[2],
-                                                        px[3]};
-      }
-      free(row);
+      std::memcpy(res_img->get_row(static_cast<uint32_t>(y)).data(),
+                  row_pointers[y], row_bytes[y]);
+      free(row_pointers[y]);
     }
-    free(row_pointers);
+    delete[] row_pointers;
   }
 
 finalise:
