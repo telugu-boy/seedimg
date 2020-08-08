@@ -8,7 +8,7 @@ int main() {
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    auto a = seedimg_autodetect_from("violeur.png");
+    auto a = seedimg_autodetect_from("violeur-int.png");
     if (a != std::nullopt) {
       seedimg::filters::grayscale(*a, true);
       seedimg::filters::invert(*a);

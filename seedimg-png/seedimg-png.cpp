@@ -131,7 +131,6 @@ seedimg::modules::png::from(const std::string &filename) noexcept {
       row_pointers[y] = static_cast<png_bytep>(malloc(row_bytes[y]));
     }
     png_read_image(png_ptr, row_pointers);
-    png_read_image(png_ptr, row_pointers);
     for (std::size_t y = 0; y < res_img->height; ++y) {
       std::memcpy(res_img->get_row(static_cast<uint32_t>(y)).data(),
                   row_pointers[y], row_bytes[y]);
