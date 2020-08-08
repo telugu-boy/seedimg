@@ -35,7 +35,7 @@ seedimg::from(const std::string &filename) noexcept {
     infile.read(reinterpret_cast<char *>(image->get_row(y).data()),
                 static_cast<long>(stride));
 
-  return std::optional<decltype(image)>();
+  return std::move(image);
 }
 
 bool seedimg::to(const std::string &filename,
