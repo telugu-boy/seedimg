@@ -86,7 +86,7 @@ bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
         (ordered_crop_x.second - ordered_crop_x.first) *
             sizeof(seedimg::pixel));
   }
-  inp_img = std::move(cropped_img);
+  inp_img.reset(cropped_img.get());
   return true;
 }
 void blur(std::unique_ptr<seedimg::img> &inp_img,
