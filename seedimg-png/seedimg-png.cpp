@@ -1,4 +1,4 @@
-// seedimg-png.cpp : Defines the functions for the static library.
+﻿// seedimg-png.cpp : Defines the functions for the static library.
 //
 
 #include <filesystem>
@@ -120,7 +120,7 @@ seedimg::modules::png::from(const std::string &filename) noexcept {
     for (std::size_t y = 0; y < res_img->height; ++y) {
       png_read_row(png_ptr,
                    reinterpret_cast<png_bytep>(
-                       res_img->get_row(static_cast<uint32_t>(y)).data()),
+                       res_img->row(static_cast<uint32_t>(y)).data()),
                    nullptr);
     }
   } else {
@@ -134,9 +134,8 @@ seedimg::modules::png::from(const std::string &filename) noexcept {
       png_bytep row = row_pointers[y];
       for (std::size_t x = 0; x < res_img->width; ++x) {
         png_bytep px = &(row[x * 4]);
-        res_img->get_pixel(static_cast<uint32_t>(x),
-                           static_cast<uint32_t>(y)) = {px[0], px[1], px[2],
-                                                        px[3]};
+        res_img->pixel({static_cast<uint32_t>(x),
+                        static_cast<uint32_t>(y)}) = {px[0], px[1], px[2], px[3]};
       }
       free(row);
     }
@@ -154,7 +153,7 @@ finalise:
   if (errcode != 0 || res_img == nullptr) {
     return std::nullopt;
   } else {
-    return std::move(res_img);
+    return res_img;
   }
 }
 
@@ -209,7 +208,7 @@ bool seedimg::modules::png::to(
   for (std::size_t y = 0; y < inp_img->height; ++y) {
     png_write_row(png_ptr,
                   reinterpret_cast<png_bytep>(
-                      inp_img->get_row(static_cast<uint32_t>(y)).data()));
+                      inp_img->row(static_cast<uint32_t>(y)).data()));
   }
 
   png_write_end(png_ptr, nullptr);

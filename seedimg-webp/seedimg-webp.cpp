@@ -1,4 +1,4 @@
-// seedimg-webp.cpp : Defines the functions for the static library.
+﻿// seedimg-webp.cpp : Defines the functions for the static library.
 //
 
 #include <filesystem>
@@ -36,7 +36,7 @@ bool seedimg::modules::webp::to(const std::string &filename,
       new uint8_t[inp_img->height * inp_img->width * sizeof(seedimg::pixel)];
   for (size_t y = 0; y < inp_img->height; y++) {
     std::memcpy(data + y * inp_img->width * sizeof(seedimg::pixel),
-                inp_img->get_row(static_cast<std::uint32_t>(y)).data(),
+                inp_img->row(static_cast<std::uint32_t>(y)).data(),
                 inp_img->width * sizeof(seedimg::pixel));
   }
   // this is the amount of bytes output has been allocated, 0 if failure
@@ -74,11 +74,11 @@ seedimg::modules::webp::from(const std::string &filename) noexcept {
   auto res_img = std::make_unique<seedimg::img>(width, height);
   uint8_t *inp_img = WebPDecodeRGBA(data.get(), size, &width, &height);
   for (size_t y = 0; y < static_cast<size_t>(height); y++) {
-    std::memcpy(res_img->get_row(static_cast<std::uint32_t>(y)).data(),
+    std::memcpy(res_img->row(static_cast<std::uint32_t>(y)).data(),
                 inp_img + y * static_cast<unsigned long>(width) *
                               sizeof(seedimg::pixel),
                 static_cast<unsigned long>(width) * sizeof(seedimg::pixel));
   }
   WebPFree(inp_img);
-  return std::move(res_img);
+  return res_img;
 }

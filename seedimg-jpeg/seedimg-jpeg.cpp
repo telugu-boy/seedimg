@@ -1,4 +1,4 @@
-// seedimg-jpeg.cpp : Defines the functions for the static library.
+﻿// seedimg-jpeg.cpp : Defines the functions for the static library.
 //
 
 #include <csetjmp>
@@ -84,9 +84,9 @@ seedimg::modules::jpeg::from(const std::string &filename) noexcept {
       return std::nullopt;
 
     for (std::size_t x = 0; x < res_img->width; ++x) {
-#define P(ch) rowbuffer[3 * x + ch]
-      res_img->get_pixel(static_cast<uint32_t>(x),
-                         static_cast<uint32_t>(y)) = {P(0), P(1), P(2), 0xFF};
+      #define P(ch) rowbuffer[3 * x + ch]
+      res_img->pixel({static_cast<uint32_t>(x),
+                      static_cast<uint32_t>(y)}) = {P(0), P(1), P(2), 0xFF};
     }
   }
 
@@ -151,8 +151,8 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
   for (std::size_t y = 0; y < image->height; ++y) {
     for (std::size_t x = 0; x < image->width; ++x) {
 #define P(ch) rowbuffer[3 * x + ch]
-      auto pix =
-          image->get_pixel(static_cast<uint32_t>(x), static_cast<uint32_t>(y));
+      auto pix = image->pixel({static_cast<uint32_t>(x),
+                               static_cast<uint32_t>(y)});
       P(0) = pix.r;
       P(1) = pix.g;
       P(2) = pix.b;

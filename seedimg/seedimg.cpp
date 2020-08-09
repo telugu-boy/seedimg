@@ -1,4 +1,4 @@
-// seedimg.cpp : Defines the functions for the static library.
+﻿// seedimg.cpp : Defines the functions for the static library.
 //
 
 #include <filesystem>
@@ -32,7 +32,7 @@ seedimg::from(const std::string &filename) noexcept {
   const auto stride = sizeof(seedimg::pixel) * image->width;
 
   for (std::size_t y = 0; y < image->height; ++y)
-    infile.read(reinterpret_cast<char *>(image->get_row(y).data()),
+    infile.read(reinterpret_cast<char *>(image->row(y).data()),
                 static_cast<long>(stride));
 
   return std::optional<decltype(image)>();
@@ -52,7 +52,7 @@ bool seedimg::to(const std::string &filename,
   const auto stride = sizeof(seedimg::pixel) * image->width;
 
   for (std::size_t y = 0; y < image->height; ++y)
-    outfile.write(reinterpret_cast<const char *>(image->get_row(y).data()),
+    outfile.write(reinterpret_cast<const char *>(image->row(y).data()),
                   static_cast<long>(stride));
 
   return true;

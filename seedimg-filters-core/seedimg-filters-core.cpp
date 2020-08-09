@@ -1,4 +1,4 @@
-// seedimg-filters-core.cpp : Defines the functions for the static library.
+﻿// seedimg-filters-core.cpp : Defines the functions for the static library.
 //
 
 #include "seedimg-filters-core.hpp"
@@ -21,7 +21,7 @@ void grayscale(std::unique_ptr<seedimg::img> &inp_img,
                bool lightness) noexcept {
   // would rather check once if it's in lightness mode than width*height times.
   if (lightness) {
-    for (auto &row : inp_img->get_data()) {
+    for (auto &row : inp_img->data()) {
       for (auto &pix : row) {
         uint8_t linear = static_cast<uint8_t>((0.2126 * (pix.r / 255.0) +
                                                0.7152 * (pix.g / 255.0) +
@@ -31,7 +31,7 @@ void grayscale(std::unique_ptr<seedimg::img> &inp_img,
       }
     }
   } else {
-    for (auto &row : inp_img->get_data()) {
+    for (auto &row : inp_img->data()) {
       for (auto &pix : row) {
         uint8_t avg = (pix.r + pix.g + pix.b) / 3;
         pix = {avg, avg, avg, pix.a};
@@ -43,7 +43,7 @@ void grayscale(std::unique_ptr<seedimg::img> &inp_img,
 void invert(std::unique_ptr<seedimg::img> &inp_img,
             bool invert_alpha) noexcept {
   if (invert_alpha) {
-    for (auto &row : inp_img->get_data()) {
+    for (auto &row : inp_img->data()) {
       for (auto &pix : row) {
         pix = {
             static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
@@ -53,7 +53,7 @@ void invert(std::unique_ptr<seedimg::img> &inp_img,
       }
     }
   } else {
-    for (auto &row : inp_img->get_data()) {
+    for (auto &row : inp_img->data()) {
       for (auto &pix : row) {
         pix = {static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
                static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
@@ -79,8 +79,8 @@ bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
   for (std::size_t y = 0; y < (ordered_crop_y.second - ordered_crop_y.first);
        ++y) {
     std::memcpy(
-        cropped_img->get_row(static_cast<uint32_t>(y)).data(),
-        inp_img->get_row(static_cast<uint32_t>(y + ordered_crop_y.first))
+        cropped_img->row(static_cast<uint32_t>(y)).data(),
+        inp_img->row(static_cast<uint32_t>(y + ordered_crop_y.first))
                 .data() +
             (ordered_crop_x.first * sizeof(seedimg::pixel)),
         (ordered_crop_x.second - ordered_crop_x.first) *
