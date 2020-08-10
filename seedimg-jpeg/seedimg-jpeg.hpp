@@ -12,9 +12,9 @@ namespace jpeg {
  * @param progressive whether to make JPEG progresssive
  */
 bool check(const std::string &filename) noexcept;
-bool to(const std::string &filename, std::unique_ptr<seedimg::img> &image,
-        uint8_t quality = 100, bool progressive = false);
-std::unique_ptr<seedimg::img> from(const std::string &filename);
+bool to(const std::string &filename, seedimg::img &image, uint8_t quality = 100,
+        bool progressive = false);
+std::optional<seedimg::img> from(const std::string &filename);
 } // namespace jpeg
 } // namespace seedimg::modules
 #endif

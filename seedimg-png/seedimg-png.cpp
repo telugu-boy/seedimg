@@ -29,9 +29,9 @@ bool seedimg::modules::png::check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 8);
 }
 
-std::unique_ptr<seedimg::img>
+std::optional<seedimg::img>
 seedimg::modules::png::from(const std::string &filename) {
-  std::unique_ptr<seedimg::img> res_img = nullptr;
+  std::optional<seedimg::img> res_img = std::nullopt;
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
   // chosen 127 as 0 is already taken as a type.
@@ -45,7 +45,7 @@ seedimg::modules::png::from(const std::string &filename) {
   if (!fp) {
     std::cerr << "File " << filename << " could not be opened" << std::endl;
     errcode = -1;
-    return nullptr;
+    return std::nullopt;
   }
 
   uint8_t sig[8];
@@ -90,9 +90,8 @@ seedimg::modules::png::from(const std::string &filename) {
   color_type = png_get_color_type(png_ptr, info_ptr);
   bit_depth = png_get_bit_depth(png_ptr, info_ptr);
   interlace_type = png_get_interlace_type(png_ptr, info_ptr);
-  res_img =
-      std::make_unique<seedimg::img>(png_get_image_width(png_ptr, info_ptr),
-                                     png_get_image_height(png_ptr, info_ptr));
+  res_img = seedimg::img(png_get_image_width(png_ptr, info_ptr),
+                         png_get_image_height(png_ptr, info_ptr));
 
   if (bit_depth == 16)
     png_set_strip_16(png_ptr);
@@ -127,15 +126,15 @@ finalise:
   if (png_ptr != nullptr)
     png_destroy_read_struct(&png_ptr, nullptr, nullptr);
 
-  if (errcode != 0 || res_img == nullptr) {
-    return nullptr;
+  if (errcode != 0 || res_img == std::nullopt) {
+    return std::nullopt;
   } else {
     return res_img;
   }
 }
 
 bool seedimg::modules::png::to(const std::string &filename,
-                               std::unique_ptr<seedimg::img> &inp_img) {
+                               seedimg::img &inp_img) {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
   int errcode = 0;
@@ -175,13 +174,13 @@ bool seedimg::modules::png::to(const std::string &filename,
   png_init_io(png_ptr, fp);
 
   // Output is 8bit depth, RGBA format.
-  png_set_IHDR(png_ptr, info_ptr, static_cast<png_uint_32>(inp_img->width()),
-               static_cast<png_uint_32>(inp_img->height()), 8,
+  png_set_IHDR(png_ptr, info_ptr, static_cast<png_uint_32>(inp_img.width()),
+               static_cast<png_uint_32>(inp_img.height()), 8,
                PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_write_info(png_ptr, info_ptr);
 
-  png_write_image(png_ptr, reinterpret_cast<png_bytepp>(inp_img->data()));
+  png_write_image(png_ptr, reinterpret_cast<png_bytepp>(inp_img.data()));
 
   png_write_end(png_ptr, nullptr);
 
