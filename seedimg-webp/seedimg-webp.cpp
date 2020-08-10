@@ -30,23 +30,24 @@ bool seedimg::modules::webp::check(const std::string &filename) noexcept {
 }
 
 bool seedimg::modules::webp::to(const std::string &filename,
-                                seedimg::img &inp_img, float quality) {
+                                std::unique_ptr<seedimg::img> &inp_img,
+                                float quality) {
   uint8_t *output = nullptr;
-  uint8_t *data = new uint8_t[static_cast<unsigned long>(inp_img.height() *
-                                                         inp_img.width()) *
+  uint8_t *data = new uint8_t[static_cast<unsigned long>(inp_img->height() *
+                                                         inp_img->width()) *
                               sizeof(seedimg::pixel)];
-  for (int y = 0; y < inp_img.height(); y++) {
+  for (int y = 0; y < inp_img->height(); y++) {
     std::memcpy(
-        data + y * inp_img.width() * static_cast<int>(sizeof(seedimg::pixel)),
-        inp_img.row(y),
-        static_cast<std::size_t>(inp_img.width()) * sizeof(seedimg::pixel));
+        data + y * inp_img->width() * static_cast<int>(sizeof(seedimg::pixel)),
+        inp_img->row(y),
+        static_cast<std::size_t>(inp_img->width()) * sizeof(seedimg::pixel));
   }
   // this is the amount of bytes output has been allocated, 0 if failure
   // '''''-'''''
-  std::size_t success =
-      WebPEncodeRGBA(data, inp_img.width(), inp_img.height(),
-                     inp_img.width() * static_cast<int>(sizeof(seedimg::pixel)),
-                     quality, &output);
+  std::size_t success = WebPEncodeRGBA(
+      data, inp_img->width(), inp_img->height(),
+      inp_img->width() * static_cast<int>(sizeof(seedimg::pixel)), quality,
+      &output);
   delete[] data;
   data = nullptr;
   if (success == 0)
@@ -56,31 +57,31 @@ bool seedimg::modules::webp::to(const std::string &filename,
   WebPFree(output);
   return true;
 }
-std::optional<seedimg::img>
+std::unique_ptr<seedimg::img>
 seedimg::modules::webp::from(const std::string &filename) {
   std::error_code ec;
   size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{})
-    return std::nullopt;
+    return nullptr;
   int width, height;
   auto data = std::make_unique<uint8_t[]>(size);
 
   // read into data
   std::ifstream file(filename, std::ios::binary);
   if (!file.read(reinterpret_cast<char *>(data.get()), static_cast<long>(size)))
-    return std::nullopt;
+    return nullptr;
 
   int success = WebPGetInfo(data.get(), size, &width, &height);
   if (!success)
-    return std::nullopt;
+    return nullptr;
 
-  auto res_img = seedimg::img(width, height);
+  auto res_img = std::make_unique<seedimg::img>(width, height);
   uint8_t *inp_img = WebPDecodeRGBA(data.get(), size, &width, &height);
   for (int y = 0; y < height; y++) {
-    std::memcpy(res_img.row(y),
+    std::memcpy(res_img->row(y),
                 inp_img + y * width * static_cast<int>(sizeof(seedimg::pixel)),
                 static_cast<unsigned long>(width) * sizeof(seedimg::pixel));
   }
   WebPFree(inp_img);
-  return {res_img};
+  return res_img;
 }

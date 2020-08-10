@@ -44,15 +44,15 @@ bool seedimg::modules::jpeg::check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 3);
 }
 
-std::optional<seedimg::img>
+std::unique_ptr<seedimg::img>
 seedimg::modules::jpeg::from(const std::string &filename) {
   auto input = std::fopen(filename.c_str(), "rb");
   if (input == nullptr)
-    return std::nullopt;
+    return nullptr;
 
   jpeg_decompress_struct jdec;
   seedimg_jpeg_error_mgr jerr;
-  std::optional<seedimg::img> res_img;
+  std::unique_ptr<seedimg::img> res_img;
   JSAMPROW rowbuffer = nullptr;
   int errcode = 0;
 
@@ -72,8 +72,8 @@ seedimg::modules::jpeg::from(const std::string &filename) {
   jpeg_read_header(&jdec, TRUE);
   jpeg_start_decompress(&jdec);
 
-  res_img = seedimg::img(static_cast<int>(jdec.output_width),
-                         static_cast<int>(jdec.output_height));
+  res_img =
+      std::make_unique<seedimg::img>(jdec.output_width, jdec.output_height);
 
   // libjpeg doesn't allow colorspace conversion while decoding for some weird
   // reason, it's set static to produce an RGB image at the end, thus conversion
@@ -82,7 +82,7 @@ seedimg::modules::jpeg::from(const std::string &filename) {
 
   for (int y = 0; y < res_img->height(); ++y) {
     if (jpeg_read_scanlines(&jdec, &rowbuffer, 1) != 1)
-      return std::nullopt;
+      return nullptr;
 
     for (int x = 0; x < res_img->width(); ++x) {
       res_img->pixel(x, y) = {rowbuffer[3 * x], rowbuffer[3 * x + 1],
@@ -100,7 +100,7 @@ finalise:
   if (errcode == 0)
     return res_img;
   else
-    return std::nullopt;
+    return nullptr;
 }
 
 /**
@@ -109,8 +109,8 @@ finalise:
  */
 // quality default param = 100, progressive = false
 bool seedimg::modules::jpeg::to(const std::string &filename,
-                                seedimg::img &image, uint8_t quality,
-                                bool progressive) {
+                                std::unique_ptr<seedimg::img> &image,
+                                uint8_t quality, bool progressive) {
 
   auto output = std::fopen(filename.c_str(), "wb");
   if (output == nullptr)
@@ -134,8 +134,8 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
                       static_cast<size_t>(sizeof(struct jpeg_compress_struct)));
   jpeg_stdio_dest(&jenc, output);
 
-  jenc.image_width = static_cast<JDIMENSION>(image.width());
-  jenc.image_height = static_cast<JDIMENSION>(image.height());
+  jenc.image_width = static_cast<JDIMENSION>(image->width());
+  jenc.image_height = static_cast<JDIMENSION>(image->height());
   jenc.input_components = 3;
   jenc.in_color_space = JCS_RGB;
 
@@ -148,9 +148,9 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
   rowbuffer = new JSAMPLE[jenc.image_width *
                           static_cast<unsigned int>(jenc.input_components)];
 
-  for (int y = 0; y < image.height(); ++y) {
-    for (int x = 0; x < image.width(); ++x) {
-      auto &pix = image.pixel(x, y);
+  for (int y = 0; y < image->height(); ++y) {
+    for (int x = 0; x < image->width(); ++x) {
+      auto pix = image->pixel(x, y);
       rowbuffer[3 * x] = pix.r;
       rowbuffer[3 * x + 1] = pix.g;
       rowbuffer[3 * x + 2] = pix.b;

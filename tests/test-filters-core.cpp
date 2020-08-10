@@ -24,10 +24,10 @@ int main(int argc, char *argv[]) {
   auto img = seedimg_autodetect_from("violeur.png");
   switch (filter_mapping.at(argv[1])) {
   case filter_functions::GRAYSCALE:
-    seedimg::filters::grayscale(*img);
+    seedimg::filters::grayscale(img);
     break;
   case filter_functions::INVERT:
-    seedimg::filters::invert(*img);
+    seedimg::filters::invert(img);
     break;
   case filter_functions::CROP:
     img->crop({50, 25}, {250, 183});
@@ -35,6 +35,6 @@ int main(int argc, char *argv[]) {
   }
   char name_buf[256];
   std::snprintf(name_buf, 256, "tests_output/filters/result-%s.png", argv[1]);
-  seedimg_autodetect_to(name_buf, *img);
+  seedimg_autodetect_to(name_buf, img);
   std::cout << "SUCCESS";
 }

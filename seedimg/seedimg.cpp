@@ -17,12 +17,12 @@ inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
          xy1.second <= point.second && point.second <= xy2.second;
 }
 
-std::optional<seedimg::img> seedimg::from(const std::string &filename) {
+std::unique_ptr<seedimg::img> seedimg::from(const std::string &filename) {
   std::ifstream infile(filename, std::ios::binary);
   if (infile.fail())
-    return std::nullopt;
+    return nullptr;
 
-  int width, height;
+  std::size_t width, height;
   infile.read(reinterpret_cast<char *>(&width), sizeof(width));
   infile.read(reinterpret_cast<char *>(&height), sizeof(height));
 
@@ -32,37 +32,37 @@ std::optional<seedimg::img> seedimg::from(const std::string &filename) {
   // check if the data size is equal to the retrieved rectangular area.
   // if not, then just don't return any results, partial data isn't supported.
   if (ec != std::error_code{} ||
-      size !=
-          sizeof(seedimg::pixel) * static_cast<std::size_t>(width * height) +
-              sizeof(width) + sizeof(height))
-    return std::nullopt;
+      size != sizeof(seedimg::pixel) * width * height + sizeof(width) +
+                  sizeof(height))
+    return nullptr;
 
-  auto image = seedimg::img(width, height);
+  auto image = std::make_unique<seedimg::img>(width, height);
   const auto stride =
-      sizeof(seedimg::pixel) * static_cast<std::size_t>(image.width());
+      sizeof(seedimg::pixel) * static_cast<std::size_t>(image->width());
 
-  for (int y = 0; y < image.height(); ++y)
-    infile.read(reinterpret_cast<char *>(image.row(y)),
+  for (int y = 0; y < image->height(); ++y)
+    infile.read(reinterpret_cast<char *>(image->row(y)),
                 static_cast<long>(stride));
 
-  return {image};
+  return image;
 }
 
-bool seedimg::to(const std::string &filename, seedimg::img &image) {
+bool seedimg::to(const std::string &filename,
+                 std::unique_ptr<seedimg::img> &image) {
   std::ofstream outfile(filename, std::ios::binary);
   if (outfile.fail())
     return false;
 
-  outfile.write(reinterpret_cast<const char *>(image.width()),
-                sizeof(image.width()));
-  outfile.write(reinterpret_cast<const char *>(image.height()),
-                sizeof(image.height()));
+  outfile.write(reinterpret_cast<const char *>(image->width()),
+                sizeof(image->width()));
+  outfile.write(reinterpret_cast<const char *>(image->height()),
+                sizeof(image->height()));
 
   const auto stride =
-      sizeof(seedimg::pixel) * static_cast<std::size_t>(image.width());
+      sizeof(seedimg::pixel) * static_cast<std::size_t>(image->width());
 
-  for (int y = 0; y < image.height(); ++y)
-    outfile.write(reinterpret_cast<const char *>(image.row(y)),
+  for (int y = 0; y < image->height(); ++y)
+    outfile.write(reinterpret_cast<const char *>(image->row(y)),
                   static_cast<long>(stride));
 
   return true;
