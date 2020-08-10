@@ -9,9 +9,8 @@ namespace seedimg::modules {
 namespace webp {
 bool check(const std::string &filename) noexcept;
 bool to(const std::string &filename, std::unique_ptr<seedimg::img> &inp_img,
-        float quality = 100.0) noexcept;
-std::optional<std::unique_ptr<seedimg::img>>
-from(const std::string &filename) noexcept;
+        float quality = 100.0);
+std::optional<std::unique_ptr<seedimg::img>> from(const std::string &filename);
 } // namespace webp
 } // namespace seedimg::modules
 

@@ -13,9 +13,8 @@ namespace jpeg {
  */
 bool check(const std::string &filename) noexcept;
 bool to(const std::string &filename, std::unique_ptr<seedimg::img> &image,
-        uint8_t quality = 100, bool progressive = false) noexcept;
-std::optional<std::unique_ptr<seedimg::img>>
-from(const std::string &filename) noexcept;
+        uint8_t quality = 100, bool progressive = false);
+std::optional<std::unique_ptr<seedimg::img>> from(const std::string &filename);
 } // namespace jpeg
 } // namespace seedimg::modules
 #endif

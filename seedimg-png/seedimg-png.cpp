@@ -29,7 +29,7 @@ bool seedimg::modules::png::check(const std::string &filename) noexcept {
 }
 
 std::optional<std::unique_ptr<seedimg::img>>
-seedimg::modules::png::from(const std::string &filename) noexcept {
+seedimg::modules::png::from(const std::string &filename) {
   std::unique_ptr<seedimg::img> res_img = nullptr;
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
@@ -154,9 +154,8 @@ finalise:
   }
 }
 
-bool seedimg::modules::png::to(
-    const std::string &filename,
-    std::unique_ptr<seedimg::img> &inp_img) noexcept {
+bool seedimg::modules::png::to(const std::string &filename,
+                               std::unique_ptr<seedimg::img> &inp_img) {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
   int errcode = 0;

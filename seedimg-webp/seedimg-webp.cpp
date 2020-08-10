@@ -30,7 +30,7 @@ bool seedimg::modules::webp::check(const std::string &filename) noexcept {
 
 bool seedimg::modules::webp::to(const std::string &filename,
                                 std::unique_ptr<seedimg::img> &inp_img,
-                                float quality) noexcept {
+                                float quality) {
   uint8_t *output = nullptr;
   uint8_t *data =
       new uint8_t[inp_img->height * inp_img->width * sizeof(seedimg::pixel)];
@@ -55,7 +55,7 @@ bool seedimg::modules::webp::to(const std::string &filename,
   return true;
 }
 std::optional<std::unique_ptr<seedimg::img>>
-seedimg::modules::webp::from(const std::string &filename) noexcept {
+seedimg::modules::webp::from(const std::string &filename) {
   std::error_code ec;
   size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{})

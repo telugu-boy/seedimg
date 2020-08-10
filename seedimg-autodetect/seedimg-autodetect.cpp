@@ -31,7 +31,7 @@ seedimg_imgtype(const std::string &filename) noexcept {
 }
 
 std::optional<std::unique_ptr<seedimg::img>>
-seedimg_autodetect_from(const std::string &filename) noexcept {
+seedimg_autodetect_from(const std::string &filename) {
   auto type = seedimg_imgtype(filename);
   if (type == std::nullopt)
     return std::nullopt;
@@ -48,7 +48,7 @@ seedimg_autodetect_from(const std::string &filename) noexcept {
 }
 
 bool seedimg_autodetect_to(const std::string &filename,
-                           std::unique_ptr<seedimg::img> &image) noexcept {
+                           std::unique_ptr<seedimg::img> &image) {
   std::string extension_type = filename.substr(filename.rfind('.') + 1);
   switch (seedimg_match_ext(extension_type)) {
   case img_type::png:

@@ -44,7 +44,7 @@ bool seedimg::modules::jpeg::check(const std::string &filename) noexcept {
 }
 
 std::optional<std::unique_ptr<seedimg::img>>
-seedimg::modules::jpeg::from(const std::string &filename) noexcept {
+seedimg::modules::jpeg::from(const std::string &filename) {
   auto input = std::fopen(filename.c_str(), "rb");
   if (input == nullptr)
     return std::nullopt;
@@ -110,7 +110,7 @@ finalise:
 // quality default param = 100, progressive = false
 bool seedimg::modules::jpeg::to(const std::string &filename,
                                 std::unique_ptr<seedimg::img> &image,
-                                uint8_t quality, bool progressive) noexcept {
+                                uint8_t quality, bool progressive) {
 
   auto output = std::fopen(filename.c_str(), "wb");
   if (output == nullptr)
