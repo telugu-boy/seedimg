@@ -1,5 +1,5 @@
-#ifndef _SEEDIMG_FILTERS_CORE_H
-#define _SEEDIMG_FILTERS_CORE_H
+#ifndef SEEDIMG_FILTERS_CORE_H
+#define SEEDIMG_FILTERS_CORE_H
 
 #include <seedimg/seedimg.hpp>
 

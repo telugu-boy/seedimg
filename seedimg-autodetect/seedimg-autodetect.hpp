@@ -1,5 +1,5 @@
-#ifndef _SEEDIMG_AUTODETECT_H
-#define _SEEDIMG_AUTODETECT_H
+#ifndef SEEDIMG_AUTODETECT_H
+#define SEEDIMG_AUTODETECT_H
 
 #include <memory>
 #include <optional>

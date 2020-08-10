@@ -1,5 +1,5 @@
-#ifndef _SEEDIMG_WEBP_H
-#define _SEEDIMG_WEBP_H
+#ifndef SEEDIMG_WEBP_H
+#define SEEDIMG_WEBP_H
 
 #include <memory>
 #include <optional>

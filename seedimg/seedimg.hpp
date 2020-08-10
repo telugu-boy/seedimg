@@ -1,5 +1,5 @@
-#ifndef _SEEDIMG_CORE_H
-#define _SEEDIMG_CORE_H
+#ifndef SEEDIMG_CORE_H
+#define SEEDIMG_CORE_H
 
 #include <cinttypes>
 #include <cstring> // just for memset '-'

@@ -1,5 +1,5 @@
-#ifndef _SEEDIMG_JPEG_H
-#define _SEEDIMG_JPEG_H
+#ifndef SEEDIMG_JPEG_H
+#define SEEDIMG_JPEG_H
 
 #include <memory>
 #include <optional>

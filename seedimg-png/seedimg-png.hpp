@@ -1,5 +1,5 @@
-#ifndef _SEEDIMG_PNG_H
-#define _SEEDIMG_PNG_H
+#ifndef SEEDIMG_PNG_H
+#define SEEDIMG_PNG_H
 
 #include <seedimg/seedimg.hpp>
 
