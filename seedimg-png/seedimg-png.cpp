@@ -120,7 +120,7 @@ seedimg::modules::png::from(const std::string &filename) {
     for (std::size_t y = 0; y < res_img->height; ++y) {
       png_read_row(png_ptr,
                    reinterpret_cast<png_bytep>(
-                       res_img->get_row(static_cast<uint32_t>(y)).data()),
+                       res_img->row(static_cast<uint32_t>(y)).data()),
                    nullptr);
     }
   } else {
@@ -132,7 +132,7 @@ seedimg::modules::png::from(const std::string &filename) {
     }
     png_read_image(png_ptr, row_pointers);
     for (std::size_t y = 0; y < res_img->height; ++y) {
-      std::memcpy(res_img->get_row(static_cast<uint32_t>(y)).data(),
+      std::memcpy(res_img->row(static_cast<uint32_t>(y)).data(),
                   row_pointers[y], row_bytes[y]);
       free(row_pointers[y]);
     }
@@ -195,7 +195,7 @@ bool seedimg::modules::png::to(const std::string &filename,
   png_init_io(png_ptr, fp);
 
   // Output is 8bit depth, RGBA format.
-  png_set_IHDR(png_ptr, info_ptr, static_cast<png_uint_32>(inp_img->width),
+  png_set_IHDR(png_ptr, info_ptr, static_cast<png_uint_32>(inp_img->width_),
                static_cast<png_uint_32>(inp_img->height), 8,
                PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
@@ -204,7 +204,7 @@ bool seedimg::modules::png::to(const std::string &filename,
   for (std::size_t y = 0; y < inp_img->height; ++y) {
     png_write_row(png_ptr,
                   reinterpret_cast<png_bytep>(
-                      inp_img->get_row(static_cast<uint32_t>(y)).data()));
+                      inp_img->row(static_cast<uint32_t>(y)).data()));
   }
 
   png_write_end(png_ptr, nullptr);

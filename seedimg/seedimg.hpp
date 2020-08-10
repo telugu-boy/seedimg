@@ -10,60 +10,51 @@
 
 namespace seedimg {
 
-typedef std::pair<std::uint32_t, std::uint32_t> point;
-
-template <typename T> class vector_fixed {
-public:
-  vector_fixed(std::size_t l = 0) : vec_(l) {}
-  vector_fixed(std::size_t l, T elem) : vec_(l, elem) {}
-  std::size_t size(void) const noexcept { return vec_.size(); }
-
-  T &operator[](std::size_t e) { return vec_[e]; }
-  T *data(void) { return vec_.data(); }
-  auto begin() { return vec_.begin(); }
-  auto end() { return vec_.end(); }
-
-protected:
-  std::vector<T> vec_;
-};
+typedef std::pair<int, int> point;
 
 struct pixel {
   std::uint8_t r;
   std::uint8_t g;
   std::uint8_t b;
   std::uint8_t a;
-  bool operator==(const pixel &other) const noexcept {
+  inline bool operator==(const pixel &other) const noexcept {
     return std::tie(r, g, b, a) == std::tie(other.r, other.g, other.b, other.a);
+  }
+  inline bool operator!=(const pixel &other) const noexcept {
+    return !(*this == other);
   }
 };
 
 class img {
 public:
   static constexpr std::uint8_t MAX_PIXEL_VALUE = UINT8_MAX;
-  std::uint32_t const width;
-  std::uint32_t const height;
-  img(std::uint32_t w = 0, std::uint32_t h = 0) noexcept
-      : width(w), height(h), data(h, seedimg::vector_fixed<seedimg::pixel>(w)) {
-    for (auto &row : data)
-      std::memset(row.data(), 0, sizeof(seedimg::pixel) * row.size());
+  img(int w = 0, int h = 0) : width_(w), height_(h) {
+    data_ = new seedimg::pixel *[static_cast<unsigned long>(height_)];
+    for (int r = 0; r < height_; ++r)
+      data_[r] = new seedimg::pixel[static_cast<unsigned long>(width_)];
   }
-  seedimg::pixel &get_pixel(std::uint32_t x, std::uint32_t y) {
-    return data[y][x];
+  ~img() {
+    for (int r = 0; r < height_; ++r)
+      delete[] data_[r];
+    delete[] data_;
   }
-  auto &get_row(std::uint32_t y) { return data[y]; }
-  auto &get_data(void) { return data; }
+  seedimg::pixel &pixel(int x, int y) { return data_[y][x]; }
+  auto row(int y) { return data_[y]; }
+  auto data() { return data_; }
+  auto width() { return width_; }
+  auto height() { return height_; }
 
 private:
+  int width_;
+  int height_;
   // stored in row major order
   // width amount of pixels in a row
   // height amount of rows.
-  seedimg::vector_fixed<seedimg::vector_fixed<seedimg::pixel>> data;
+  seedimg::pixel **data_;
 };
 
-bool to(const std::string &filename,
-        std::unique_ptr<seedimg::img> &inp_img) noexcept;
-std::optional<std::unique_ptr<seedimg::img>>
-from(const std::string &filename) noexcept;
+bool to(const std::string &filename, std::unique_ptr<seedimg::img> &inp_img);
+std::optional<std::unique_ptr<seedimg::img>> from(const std::string &filename);
 
 namespace modules {};
 namespace filters {};

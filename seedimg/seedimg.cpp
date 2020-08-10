@@ -44,15 +44,15 @@ bool seedimg::to(const std::string &filename,
   if (outfile.fail())
     return false;
 
-  outfile.write(reinterpret_cast<const char *>(image->width),
-                sizeof(image->width));
+  outfile.write(reinterpret_cast<const char *>(image->width_),
+                sizeof(image->width_));
   outfile.write(reinterpret_cast<const char *>(image->height),
                 sizeof(image->height));
 
-  const auto stride = sizeof(seedimg::pixel) * image->width;
+  const auto stride = sizeof(seedimg::pixel) * image->width_;
 
   for (std::size_t y = 0; y < image->height; ++y)
-    outfile.write(reinterpret_cast<const char *>(image->get_row(y).data()),
+    outfile.write(reinterpret_cast<const char *>(image->row(y).data()),
                   static_cast<long>(stride));
 
   return true;

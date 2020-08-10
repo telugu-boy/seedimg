@@ -83,9 +83,9 @@ seedimg::modules::jpeg::from(const std::string &filename) {
     if (jpeg_read_scanlines(&jdec, &rowbuffer, 1) != 1)
       return std::nullopt;
 
-    for (std::size_t x = 0; x < res_img->width; ++x) {
+    for (std::size_t x = 0; x < res_img->width_; ++x) {
 #define P(ch) rowbuffer[3 * x + ch]
-      res_img->get_pixel(static_cast<uint32_t>(x),
+      res_img->pixel(static_cast<uint32_t>(x),
                          static_cast<uint32_t>(y)) = {P(0), P(1), P(2), 0xFF};
     }
   }
@@ -134,7 +134,7 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
                       static_cast<size_t>(sizeof(struct jpeg_compress_struct)));
   jpeg_stdio_dest(&jenc, output);
 
-  jenc.image_width = static_cast<JDIMENSION>(image->width);
+  jenc.image_width = static_cast<JDIMENSION>(image->width_);
   jenc.image_height = static_cast<JDIMENSION>(image->height);
   jenc.input_components = 3;
   jenc.in_color_space = JCS_RGB;
@@ -149,10 +149,10 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
                           static_cast<unsigned int>(jenc.input_components)];
 
   for (std::size_t y = 0; y < image->height; ++y) {
-    for (std::size_t x = 0; x < image->width; ++x) {
+    for (std::size_t x = 0; x < image->width_; ++x) {
 #define P(ch) rowbuffer[3 * x + ch]
       auto pix =
-          image->get_pixel(static_cast<uint32_t>(x), static_cast<uint32_t>(y));
+          image->pixel(static_cast<uint32_t>(x), static_cast<uint32_t>(y));
       P(0) = pix.r;
       P(1) = pix.g;
       P(2) = pix.b;
