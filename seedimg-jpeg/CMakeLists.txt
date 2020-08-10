@@ -1,5 +1,6 @@
 add_library(seedimg-jpeg SHARED seedimg-jpeg.cpp)
 
 find_package(JPEG REQUIRED)
-include_directories(${JPEG_INCLUDE_DIR})
-target_link_libraries(seedimg-jpeg seedimg ${JPEG_LIBRARY} stdc++fs)
+target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES} seedimg stdc++fs)
+target_include_directories(seedimg-jpeg PRIVATE ${JPEG_INCLUDE_DIR} seedimg)
+
