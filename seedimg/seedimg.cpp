@@ -74,19 +74,33 @@ bool seedimg::img::crop(seedimg::point p1, seedimg::point p2) {
     return false;
   auto ordered_crop_x = std::minmax(p1.first, p2.first);
   auto ordered_crop_y = std::minmax(p1.second, p2.second);
+  int init_height = this->height_;
   this->width_ = ordered_crop_x.second - ordered_crop_x.first;
   this->height_ = ordered_crop_y.second - ordered_crop_y.first;
 
   for (int y = 0; y < this->height_; ++y) {
     std::memmove(this->row(y),
                  this->row(ordered_crop_y.first + y) + ordered_crop_x.first,
-                 this->width_ * sizeof(seedimg::pixel));
-    this->data_[y] = reinterpret_cast<seedimg::pixel *>(
-        std::realloc(this->row(y), static_cast<std::size_t>(this->width_) *
-                                       sizeof(seedimg::pixel)));
+                 static_cast<std::size_t>(this->width_) *
+                     sizeof(seedimg::pixel));
+
+    auto tmp = reinterpret_cast<seedimg::pixel *>(
+        std::realloc(this->data_[y], static_cast<std::size_t>(this->width_) *
+                                         sizeof(seedimg::pixel)));
+    if (tmp)
+      this->data_[y] = tmp;
+    else
+      return false;
   }
-  this->data_ = reinterpret_cast<seedimg::pixel **>(
+  // must free vertically resized memory
+  for (int y = this->height_; y < init_height; ++y)
+    std::free(this->data_[y]);
+  auto tmp = reinterpret_cast<seedimg::pixel **>(
       std::realloc(this->data_, static_cast<std::size_t>(this->height_) *
-                                    sizeof(seedimg::pixel)));
+                                    sizeof(seedimg::pixel *)));
+  if (tmp)
+    this->data_ = tmp;
+  else
+    return false;
   return true;
 }

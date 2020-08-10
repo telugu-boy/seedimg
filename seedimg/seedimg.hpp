@@ -36,10 +36,11 @@ public:
           static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
     }
   }
+
   ~img() {
     for (int r = 0; r < height_; ++r)
-      free(data_[r]);
-    free(data_);
+      std::free(data_[r]);
+    std::free(data_);
   }
   seedimg::pixel &pixel(int x, int y) { return data_[y][x]; }
   seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
