@@ -2,6 +2,8 @@
 //
 
 #include <algorithm>
+#include <cstdlib>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -75,14 +77,10 @@ bool seedimg::img::crop(seedimg::point p1, seedimg::point p2) {
   this->width_ = ordered_crop_x.second - ordered_crop_x.first;
   this->height_ = ordered_crop_y.second - ordered_crop_y.first;
 
-  // ordered_crop_points.first is the minimum distance from the left, so we
-  // offset the memcpy src by it
   for (int y = 0; y < this->height_; ++y) {
     std::memmove(this->row(y),
-                 this->row(y) + static_cast<std::size_t>(ordered_crop_x.first) *
-                                    sizeof(seedimg::pixel),
-                 static_cast<std::size_t>(this->width_) *
-                     sizeof(seedimg::pixel));
+                 this->row(ordered_crop_y.first + y) + ordered_crop_x.first,
+                 this->width_ * sizeof(seedimg::pixel));
     this->data_[y] = reinterpret_cast<seedimg::pixel *>(
         std::realloc(this->row(y), static_cast<std::size_t>(this->width_) *
                                        sizeof(seedimg::pixel)));

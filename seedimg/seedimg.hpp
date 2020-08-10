@@ -2,7 +2,7 @@
 #define SEEDIMG_CORE_H
 
 #include <cinttypes>
-#include <cstring> // just for memset '-'
+#include <cstdlib>
 #include <memory>
 #include <optional>
 #include <string>
@@ -29,14 +29,17 @@ class img {
 public:
   static constexpr std::uint8_t MAX_PIXEL_VALUE = UINT8_MAX;
   img(int w = 0, int h = 0) : width_(w), height_(h) {
-    data_ = new seedimg::pixel *[static_cast<unsigned long>(height_)];
-    for (int r = 0; r < height_; ++r)
-      data_[r] = new seedimg::pixel[static_cast<unsigned long>(width_)];
+    data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
+        static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
+    for (int r = 0; r < height_; ++r) {
+      data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
+          static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
+    }
   }
   ~img() {
     for (int r = 0; r < height_; ++r)
-      delete[] data_[r];
-    delete[] data_;
+      free(data_[r]);
+    free(data_);
   }
   seedimg::pixel &pixel(int x, int y) { return data_[y][x]; }
   seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }

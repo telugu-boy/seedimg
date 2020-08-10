@@ -1,6 +1,7 @@
 // seedimg-webp.cpp : Defines the functions for the static library.
 //
 
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 

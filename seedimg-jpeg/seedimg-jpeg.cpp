@@ -2,6 +2,7 @@
 //
 
 #include <csetjmp>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
