@@ -9,7 +9,6 @@ int main() {
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-
     auto a = seedimg_autodetect_from("violeur.png");
     if (a != nullptr) {
       bool f = a->crop({100, 100}, {250, 250});
