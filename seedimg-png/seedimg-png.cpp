@@ -28,7 +28,7 @@ bool seedimg::modules::png::check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 8);
 }
 
-std::optional<std::unique_ptr<seedimg::img>>
+std::unique_ptr<seedimg::img>
 seedimg::modules::png::from(const std::string &filename) {
   std::unique_ptr<seedimg::img> res_img = nullptr;
   png_structp png_ptr = nullptr;
@@ -44,7 +44,7 @@ seedimg::modules::png::from(const std::string &filename) {
   if (!fp) {
     std::cerr << "File " << filename << " could not be opened" << std::endl;
     errcode = -1;
-    return std::nullopt;
+    return nullptr;
   }
 
   uint8_t sig[8];
@@ -116,28 +116,7 @@ seedimg::modules::png::from(const std::string &filename) {
   png_read_update_info(png_ptr, info_ptr);
 
   // This will load the png into the vectors. (non interlaced pngs only)
-  if (interlace_type == PNG_INTERLACE_NONE) {
-    for (std::size_t y = 0; y < res_img->height; ++y) {
-      png_read_row(png_ptr,
-                   reinterpret_cast<png_bytep>(
-                       res_img->row(static_cast<uint32_t>(y)).data()),
-                   nullptr);
-    }
-  } else {
-    png_bytepp row_pointers = new png_bytep[res_img->height];
-    std::size_t *row_bytes = new size_t[res_img->height];
-    for (std::size_t y = 0; y < res_img->height; y++) {
-      row_bytes[y] = png_get_rowbytes(png_ptr, info_ptr);
-      row_pointers[y] = static_cast<png_bytep>(malloc(row_bytes[y]));
-    }
-    png_read_image(png_ptr, row_pointers);
-    for (std::size_t y = 0; y < res_img->height; ++y) {
-      std::memcpy(res_img->row(static_cast<uint32_t>(y)).data(),
-                  row_pointers[y], row_bytes[y]);
-      free(row_pointers[y]);
-    }
-    delete[] row_pointers;
-  }
+  png_read_image(png_ptr, reinterpret_cast<png_bytepp>(res_img->data()));
 
 finalise:
   if (fp != nullptr)
@@ -148,9 +127,9 @@ finalise:
     png_destroy_read_struct(&png_ptr, nullptr, nullptr);
 
   if (errcode != 0 || res_img == nullptr) {
-    return std::nullopt;
+    return nullptr;
   } else {
-    return std::move(res_img);
+    return res_img;
   }
 }
 
@@ -195,17 +174,13 @@ bool seedimg::modules::png::to(const std::string &filename,
   png_init_io(png_ptr, fp);
 
   // Output is 8bit depth, RGBA format.
-  png_set_IHDR(png_ptr, info_ptr, static_cast<png_uint_32>(inp_img->width_),
-               static_cast<png_uint_32>(inp_img->height), 8,
+  png_set_IHDR(png_ptr, info_ptr, static_cast<png_uint_32>(inp_img->width()),
+               static_cast<png_uint_32>(inp_img->height()), 8,
                PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_write_info(png_ptr, info_ptr);
 
-  for (std::size_t y = 0; y < inp_img->height; ++y) {
-    png_write_row(png_ptr,
-                  reinterpret_cast<png_bytep>(
-                      inp_img->row(static_cast<uint32_t>(y)).data()));
-  }
+  png_write_image(png_ptr, reinterpret_cast<png_bytepp>(inp_img->data()));
 
   png_write_end(png_ptr, nullptr);
 
