@@ -14,7 +14,7 @@ enum img_type seedimg_match_ext(const std::string &ext) noexcept;
 std::optional<enum img_type>
 seedimg_imgtype(const std::string &filename) noexcept;
 
-std::optional<std::unique_ptr<seedimg::img>>
+std::unique_ptr<seedimg::img>
 seedimg_autodetect_from(const std::string &filename);
 
 bool seedimg_autodetect_to(const std::string &filename,

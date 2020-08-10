@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
   std::filesystem::create_directories(res_dir);
-  auto img = *seedimg_autodetect_from("violeur.png");
+  auto img = seedimg_autodetect_from("violeur.png");
   switch (filter_mapping.at(argv[1])) {
   case filter_functions::GRAYSCALE:
     seedimg::filters::grayscale(img);
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     seedimg::filters::invert(img);
     break;
   case filter_functions::CROP:
-    seedimg::filters::crop(img, {50, 25}, {250, 183});
+    img->crop({50, 25}, {250, 183});
     break;
   }
   char name_buf[256];

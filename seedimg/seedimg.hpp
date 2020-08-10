@@ -39,10 +39,14 @@ public:
     delete[] data_;
   }
   seedimg::pixel &pixel(int x, int y) { return data_[y][x]; }
-  auto row(int y) { return data_[y]; }
-  auto data() { return data_; }
-  auto width() { return width_; }
-  auto height() { return height_; }
+  seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
+  seedimg::pixel *row(int y) { return data_[y]; }
+  seedimg::pixel **data() { return data_; }
+  int width() { return width_; }
+  int height() { return height_; }
+
+  // resizing image manipulation functions
+  bool crop(seedimg::point p1, seedimg::point p2);
 
 private:
   int width_;
@@ -54,7 +58,7 @@ private:
 };
 
 bool to(const std::string &filename, std::unique_ptr<seedimg::img> &inp_img);
-std::optional<std::unique_ptr<seedimg::img>> from(const std::string &filename);
+std::unique_ptr<seedimg::img> from(const std::string &filename);
 
 namespace modules {};
 namespace filters {};

@@ -43,11 +43,11 @@ bool seedimg::modules::jpeg::check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 3);
 }
 
-std::optional<std::unique_ptr<seedimg::img>>
+std::unique_ptr<seedimg::img>
 seedimg::modules::jpeg::from(const std::string &filename) {
   auto input = std::fopen(filename.c_str(), "rb");
   if (input == nullptr)
-    return std::nullopt;
+    return nullptr;
 
   jpeg_decompress_struct jdec;
   seedimg_jpeg_error_mgr jerr;
@@ -79,14 +79,13 @@ seedimg::modules::jpeg::from(const std::string &filename) {
   // is done manually.
   rowbuffer = new JSAMPLE[jdec.output_width * 3];
 
-  for (std::size_t y = 0; y < res_img->height; ++y) {
+  for (int y = 0; y < res_img->height(); ++y) {
     if (jpeg_read_scanlines(&jdec, &rowbuffer, 1) != 1)
-      return std::nullopt;
+      return nullptr;
 
-    for (std::size_t x = 0; x < res_img->width_; ++x) {
-#define P(ch) rowbuffer[3 * x + ch]
-      res_img->pixel(static_cast<uint32_t>(x),
-                         static_cast<uint32_t>(y)) = {P(0), P(1), P(2), 0xFF};
+    for (int x = 0; x < res_img->width(); ++x) {
+      res_img->pixel(x, y) = {rowbuffer[3 * x], rowbuffer[3 * x + 1],
+                              rowbuffer[3 * x + 2], 0xFF};
     }
   }
 
@@ -98,9 +97,9 @@ finalise:
   if (rowbuffer != nullptr)
     delete[] rowbuffer;
   if (errcode == 0)
-    return std::move(res_img);
+    return res_img;
   else
-    return std::nullopt;
+    return nullptr;
 }
 
 /**
@@ -134,8 +133,8 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
                       static_cast<size_t>(sizeof(struct jpeg_compress_struct)));
   jpeg_stdio_dest(&jenc, output);
 
-  jenc.image_width = static_cast<JDIMENSION>(image->width_);
-  jenc.image_height = static_cast<JDIMENSION>(image->height);
+  jenc.image_width = static_cast<JDIMENSION>(image->width());
+  jenc.image_height = static_cast<JDIMENSION>(image->height());
   jenc.input_components = 3;
   jenc.in_color_space = JCS_RGB;
 
@@ -148,14 +147,12 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
   rowbuffer = new JSAMPLE[jenc.image_width *
                           static_cast<unsigned int>(jenc.input_components)];
 
-  for (std::size_t y = 0; y < image->height; ++y) {
-    for (std::size_t x = 0; x < image->width_; ++x) {
-#define P(ch) rowbuffer[3 * x + ch]
-      auto pix =
-          image->pixel(static_cast<uint32_t>(x), static_cast<uint32_t>(y));
-      P(0) = pix.r;
-      P(1) = pix.g;
-      P(2) = pix.b;
+  for (int y = 0; y < image->height(); ++y) {
+    for (int x = 0; x < image->width(); ++x) {
+      auto pix = image->pixel(x, y);
+      rowbuffer[3 * x] = pix.r;
+      rowbuffer[3 * x + 1] = pix.g;
+      rowbuffer[3 * x + 2] = pix.b;
     }
     if (jpeg_write_scanlines(&jenc, &rowbuffer, 1) != 1)
       return false;

@@ -30,11 +30,11 @@ seedimg_imgtype(const std::string &filename) noexcept {
   return img_type::unknown;
 }
 
-std::optional<std::unique_ptr<seedimg::img>>
+std::unique_ptr<seedimg::img>
 seedimg_autodetect_from(const std::string &filename) {
   auto type = seedimg_imgtype(filename);
   if (type == std::nullopt)
-    return std::nullopt;
+    return nullptr;
   switch (*seedimg_imgtype(filename)) {
   case img_type::png:
     return seedimg::modules::png::from(filename);
@@ -43,7 +43,7 @@ seedimg_autodetect_from(const std::string &filename) {
   case img_type::webp:
     return seedimg::modules::webp::from(filename);
   default:
-    return std::nullopt;
+    return nullptr;
   }
 }
 
