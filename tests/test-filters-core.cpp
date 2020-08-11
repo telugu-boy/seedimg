@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
   std::filesystem::create_directories(res_dir + "/png/");
   std::filesystem::create_directories(res_dir + "/jpg/");
   std::filesystem::create_directories(res_dir + "/webp/");
+  std::filesystem::create_directories(res_dir + "/farbfeld/");
   auto img = seedimg_autodetect_from("test_image.png");
   switch (filter_mapping.at(argv[1])) {
   case filter_functions::GRAYSCALE_LUM:
@@ -63,6 +64,9 @@ int main(int argc, char *argv[]) {
                 argv[1]);
   seedimg_autodetect_to(name_buf, img);
   std::snprintf(name_buf, 256, "tests_output/filters/webp/result-%s.webp",
+                argv[1]);
+  seedimg_autodetect_to(name_buf, img);
+  std::snprintf(name_buf, 256, "tests_output/filters/farbfeld/result-%s.ff",
                 argv[1]);
   seedimg_autodetect_to(name_buf, img);
   std::cout << "SUCCESS";

@@ -7,7 +7,7 @@
 
 #include <seedimg/seedimg.hpp>
 
-enum class img_type { unknown = 0, png, jpeg, webp };
+enum class img_type { unknown = 0, png, jpeg, webp, farbfeld };
 
 enum img_type seedimg_match_ext(const std::string &ext) noexcept;
 

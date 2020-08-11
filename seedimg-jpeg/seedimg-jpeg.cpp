@@ -54,7 +54,7 @@ seedimg::modules::jpeg::from(const std::string &filename) {
   seedimg_jpeg_error_mgr jerr;
   std::unique_ptr<seedimg::img> res_img;
   JSAMPROW rowbuffer = nullptr;
-  simg_int errcode = 0;
+  int errcode = 0;
 
   jdec.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpeg_error_exit;
