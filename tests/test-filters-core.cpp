@@ -7,11 +7,20 @@
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
 
-enum class filter_functions { GRAYSCALE_LUM, GRAYSCALE_AVG, INVERT, CROP };
+enum class filter_functions {
+  GRAYSCALE_LUM,
+  GRAYSCALE_AVG,
+  INVERT,
+  INVERT_A,
+  INVERT_AO,
+  CROP
+};
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
     {{"grayscale_lum", filter_functions::GRAYSCALE_LUM},
      {"grayscale_avg", filter_functions::GRAYSCALE_AVG},
      {"invert", filter_functions::INVERT},
+     {"invert_alpha", filter_functions::INVERT_A},
+     {"invert_alpha_only", filter_functions::INVERT_AO},
      {"crop", filter_functions::CROP}};
 
 int main(int argc, char *argv[]) {
@@ -23,7 +32,7 @@ int main(int argc, char *argv[]) {
   std::string res_dir = "tests_output/filters/";
   std::filesystem::create_directories(res_dir);
 
-  auto img = seedimg_autodetect_from("violeur.png");
+  auto img = seedimg_autodetect_from("test_image.png");
   switch (filter_mapping.at(argv[1])) {
   case filter_functions::GRAYSCALE_LUM:
     seedimg::filters::grayscale(img, true);
@@ -33,6 +42,12 @@ int main(int argc, char *argv[]) {
     break;
   case filter_functions::INVERT:
     seedimg::filters::invert(img);
+    break;
+  case filter_functions::INVERT_A:
+    seedimg::filters::invert_a(img, false);
+    break;
+  case filter_functions::INVERT_AO:
+    seedimg::filters::invert_a(img, true);
     break;
   case filter_functions::CROP:
     img->crop({50, 25}, {250, 183});

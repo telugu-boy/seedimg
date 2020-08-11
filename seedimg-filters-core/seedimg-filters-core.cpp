@@ -66,32 +66,6 @@ void grayscale(std::unique_ptr<seedimg::img> &inp_img,
     workers.at(i).join();
 }
 
-void invert(std::unique_ptr<seedimg::img> &inp_img,
-            bool invert_alpha) noexcept {
-  if (invert_alpha) {
-    for (int y = 0; y < inp_img->height(); ++y) {
-      for (int x = 0; x < inp_img->width(); ++x) {
-        seedimg::pixel &pix = inp_img->pixel(x, y);
-        pix = {
-            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
-            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
-            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b),
-            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.a)};
-      }
-    }
-  } else {
-    for (int y = 0; y < inp_img->height(); ++y) {
-      for (int x = 0; x < inp_img->width(); ++x) {
-        seedimg::pixel &pix = inp_img->pixel(x, y);
-        pix = {static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
-               static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
-               static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b),
-               pix.a};
-      }
-    }
-  }
-}
-
 void blur(std::unique_ptr<seedimg::img> &inp_img,
           std::uint8_t blur_level) noexcept {}
 } // namespace seedimg::filters
