@@ -127,7 +127,7 @@ finalise:
   if (png_ptr != nullptr)
     png_destroy_read_struct(&png_ptr, nullptr, nullptr);
 
-  if (errcode != 0 || res_img == nullptr) {
+  if (errcode != 0) {
     return nullptr;
   } else {
     return res_img;

@@ -11,10 +11,12 @@ int main() {
   {
     auto a = seedimg_autodetect_from("violeur.png");
     if (a != nullptr) {
+      auto c = std::make_unique<seedimg::img>(*a);
       bool f = a->crop({100, 100}, {250, 250});
       seedimg::filters::grayscale(a, true);
       seedimg::filters::invert(a);
       bool b = seedimg_autodetect_to("bioleur.jpg", a);
+      seedimg_autodetect_to("boileurcopy.png", c);
     }
     std::cout << "done" << std::endl;
   }

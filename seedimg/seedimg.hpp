@@ -3,6 +3,7 @@
 
 #include <cinttypes>
 #include <cstdlib>
+#include <cstring>
 #include <memory>
 #include <optional>
 #include <string>
@@ -39,6 +40,14 @@ public:
           static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
       if (data_[r] == nullptr)
         exit(0);
+    }
+  }
+  img(seedimg::img const &img_) {
+    img(img_.width_, img_.height_);
+    for (int y = 0; y < img_.height_; ++y) {
+      std::memcpy(this->data_[y], img_.data_[y],
+                  static_cast<std::size_t>(img_.width_) *
+                      sizeof(seedimg::pixel));
     }
   }
 
