@@ -31,7 +31,9 @@ static char jpeg_last_error_msg[JMSG_LENGTH_MAX];
   std::longjmp(err->setjmp_buffer, 1);
 }
 
-bool seedimg::modules::jpeg::check(const std::string &filename) noexcept {
+namespace seeding::modules {
+namespace jpeg {
+bool check(const std::string &filename) noexcept {
   std::error_code ec;
   std::size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{} || size < 3)
@@ -45,7 +47,7 @@ bool seedimg::modules::jpeg::check(const std::string &filename) noexcept {
 }
 
 std::unique_ptr<seedimg::img>
-seedimg::modules::jpeg::from(const std::string &filename) {
+from(const std::string &filename) {
   auto input = std::fopen(filename.c_str(), "rb");
   if (input == nullptr)
     return nullptr;
@@ -108,7 +110,7 @@ finalise:
  * @param progressive whether to make JPEG progresssive
  */
 // quality default param = 100, progressive = false
-bool seedimg::modules::jpeg::to(const std::string &filename,
+bool to(const std::string &filename,
                                 const std::unique_ptr<seedimg::img> &image,
                                 uint8_t quality, bool progressive) {
 
@@ -167,4 +169,6 @@ finalise:
   if (rowbuffer != nullptr)
     delete[] rowbuffer;
   return errcode == 0;
+}
+}
 }
