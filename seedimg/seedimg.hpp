@@ -42,8 +42,17 @@ public:
         exit(0);
     }
   }
-  img(seedimg::img const &img_) {
-    img(img_.width_, img_.height_);
+  img(seedimg::img const &img_) : width_(img_.width_), height_(img_.height_) {
+    data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
+        static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
+    if (data_ == nullptr)
+      exit(0);
+    for (int r = 0; r < height_; ++r) {
+      data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
+          static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
+      if (data_[r] == nullptr)
+        exit(0);
+    }
     for (int y = 0; y < img_.height_; ++y) {
       std::memcpy(this->data_[y], img_.data_[y],
                   static_cast<std::size_t>(img_.width_) *
