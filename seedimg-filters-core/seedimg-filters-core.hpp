@@ -5,7 +5,7 @@
 
 namespace seedimg::filters {
 void grayscale(std::unique_ptr<seedimg::img> &inp_img,
-               bool lightness = false) noexcept;
+               bool lightness = true) noexcept;
 void invert(std::unique_ptr<seedimg::img> &inp_img,
             bool invert_alpha = false) noexcept;
 bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,

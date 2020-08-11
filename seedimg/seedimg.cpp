@@ -69,6 +69,10 @@ bool seedimg::to(const std::string &filename,
 }
 
 bool seedimg::img::crop(seedimg::point p1, seedimg::point p2) {
+  if (p1 == seedimg::point{0, 0} &&
+      p2 == seedimg::point{this->width_, this->height_}) {
+    return true;
+  }
   if (!(is_on_rect({0, 0}, {this->width_, this->height_}, p1) &&
         is_on_rect({0, 0}, {this->width_, this->height_}, p2)))
     return false;

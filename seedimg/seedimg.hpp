@@ -1,12 +1,14 @@
 #ifndef SEEDIMG_CORE_H
 #define SEEDIMG_CORE_H
 
+#include <cassert>
 #include <cinttypes>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
 #include <optional>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace seedimg {
@@ -33,25 +35,21 @@ public:
   img(int w, int h) : width_(w), height_(h) {
     data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
         static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
-    if (data_ == nullptr)
-      exit(0);
+    assert(data_ != nullptr);
     for (int r = 0; r < height_; ++r) {
       data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
           static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
-      if (data_[r] == nullptr)
-        exit(0);
+      assert(data_[r] != nullptr);
     }
   }
   img(seedimg::img const &img_) : width_(img_.width_), height_(img_.height_) {
     data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
         static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
-    if (data_ == nullptr)
-      exit(0);
+    assert(data_ != nullptr);
     for (int r = 0; r < height_; ++r) {
       data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
           static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
-      if (data_[r] == nullptr)
-        exit(0);
+      assert(data_[r] != nullptr);
     }
     for (int y = 0; y < img_.height_; ++y) {
       std::memcpy(this->data_[y], img_.data_[y],
@@ -67,6 +65,19 @@ public:
       std::free(data_);
     }
   }
+
+  std::vector<std::pair<int, int>> start_end_rows() {
+    std::vector<std::pair<int, int>> res;
+    auto processor_count =
+        static_cast<int>(std::thread::hardware_concurrency());
+    if (processor_count == 0)
+      processor_count = 1;
+    int rows_per_thread = this->height_ / processor_count;
+    for (int i = 0; i < processor_count; i += rows_per_thread)
+      res.push_back({i, i + processor_count});
+    res[start_end_row.size() - 1].second += this->height_ % processor_count;
+  }
+
   seedimg::pixel &pixel(int x, int y) { return data_[y][x]; }
   seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
   seedimg::pixel *row(int y) { return data_[y]; }
