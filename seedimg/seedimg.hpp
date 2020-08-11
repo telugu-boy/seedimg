@@ -70,11 +70,14 @@ public:
     std::vector<std::pair<int, int>> res;
     auto processor_count =
         static_cast<int>(std::thread::hardware_concurrency());
+    res.reserve(static_cast<std::size_t>(processor_count));
     if (processor_count == 0)
       processor_count = 1;
+    if (processor_count > this->height_)
+      processor_count = this->height_;
     int rows_per_thread = this->height_ / processor_count;
     for (int i = 0; i < processor_count * rows_per_thread; i += rows_per_thread)
-      res.push_back({i, i + rows_per_thread});
+      res.emplace_back(i, i + rows_per_thread);
     res[res.size() - 1].second += this->height_ % processor_count;
     return res;
   }
