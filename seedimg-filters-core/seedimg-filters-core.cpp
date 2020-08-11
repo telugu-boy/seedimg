@@ -11,12 +11,6 @@
 
 // TODO: This is an example of a library function
 
-inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
-                       seedimg::point point) {
-  return xy1.first <= point.first && point.first <= xy2.first &&
-         xy1.second <= point.second && point.second <= xy2.second;
-}
-
 void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
                                  int start_row, int end_row) noexcept {
   int w = inp_img->width();
