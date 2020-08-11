@@ -30,7 +30,6 @@ int main(int argc, char *argv[]) {
   }
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
-  std::filesystem::create_directories(res_dir);
   std::filesystem::create_directories(res_dir + "/png/");
   std::filesystem::create_directories(res_dir + "/jpg/");
   std::filesystem::create_directories(res_dir + "/webp/");
