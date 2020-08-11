@@ -17,8 +17,8 @@ inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
          xy1.second <= point.second && point.second <= xy2.second;
 }
 
-void grayscale_worker_lightness(std::unique_ptr<seedimg::img> &inp_img,
-                                int start_row, int end_row) {
+void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
+                                 int start_row, int end_row) {
   int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
     for (int x = 0; x < w; ++x) {
@@ -32,26 +32,23 @@ void grayscale_worker_lightness(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
-                                 int start_row, int end_row) {}
+void grayscale_worker_lightness(std::unique_ptr<seedimg::img> &inp_img,
+                                int start_row, int end_row) {}
 
 namespace seedimg::filters {
 void grayscale(std::unique_ptr<seedimg::img> &inp_img,
                bool luminosity) noexcept {
   // would rather check once if it's in lightness mode than width*height times.
   auto start_end = inp_img->start_end_rows();
-
+  std::vector<std::thread> workers(start_end.size());
   if (luminosity) {
-    for (int y = 0; y < inp_img->height(); ++y) {
-      for (int x = 0; x < inp_img->width(); ++x) {
-        seedimg::pixel &pix = inp_img->pixel(x, y);
-        uint8_t linear = static_cast<uint8_t>((0.2126 * (pix.r / 255.0) +
-                                               0.7152 * (pix.g / 255.0) +
-                                               0.0722 * (pix.b / 255.0)) *
-                                              255);
-        pix = {linear, linear, linear, pix.a};
-      }
+    for (std::size_t i = 0; i < workers.size(); i++) {
+      workers.at(i) =
+          std::thread(grayscale_worker_luminosity, std::ref(inp_img),
+                      start_end.at(i).first, start_end.at(i).second);
     }
+    for (std::size_t i = 0; i < workers.size(); ++i)
+      workers.at(i).join();
   } else {
     for (int y = 0; y < inp_img->height(); ++y) {
       for (int x = 0; x < inp_img->width(); ++x) {
