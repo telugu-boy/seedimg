@@ -5,11 +5,11 @@
 #include <thread>
 #include <vector>
 
-void invert_worker(std::unique_ptr<seedimg::img> &inp_img, int start_row,
-                   int end_row) noexcept {
-  int w = inp_img->width();
+void invert_worker(std::unique_ptr<seedimg::img> &inp_img, simg_int start_row,
+                   simg_int end_row) noexcept {
+  simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
-    for (int x = 0; x < w; ++x) {
+    for (simg_int x = 0; x < w; ++x) {
       seedimg::pixel &pix = inp_img->pixel(x, start_row);
       pix = {static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
              static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
@@ -19,11 +19,11 @@ void invert_worker(std::unique_ptr<seedimg::img> &inp_img, int start_row,
   }
 }
 
-void invert_worker_alpha(std::unique_ptr<seedimg::img> &inp_img, int start_row,
-                         int end_row) noexcept {
-  int w = inp_img->width();
+void invert_worker_alpha(std::unique_ptr<seedimg::img> &inp_img, simg_int start_row,
+                         simg_int end_row) noexcept {
+  simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
-    for (int x = 0; x < w; ++x) {
+    for (simg_int x = 0; x < w; ++x) {
       seedimg::pixel &pix = inp_img->pixel(x, start_row);
       pix = {static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
              static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
@@ -34,10 +34,10 @@ void invert_worker_alpha(std::unique_ptr<seedimg::img> &inp_img, int start_row,
 }
 
 void invert_worker_alpha_only(std::unique_ptr<seedimg::img> &inp_img,
-                              int start_row, int end_row) noexcept {
-  int w = inp_img->width();
+                              simg_int start_row, simg_int end_row) noexcept {
+  simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
-    for (int x = 0; x < w; ++x) {
+    for (simg_int x = 0; x < w; ++x) {
       seedimg::pixel &pix = inp_img->pixel(x, start_row);
       pix.a = static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.a);
     }

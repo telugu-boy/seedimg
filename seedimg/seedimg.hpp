@@ -11,9 +11,11 @@
 #include <thread>
 #include <vector>
 
+typedef std::size_t simg_int;
+
 namespace seedimg {
 
-typedef std::pair<int, int> point;
+typedef std::pair<simg_int, simg_int> point;
 
 struct pixel {
   std::uint8_t r;
@@ -32,11 +34,11 @@ class img {
 public:
   static constexpr std::uint8_t MAX_PIXEL_VALUE = UINT8_MAX;
   img() : width_(0), height_(0), data_(nullptr) {}
-  img(int w, int h) : width_(w), height_(h) {
+  img(simg_int w, simg_int h) : width_(w), height_(h) {
     data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
         static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
     assert(data_ != nullptr);
-    for (int r = 0; r < height_; ++r) {
+    for (simg_int r = 0; r < height_; ++r) {
       data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
           static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
       assert(data_[r] != nullptr);
@@ -46,12 +48,12 @@ public:
     data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
         static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
     assert(data_ != nullptr);
-    for (int r = 0; r < height_; ++r) {
+    for (simg_int r = 0; r < height_; ++r) {
       data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
           static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
       assert(data_[r] != nullptr);
     }
-    for (int y = 0; y < img_.height_; ++y) {
+    for (simg_int y = 0; y < img_.height_; ++y) {
       std::memcpy(this->data_[y], img_.data_[y],
                   static_cast<std::size_t>(img_.width_) *
                       sizeof(seedimg::pixel));
@@ -60,41 +62,42 @@ public:
 
   ~img() {
     if (data_ != nullptr) {
-      for (int r = 0; r < height_; ++r)
+      for (simg_int r = 0; r < height_; ++r)
         std::free(data_[r]);
       std::free(data_);
     }
   }
 
-  std::vector<std::pair<int, int>> start_end_rows() {
-    std::vector<std::pair<int, int>> res;
+  std::vector<std::pair<simg_int, simg_int>> start_end_rows() {
+    std::vector<std::pair<simg_int, simg_int>> res;
     auto processor_count =
-        static_cast<int>(std::thread::hardware_concurrency());
+        static_cast<simg_int>(std::thread::hardware_concurrency());
     res.reserve(static_cast<std::size_t>(processor_count));
     if (processor_count == 0)
       processor_count = 1;
     if (processor_count > this->height_)
       processor_count = this->height_;
-    int rows_per_thread = this->height_ / processor_count;
-    for (int i = 0; i < processor_count * rows_per_thread; i += rows_per_thread)
+    simg_int rows_per_thread = this->height_ / processor_count;
+    for (simg_int i = 0; i < processor_count * rows_per_thread;
+         i += rows_per_thread)
       res.emplace_back(i, i + rows_per_thread);
     res[res.size() - 1].second += this->height_ % processor_count;
     return res;
   }
 
-  seedimg::pixel &pixel(int x, int y) { return data_[y][x]; }
+  seedimg::pixel &pixel(simg_int x, simg_int y) { return data_[y][x]; }
   seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
-  seedimg::pixel *row(int y) { return data_[y]; }
+  seedimg::pixel *row(simg_int y) { return data_[y]; }
   seedimg::pixel **data() { return data_; }
-  int width() { return width_; }
-  int height() { return height_; }
+  simg_int width() { return width_; }
+  simg_int height() { return height_; }
 
   // resizing image manipulation functions
   bool crop(seedimg::point p1, seedimg::point p2);
 
 private:
-  int width_;
-  int height_;
+  simg_int width_;
+  simg_int height_;
   // stored in row major order
   // width amount of pixels in a row
   // height amount of rows.

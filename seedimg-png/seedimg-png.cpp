@@ -38,7 +38,7 @@ seedimg::modules::png::from(const std::string &filename) {
   uint8_t color_type = 127;
   uint8_t bit_depth = 0;
   uint8_t interlace_type = 127;
-  int errcode = 0;
+  simg_int errcode = 0;
 
   auto fp = std::fopen(filename.c_str(), "rb");
 
@@ -138,7 +138,7 @@ bool seedimg::modules::png::to(const std::string &filename,
                                std::unique_ptr<seedimg::img> &inp_img) {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
-  int errcode = 0;
+  simg_int errcode = 0;
 
   auto fp = std::fopen(filename.c_str(), "wb");
 

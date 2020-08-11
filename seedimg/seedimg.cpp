@@ -40,7 +40,7 @@ std::unique_ptr<seedimg::img> seedimg::from(const std::string &filename) {
   const auto stride =
       sizeof(seedimg::pixel) * static_cast<std::size_t>(image->width());
 
-  for (int y = 0; y < image->height(); ++y)
+  for (simg_int y = 0; y < image->height(); ++y)
     infile.read(reinterpret_cast<char *>(image->row(y)),
                 static_cast<long>(stride));
 
@@ -61,7 +61,7 @@ bool seedimg::to(const std::string &filename,
   const auto stride =
       sizeof(seedimg::pixel) * static_cast<std::size_t>(image->width());
 
-  for (int y = 0; y < image->height(); ++y)
+  for (simg_int y = 0; y < image->height(); ++y)
     outfile.write(reinterpret_cast<const char *>(image->row(y)),
                   static_cast<long>(stride));
 
@@ -78,11 +78,11 @@ bool seedimg::img::crop(seedimg::point p1, seedimg::point p2) {
     return false;
   auto ordered_crop_x = std::minmax(p1.first, p2.first);
   auto ordered_crop_y = std::minmax(p1.second, p2.second);
-  int init_height = this->height_;
+  simg_int init_height = this->height_;
   this->width_ = ordered_crop_x.second - ordered_crop_x.first;
   this->height_ = ordered_crop_y.second - ordered_crop_y.first;
 
-  for (int y = 0; y < this->height_; ++y) {
+  for (simg_int y = 0; y < this->height_; ++y) {
     std::memmove(this->row(y),
                  this->row(ordered_crop_y.first + y) + ordered_crop_x.first,
                  static_cast<std::size_t>(this->width_) *
@@ -97,7 +97,7 @@ bool seedimg::img::crop(seedimg::point p1, seedimg::point p2) {
       return false;
   }
   // must free vertically resized memory
-  for (int y = this->height_; y < init_height; ++y)
+  for (simg_int y = this->height_; y < init_height; ++y)
     std::free(this->data_[y]);
   auto tmp = reinterpret_cast<seedimg::pixel **>(
       std::realloc(this->data_, static_cast<std::size_t>(this->height_) *

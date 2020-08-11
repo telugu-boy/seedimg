@@ -54,7 +54,7 @@ seedimg::modules::jpeg::from(const std::string &filename) {
   seedimg_jpeg_error_mgr jerr;
   std::unique_ptr<seedimg::img> res_img;
   JSAMPROW rowbuffer = nullptr;
-  int errcode = 0;
+  simg_int errcode = 0;
 
   jdec.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpeg_error_exit;
@@ -80,11 +80,11 @@ seedimg::modules::jpeg::from(const std::string &filename) {
   // is done manually.
   rowbuffer = new JSAMPLE[jdec.output_width * 3];
 
-  for (int y = 0; y < res_img->height(); ++y) {
+  for (simg_int y = 0; y < res_img->height(); ++y) {
     if (jpeg_read_scanlines(&jdec, &rowbuffer, 1) != 1)
       return nullptr;
 
-    for (int x = 0; x < res_img->width(); ++x) {
+    for (simg_int x = 0; x < res_img->width(); ++x) {
       res_img->pixel(x, y) = {rowbuffer[3 * x], rowbuffer[3 * x + 1],
                               rowbuffer[3 * x + 2], 0xFF};
     }
@@ -119,7 +119,7 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
   jpeg_compress_struct jenc;
   seedimg_jpeg_error_mgr jerr;
   JSAMPROW rowbuffer = nullptr;
-  int errcode = 0;
+  simg_int errcode = 0;
 
   jenc.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpeg_error_exit;
@@ -146,10 +146,10 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
   jpeg_start_compress(&jenc, TRUE);
 
   rowbuffer = new JSAMPLE[jenc.image_width *
-                          static_cast<unsigned int>(jenc.input_components)];
+                          static_cast<simg_int>(jenc.input_components)];
 
-  for (int y = 0; y < image->height(); ++y) {
-    for (int x = 0; x < image->width(); ++x) {
+  for (simg_int y = 0; y < image->height(); ++y) {
+    for (simg_int x = 0; x < image->width(); ++x) {
       auto pix = image->pixel(x, y);
       rowbuffer[3 * x] = pix.r;
       rowbuffer[3 * x + 1] = pix.g;
