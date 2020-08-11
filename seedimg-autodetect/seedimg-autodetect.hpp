@@ -18,6 +18,6 @@ std::unique_ptr<seedimg::img>
 seedimg_autodetect_from(const std::string &filename);
 
 bool seedimg_autodetect_to(const std::string &filename,
-                           std::unique_ptr<seedimg::img> &image);
+                           const std::unique_ptr<seedimg::img> &image);
 
 #endif

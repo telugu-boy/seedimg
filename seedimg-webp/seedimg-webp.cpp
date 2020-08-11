@@ -30,7 +30,7 @@ bool seedimg::modules::webp::check(const std::string &filename) noexcept {
 }
 
 bool seedimg::modules::webp::to(const std::string &filename,
-                                std::unique_ptr<seedimg::img> &inp_img,
+                                const std::unique_ptr<seedimg::img> &inp_img,
                                 float quality) {
   uint8_t *output = nullptr;
   uint8_t *data = new uint8_t[static_cast<unsigned long>(inp_img->height() *

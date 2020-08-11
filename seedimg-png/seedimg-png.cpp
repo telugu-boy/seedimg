@@ -135,10 +135,10 @@ finalise:
 }
 
 bool seedimg::modules::png::to(const std::string &filename,
-                               std::unique_ptr<seedimg::img> &inp_img) {
+                               const std::unique_ptr<seedimg::img> &inp_img) {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
-  simg_int errcode = 0;
+  int errcode = 0;
 
   auto fp = std::fopen(filename.c_str(), "wb");
 

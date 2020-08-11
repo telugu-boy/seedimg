@@ -109,7 +109,7 @@ finalise:
  */
 // quality default param = 100, progressive = false
 bool seedimg::modules::jpeg::to(const std::string &filename,
-                                std::unique_ptr<seedimg::img> &image,
+                                const std::unique_ptr<seedimg::img> &image,
                                 uint8_t quality, bool progressive) {
 
   auto output = std::fopen(filename.c_str(), "wb");

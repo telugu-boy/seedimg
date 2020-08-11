@@ -31,8 +31,7 @@ static inline std::uint16_t b8_16(std::uint8_t n) {
   return static_cast<std::uint16_t>(n << 8) + static_cast<std::uint16_t>(n);
 }
 
-namespace seedimg::modules::farbfeld {
-bool check(const std::string &filename) noexcept {
+bool seedimg::modules::farbfeld::check(const std::string &filename) {
   std::ifstream input(filename);
   char sig[8];
 
@@ -44,7 +43,8 @@ bool check(const std::string &filename) noexcept {
   return std::memcmp(sig, "farbfeld", 8) == 0;
 }
 
-std::unique_ptr<seedimg::img> from(const std::string &filename) {
+std::unique_ptr<seedimg::img>
+seedimg::modules::farbfeld::from(const std::string &filename) {
   std::ifstream input(filename);
   struct {
     char sig[8];
@@ -85,14 +85,14 @@ std::unique_ptr<seedimg::img> from(const std::string &filename) {
   return result;
 }
 
-bool to(const std::string &filename,
-        const std::unique_ptr<seedimg::img> &image) {
+bool seedimg::modules::farbfeld::to(
+    const std::string &filename, const std::unique_ptr<seedimg::img> &inp_img) {
   std::ofstream output(filename);
 
   std::uint8_t width_ser[4];
   std::uint8_t height_ser[4];
-  tu32be(image->width(), width_ser);
-  tu32be(image->height(), height_ser);
+  tu32be(inp_img->width(), width_ser);
+  tu32be(inp_img->height(), height_ser);
   try {
     output.write("farbfeld", 8)
         .write(reinterpret_cast<char *>(width_ser), 4)
@@ -102,9 +102,9 @@ bool to(const std::string &filename,
   }
 
   uint8_t rawpixel[8];
-  for (simg_int y = 0; y < image->height(); ++y) {
-    for (simg_int x = 0; x < image->width(); ++x) {
-      auto px = image->pixel(x, y);
+  for (simg_int y = 0; y < inp_img->height(); ++y) {
+    for (simg_int x = 0; x < inp_img->width(); ++x) {
+      auto px = inp_img->pixel(x, y);
 
       tu16be(b8_16(px.r), rawpixel);
       tu16be(b8_16(px.g), rawpixel + 2);
@@ -121,4 +121,3 @@ bool to(const std::string &filename,
 
   return true;
 }
-} // namespace seedimg::modules::farbfeld
