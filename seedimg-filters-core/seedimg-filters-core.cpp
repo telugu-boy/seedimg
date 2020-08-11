@@ -33,7 +33,16 @@ void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
 }
 
 void grayscale_worker_lightness(std::unique_ptr<seedimg::img> &inp_img,
-                                int start_row, int end_row) {}
+                                int start_row, int end_row) {
+  int w = inp_img->width();
+  for (; start_row < end_row; ++start_row) {
+    for (int x = 0; x < w; ++x) {
+      seedimg::pixel &pix = inp_img->pixel(x, start_row);
+      uint8_t avg = (pix.r + pix.g + pix.b) / 3;
+      pix = {avg, avg, avg, pix.a};
+    }
+  }
+}
 
 namespace seedimg::filters {
 void grayscale(std::unique_ptr<seedimg::img> &inp_img,
@@ -47,17 +56,15 @@ void grayscale(std::unique_ptr<seedimg::img> &inp_img,
           std::thread(grayscale_worker_luminosity, std::ref(inp_img),
                       start_end.at(i).first, start_end.at(i).second);
     }
-    for (std::size_t i = 0; i < workers.size(); ++i)
-      workers.at(i).join();
   } else {
-    for (int y = 0; y < inp_img->height(); ++y) {
-      for (int x = 0; x < inp_img->width(); ++x) {
-        seedimg::pixel &pix = inp_img->pixel(x, y);
-        uint8_t avg = (pix.r + pix.g + pix.b) / 3;
-        pix = {avg, avg, avg, pix.a};
-      }
+    for (std::size_t i = 0; i < workers.size(); i++) {
+      workers.at(i) =
+          std::thread(grayscale_worker_lightness, std::ref(inp_img),
+                      start_end.at(i).first, start_end.at(i).second);
     }
   }
+  for (std::size_t i = 0; i < workers.size(); ++i)
+    workers.at(i).join();
 }
 
 void invert(std::unique_ptr<seedimg::img> &inp_img,
