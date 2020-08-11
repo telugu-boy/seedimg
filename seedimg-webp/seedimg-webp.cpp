@@ -12,8 +12,11 @@ extern "C" {
 
 #include "seedimg-webp.hpp"
 
+namespace seedimg::modules {
+namespace webp {
+
 // TODO: This is an example of a library function
-bool seedimg::modules::webp::check(const std::string &filename) noexcept {
+bool check(const std::string &filename) noexcept {
   std::error_code ec;
   std::size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{} || size < 8)
@@ -29,7 +32,7 @@ bool seedimg::modules::webp::check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 8);
 }
 
-bool seedimg::modules::webp::to(const std::string &filename,
+bool to(const std::string &filename,
                                 const std::unique_ptr<seedimg::img> &inp_img,
                                 float quality) {
   uint8_t *output = nullptr;
@@ -61,7 +64,7 @@ bool seedimg::modules::webp::to(const std::string &filename,
   return true;
 }
 std::unique_ptr<seedimg::img>
-seedimg::modules::webp::from(const std::string &filename) {
+from(const std::string &filename) {
   std::error_code ec;
   size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{})
@@ -91,4 +94,6 @@ seedimg::modules::webp::from(const std::string &filename) {
   }
   WebPFree(inp_img);
   return res_img;
+}
+}
 }
