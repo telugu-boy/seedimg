@@ -6,8 +6,11 @@ file(COPY violeur.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
 
 include_directories(../)
 
-add_test(grayscale_test ${TESTS_EXE} grayscale)
-set_tests_properties(grayscale_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+add_test(grayscale_lum_test ${TESTS_EXE} grayscale_lum)
+set_tests_properties(grayscale_lum_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(grayscale_avg_test ${TESTS_EXE} grayscale_avg)
+set_tests_properties(grayscale_avg_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(invert_test ${TESTS_EXE} invert)
 set_tests_properties(invert_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")

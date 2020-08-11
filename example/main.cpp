@@ -12,7 +12,7 @@ int main() {
     auto a = seedimg_autodetect_from("violeur.png");
     if (a != nullptr) {
       // bool f = a->crop({100, 100}, {250, 250});
-      seedimg::filters::grayscale(a, false);
+      seedimg::filters::grayscale(a, true);
       // seedimg::filters::invert(a);
       bool b = seedimg_autodetect_to("bioleur.jpg", a);
     }

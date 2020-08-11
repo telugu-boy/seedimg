@@ -18,7 +18,7 @@ inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
 }
 
 void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
-                                 int start_row, int end_row) {
+                                 int start_row, int end_row) noexcept {
   int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
     for (int x = 0; x < w; ++x) {
@@ -32,8 +32,8 @@ void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void grayscale_worker_lightness(std::unique_ptr<seedimg::img> &inp_img,
-                                int start_row, int end_row) {
+void grayscale_worker_average(std::unique_ptr<seedimg::img> &inp_img,
+                              int start_row, int end_row) noexcept {
   int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
     for (int x = 0; x < w; ++x) {
@@ -47,7 +47,6 @@ void grayscale_worker_lightness(std::unique_ptr<seedimg::img> &inp_img,
 namespace seedimg::filters {
 void grayscale(std::unique_ptr<seedimg::img> &inp_img,
                bool luminosity) noexcept {
-  // would rather check once if it's in lightness mode than width*height times.
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   if (luminosity) {
@@ -59,7 +58,7 @@ void grayscale(std::unique_ptr<seedimg::img> &inp_img,
   } else {
     for (std::size_t i = 0; i < workers.size(); i++) {
       workers.at(i) =
-          std::thread(grayscale_worker_lightness, std::ref(inp_img),
+          std::thread(grayscale_worker_average, std::ref(inp_img),
                       start_end.at(i).first, start_end.at(i).second);
     }
   }

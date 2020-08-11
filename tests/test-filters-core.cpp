@@ -7,9 +7,10 @@
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
 
-enum class filter_functions { GRAYSCALE, INVERT, CROP };
+enum class filter_functions { GRAYSCALE_LUM, GRAYSCALE_AVG, INVERT, CROP };
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
-    {{"grayscale", filter_functions::GRAYSCALE},
+    {{"grayscale_lum", filter_functions::GRAYSCALE_LUM},
+     {"grayscale_avg", filter_functions::GRAYSCALE_AVG},
      {"invert", filter_functions::INVERT},
      {"crop", filter_functions::CROP}};
 
@@ -21,10 +22,14 @@ int main(int argc, char *argv[]) {
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
   std::filesystem::create_directories(res_dir);
+
   auto img = seedimg_autodetect_from("violeur.png");
   switch (filter_mapping.at(argv[1])) {
-  case filter_functions::GRAYSCALE:
-    seedimg::filters::grayscale(img);
+  case filter_functions::GRAYSCALE_LUM:
+    seedimg::filters::grayscale(img, true);
+    break;
+  case filter_functions::GRAYSCALE_AVG:
+    seedimg::filters::grayscale(img, false);
     break;
   case filter_functions::INVERT:
     seedimg::filters::invert(img);
