@@ -45,7 +45,7 @@ void invert_worker_alpha_only(std::unique_ptr<seedimg::img> &inp_img,
 }
 
 namespace seedimg::filters {
-void invert(std::unique_ptr<seedimg::img> &inp_img) noexcept {
+void invert(std::unique_ptr<seedimg::img> &inp_img) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   for (std::size_t i = 0; i < workers.size(); i++) {
@@ -56,8 +56,7 @@ void invert(std::unique_ptr<seedimg::img> &inp_img) noexcept {
     workers.at(i).join();
 }
 
-void invert_a(std::unique_ptr<seedimg::img> &inp_img,
-              bool invert_alpha_only) noexcept {
+void invert_a(std::unique_ptr<seedimg::img> &inp_img, bool invert_alpha_only) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   if (invert_alpha_only) {

@@ -33,8 +33,7 @@ void grayscale_worker_average(std::unique_ptr<seedimg::img> &inp_img,
 }
 
 namespace seedimg::filters {
-void grayscale(std::unique_ptr<seedimg::img> &inp_img,
-               bool luminosity) noexcept {
+void grayscale(std::unique_ptr<seedimg::img> &inp_img, bool luminosity) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   if (luminosity) {

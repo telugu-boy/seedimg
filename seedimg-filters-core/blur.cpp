@@ -7,6 +7,5 @@
 #include <vector>
 
 namespace seedimg::filters {
-void blur(std::unique_ptr<seedimg::img> &inp_img,
-          std::uint8_t blur_level) noexcept {}
+void blur(std::unique_ptr<seedimg::img> &inp_img, std::uint8_t blur_level) {}
 } // namespace seedimg::filters
