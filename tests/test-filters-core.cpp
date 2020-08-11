@@ -50,7 +50,8 @@ int main(int argc, char *argv[]) {
     seedimg::filters::invert_a(img, true);
     break;
   case filter_functions::CROP:
-    img->crop({50, 25}, {250, 183});
+    img->crop({img->width() / 3, img->height() / 3},
+              {2 * img->width() / 3, 2 * img->height() / 3});
     break;
   }
   char name_buf[256];
