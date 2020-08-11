@@ -31,7 +31,10 @@ static inline std::uint16_t b8_16(std::uint8_t n) {
   return static_cast<std::uint16_t>(n << 8) + static_cast<std::uint16_t>(n);
 }
 
-bool seedimg::modules::farbfeld::check(const std::string &filename) {
+namespace seedimg::modules {
+namespace farbfeld {
+    
+bool check(const std::string &filename) {
   std::ifstream input(filename);
   char sig[8];
 
@@ -44,7 +47,7 @@ bool seedimg::modules::farbfeld::check(const std::string &filename) {
 }
 
 std::unique_ptr<seedimg::img>
-seedimg::modules::farbfeld::from(const std::string &filename) {
+from(const std::string &filename) {
   std::ifstream input(filename);
   struct {
     char sig[8];
@@ -85,7 +88,7 @@ seedimg::modules::farbfeld::from(const std::string &filename) {
   return result;
 }
 
-bool seedimg::modules::farbfeld::to(
+bool to(
     const std::string &filename, const std::unique_ptr<seedimg::img> &inp_img) {
   std::ofstream output(filename);
 
@@ -120,4 +123,6 @@ bool seedimg::modules::farbfeld::to(
   }
 
   return true;
+}
+}
 }
