@@ -73,9 +73,10 @@ public:
     if (processor_count == 0)
       processor_count = 1;
     int rows_per_thread = this->height_ / processor_count;
-    for (int i = 0; i < processor_count; i += rows_per_thread)
-      res.push_back({i, i + processor_count});
-    res[start_end_row.size() - 1].second += this->height_ % processor_count;
+    for (int i = 0; i < processor_count * rows_per_thread; i += rows_per_thread)
+      res.push_back({i, i + rows_per_thread});
+    res[res.size() - 1].second += this->height_ % processor_count;
+    return res;
   }
 
   seedimg::pixel &pixel(int x, int y) { return data_[y][x]; }

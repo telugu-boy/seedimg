@@ -39,15 +39,7 @@ namespace seedimg::filters {
 void grayscale(std::unique_ptr<seedimg::img> &inp_img,
                bool luminosity) noexcept {
   // would rather check once if it's in lightness mode than width*height times.
-  std::vector<std::pair<int, int>> start_end_row;
-  auto processor_count = static_cast<int>(std::thread::hardware_concurrency());
-  if (processor_count == 0)
-    processor_count = 1;
-  int rows_per_thread = inp_img->height() / processor_count;
-  for (int i = 0; i < processor_count; i += rows_per_thread)
-    start_end_row.push_back({i, i + processor_count});
-  start_end_row[start_end_row.size() - 1].second +=
-      inp_img->height() % processor_count;
+  auto start_end = inp_img->start_end_rows();
 
   if (luminosity) {
     for (int y = 0; y < inp_img->height(); ++y) {
