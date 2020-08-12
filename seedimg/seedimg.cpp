@@ -17,7 +17,8 @@ inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
          xy1.second <= point.second && point.second <= xy2.second;
 }
 
-bool seedimg::img::crop(seedimg::point p1, seedimg::point p2) {
+namespace seedimg {
+bool img::crop(seedimg::point p1, seedimg::point p2) {
   if (p1 == seedimg::point{0, 0} &&
       p2 == seedimg::point{this->width_, this->height_}) {
     return true;
@@ -58,7 +59,6 @@ bool seedimg::img::crop(seedimg::point p1, seedimg::point p2) {
   return true;
 }
 
-namespace seedimg {
 std::unique_ptr<seedimg::img> from(const std::string &filename) {
   std::ifstream infile(filename, std::ios::binary);
   if (infile.fail())
@@ -89,7 +89,8 @@ std::unique_ptr<seedimg::img> from(const std::string &filename) {
   return image;
 }
 
-bool to(const std::string &filename, std::unique_ptr<seedimg::img> &image) {
+bool to(const std::string &filename,
+        const std::unique_ptr<seedimg::img> &image) {
   std::ofstream outfile(filename, std::ios::binary);
   if (outfile.fail())
     return false;
