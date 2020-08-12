@@ -35,7 +35,7 @@ class img {
 public:
   static constexpr std::uint8_t MAX_PIXEL_VALUE = UINT8_MAX;
   img() : width_(0), height_(0), data_(nullptr) {}
-  img(simg_int w, simg_int h) : width_(w), height_(h) {
+  img(simg_int w, simg_int h) : width_{w}, height_{h} {
     data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
         static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
     if (data_ == nullptr)

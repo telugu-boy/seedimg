@@ -10,16 +10,25 @@ project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipul
 
 option(BUILD_TESTING "" OFF)
 include(CTest)
+include(CheckCXXCompilerFlag)
 
 include_directories(${VCPKG_DIR}/installed/${VCPKG_TRIPLET}/include ${CMAKE_SOURCE_DIR})
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+set(BUILD_SHARED_LIBS TRUE)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+CHECK_CXX_COMPILER_FLAG(-Wextra COMPILER_SUPPORTS_WEXTRA)
+if(COMPILER_SUPPORTS_WEXTRA)
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+else()
+    set(CMAKE_CXX_FLAGS "-Wall")
+endif()
+
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
