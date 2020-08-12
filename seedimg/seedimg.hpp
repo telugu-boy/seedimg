@@ -82,6 +82,11 @@ public:
 
   seedimg::pixel &pixel(simg_int x, simg_int y) { return data_[y][x]; }
   seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
+  seedimg::pixel &pixel(simg_int x) {
+    if (x > this->width_ * this->height_ - 1)
+      std::terminate();
+    return pixel(x / this->width_, x % this->width_);
+  }
   seedimg::pixel *row(simg_int y) { return data_[y]; }
   seedimg::pixel **data() { return data_; }
   simg_int width() { return width_; }
@@ -98,8 +103,6 @@ private:
   // height amount of rows.
   seedimg::pixel **data_;
 };
-
-class filter_chain {};
 
 bool to(const std::string &filename,
         const std::unique_ptr<seedimg::img> &inp_img);
