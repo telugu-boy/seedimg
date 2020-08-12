@@ -6,7 +6,7 @@
 #include <seedimg/seedimg.hpp>
 
 int main() {
-  std::cout << "Current path is " << std::filesystem::current_path()
+  std::cerr << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
     auto a = seedimg_autodetect_from("cat.png");
@@ -17,8 +17,8 @@ int main() {
       seedimg::filters::blur(a, 10);
       bool b = seedimg_autodetect_to("biol.png", a);
     } else {
-      std::cout << "failed" << std::endl;
+      std::cerr << "failed" << std::endl;
     }
-    std::cout << "done" << std::endl;
+    std::cerr << "done" << std::endl;
   }
 }
