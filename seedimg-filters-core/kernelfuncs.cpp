@@ -12,27 +12,27 @@
 void box_blur_single(std::unique_ptr<seedimg::img> &inp_img,
                      unsigned int blur_level) {
   auto res_img = std::make_unique<seedimg::img>(*inp_img);
-  simg_int upper = static_cast<simg_int>(
+  blur_level = static_cast<unsigned int>(
       std::min(static_cast<int>(blur_level),
                std::min(static_cast<int>((inp_img->width() - 1)) / 2,
                         static_cast<int>((inp_img->height() - 1)) / 2)));
   for (simg_int y = 0; y < inp_img->height(); ++y) {
     simg_int r = 0, g = 0, b = 0;
-    // need to initialize with this pixel + upper
-    for (simg_int i = 0; i <= upper; ++i) {
+    // need to initialize with this pixel +  blur_level
+    for (simg_int i = 0; i <= blur_level; ++i) {
       auto pix = inp_img->pixel(i, y);
       r += pix.r;
       g += pix.g;
       b += pix.b;
     }
-    res_img->pixel(0, y) = {static_cast<std::uint8_t>(r / (upper + 1)),
-                            static_cast<std::uint8_t>(g / (upper + 1)),
-                            static_cast<std::uint8_t>(b / (upper + 1)),
+    res_img->pixel(0, y) = {static_cast<std::uint8_t>(r / (blur_level + 1)),
+                            static_cast<std::uint8_t>(g / (blur_level + 1)),
+                            static_cast<std::uint8_t>(b / (blur_level + 1)),
                             inp_img->pixel(0, y).a};
     // this is a separate loop because we don't remove anything, only add
-    for (simg_int x = 1; x < upper; ++x) {
-      simg_int sbl = x + upper + 1;
-      auto pix = inp_img->pixel(x + upper, y);
+    for (simg_int x = 1; x < blur_level; ++x) {
+      simg_int sbl = x + blur_level + 1;
+      auto pix = inp_img->pixel(x + blur_level, y);
       r += pix.r;
       g += pix.g;
       b += pix.b;
@@ -42,9 +42,9 @@ void box_blur_single(std::unique_ptr<seedimg::img> &inp_img,
                               inp_img->pixel(x, y).a};
     }
     // queuing optimization start when all edge cases end
-    for (simg_int x = upper; x < inp_img->width() - upper; ++x) {
-      auto pix = inp_img->pixel(x + upper, y);
-      auto prev = inp_img->pixel(x - upper, y);
+    for (simg_int x = blur_level; x < inp_img->width() - blur_level; ++x) {
+      auto pix = inp_img->pixel(x + blur_level, y);
+      auto prev = inp_img->pixel(x - blur_level, y);
       r = static_cast<simg_int>(std::max(
           static_cast<int_fast64_t>(0), static_cast<int_fast64_t>(r) +
                                             static_cast<int_fast64_t>(pix.r) -
@@ -63,10 +63,11 @@ void box_blur_single(std::unique_ptr<seedimg::img> &inp_img,
                               static_cast<std::uint8_t>(b / (2 * blur_level)),
                               inp_img->pixel(x, y).a};
     }
-    // final upper pixel loop
-    for (simg_int x = inp_img->width() - upper; x < inp_img->width(); ++x) {
-      simg_int ebl = inp_img->width() - x + upper + 1;
-      auto pix = inp_img->pixel(x - upper - 1, y);
+    // final  blur_level pixel loop
+    for (simg_int x = inp_img->width() - blur_level; x < inp_img->width();
+         ++x) {
+      simg_int ebl = inp_img->width() - x + blur_level + 1;
+      auto pix = inp_img->pixel(x - blur_level - 1, y);
       r -= pix.r;
       g -= pix.g;
       b -= pix.b;
