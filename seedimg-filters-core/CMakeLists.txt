@@ -1,6 +1,6 @@
 add_library(seedimg-filters-core SHARED
     invert.cpp
     grayscale.cpp
-    kernelfuncs.cpp)
+    blur.cpp)
 
 target_link_libraries(seedimg-filters-core seedimg)

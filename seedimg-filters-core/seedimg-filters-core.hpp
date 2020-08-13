@@ -12,6 +12,10 @@ bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
           seedimg::point p2) noexcept;
 void blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
           std::uint8_t it = 3);
+void h_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+            std::uint8_t it = 3);
+void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+            std::uint8_t it = 3);
 } // namespace seedimg::filters
 
 #endif
