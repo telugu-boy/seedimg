@@ -23,3 +23,12 @@ set_tests_properties(invert_alpha_only_test PROPERTIES PASS_REGULAR_EXPRESSION "
 
 add_test(crop_test ${TESTS_EXE} crop)
 set_tests_properties(crop_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(blur_test ${TESTS_EXE} blur)
+set_tests_properties(blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(h_blur_test ${TESTS_EXE} h_blur)
+set_tests_properties(h_blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(v_blur_test ${TESTS_EXE} v_blur)
+set_tests_properties(v_blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")

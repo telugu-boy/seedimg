@@ -13,7 +13,10 @@ enum class filter_functions {
   INVERT,
   INVERT_A,
   INVERT_AO,
-  CROP
+  CROP,
+  BLUR,
+  H_BLUR,
+  V_BLUR
 };
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
     {{"grayscale_lum", filter_functions::GRAYSCALE_LUM},
@@ -21,7 +24,10 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
      {"invert", filter_functions::INVERT},
      {"invert_alpha", filter_functions::INVERT_A},
      {"invert_alpha_only", filter_functions::INVERT_AO},
-     {"crop", filter_functions::CROP}};
+     {"crop", filter_functions::CROP},
+     {"blur", filter_functions::BLUR},
+     {"h_blur", filter_functions::H_BLUR},
+     {"v_blur", filter_functions::V_BLUR}};
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -54,6 +60,15 @@ int main(int argc, char *argv[]) {
   case filter_functions::CROP:
     img->crop({img->width() / 3, img->height() / 3},
               {2 * img->width() / 3, 2 * img->height() / 3});
+    break;
+  case filter_functions::BLUR:
+    seedimg::filters::blur(img, 10);
+    break;
+  case filter_functions::H_BLUR:
+    seedimg::filters::h_blur(img, 10);
+    break;
+  case filter_functions::V_BLUR:
+    seedimg::filters::v_blur(img, 10);
     break;
   }
   char name_buf[256];
