@@ -3,6 +3,7 @@
 
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
+#include <seedimg-jpeg/seedimg-jpeg.hpp>
 #include <seedimg/seedimg.hpp>
 
 int main() {
@@ -14,8 +15,9 @@ int main() {
       // a->crop({32, 115}, {315, 472});
       // seedimg::filters::grayscale(a, true);
       // seedimg::filters::invert(a);
-      seedimg::filters::blur(a, 255);
+      seedimg::filters::blur(a, 3);
       bool b = seedimg_autodetect_to("biol.jpg", a);
+      // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;
     }

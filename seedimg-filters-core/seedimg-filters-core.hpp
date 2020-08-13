@@ -10,7 +10,7 @@ void invert_a(std::unique_ptr<seedimg::img> &inp_img,
               bool invert_alpha_only = false);
 bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
           seedimg::point p2) noexcept;
-void blur(std::unique_ptr<seedimg::img> &inp_img, std::uint8_t blur_level,
+void blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
           std::uint8_t it = 3);
 } // namespace seedimg::filters
 
