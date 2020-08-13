@@ -14,8 +14,8 @@ int main() {
       // a->crop({32, 115}, {315, 472});
       // seedimg::filters::grayscale(a, true);
       // seedimg::filters::invert(a);
-      seedimg::filters::blur(a, 10);
-      bool b = seedimg_autodetect_to("biol.png", a);
+      seedimg::filters::blur(a, 255);
+      bool b = seedimg_autodetect_to("biol.jpg", a);
     } else {
       std::cerr << "failed" << std::endl;
     }
