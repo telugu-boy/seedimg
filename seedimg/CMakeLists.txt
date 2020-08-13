@@ -1,4 +1,4 @@
-/*********************************************************************** 
+#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -14,5 +14,5 @@ GNU Lesser General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
-************************************************************************/ 
+]]
 add_library(seedimg SHARED seedimg.cpp)
