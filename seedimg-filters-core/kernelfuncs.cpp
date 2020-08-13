@@ -11,6 +11,8 @@
 
 void box_blur_single(std::unique_ptr<seedimg::img> &inp_img,
                      unsigned int blur_level) {
+  if (blur_level == 0)
+    return;
   auto res_img = std::make_unique<seedimg::img>(*inp_img);
   blur_level = static_cast<unsigned int>(
       std::min(static_cast<int>(blur_level),
@@ -66,8 +68,8 @@ void box_blur_single(std::unique_ptr<seedimg::img> &inp_img,
     // final  blur_level pixel loop
     for (simg_int x = inp_img->width() - blur_level; x < inp_img->width();
          ++x) {
-      simg_int ebl = inp_img->width() - x + blur_level + 1;
-      auto pix = inp_img->pixel(x - blur_level - 1, y);
+      simg_int ebl = inp_img->width() - x + blur_level - 1;
+      auto pix = inp_img->pixel(x - blur_level, y);
       r -= pix.r;
       g -= pix.g;
       b -= pix.b;
