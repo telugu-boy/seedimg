@@ -1,6 +1,6 @@
 /***********************************************************************
 seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 telugu-boy
+Copyright (C) 2020 telugu-boy, <contributor name>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -15,20 +15,3 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#ifndef SEEDIMG_WEBP_H
-#define SEEDIMG_WEBP_H
-
-#include <memory>
-#include <optional>
-#include <seedimg/seedimg.hpp>
-
-namespace seedimg::modules {
-namespace webp {
-bool check(const std::string &filename) noexcept;
-bool to(const std::string &filename,
-        const std::unique_ptr<seedimg::img> &inp_img, float quality = 100.0);
-std::unique_ptr<seedimg::img> from(const std::string &filename);
-} // namespace webp
-} // namespace seedimg::modules
-
-#endif
