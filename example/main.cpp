@@ -16,6 +16,8 @@ int main() {
       // seedimg::filters::grayscale(a, true);
       // seedimg::filters::invert(a);
       seedimg::filters::blur(a, 10);
+      // seedimg::filters::h_blur(a, 10);
+      // seedimg::filters::v_blur(a, 10);
       bool b = seedimg_autodetect_to("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
