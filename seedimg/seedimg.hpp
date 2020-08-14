@@ -1,12 +1,34 @@
+/**********************************************************************
+seedimg -
+        module based image manipulation library written in modern
+            C++ Copyright(C) 2020 telugu
+        -
+        boy
+
+            This program is free software : you can redistribute it and /
+    or modify it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation,
+    either version 3 of the License,
+    or (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+************************************************************************/
 #ifndef SEEDIMG_CORE_H
 #define SEEDIMG_CORE_H
 
-#include <cassert>
 #include <cinttypes>
 #include <cstdlib>
 #include <cstring>
+#include <functional>
 #include <memory>
 #include <optional>
+#include <queue>
 #include <string>
 #include <thread>
 #include <vector>
@@ -34,29 +56,19 @@ class img {
 public:
   static constexpr std::uint8_t MAX_PIXEL_VALUE = UINT8_MAX;
   img() : width_(0), height_(0), data_(nullptr) {}
-  img(simg_int w, simg_int h) : width_(w), height_(h) {
+  img(simg_int w, simg_int h) : width_{w}, height_{h} {
     data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
         static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
     if (data_ == nullptr)
-      exit(0);
+      std::terminate();
     for (simg_int r = 0; r < height_; ++r) {
       data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
           static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
       if (data_[r] == nullptr)
-        exit(0);
+        std::terminate();
     }
   }
-  img(seedimg::img const &img_) : width_(img_.width_), height_(img_.height_) {
-    data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
-        static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
-    if (data_ == nullptr)
-      exit(0);
-    for (simg_int r = 0; r < height_; ++r) {
-      data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
-          static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
-      if (data_[r] == nullptr)
-        exit(0);
-    }
+  img(seedimg::img const &img_) : img(img_.width_, img_.height_) {
     for (simg_int y = 0; y < img_.height_; ++y) {
       std::memcpy(this->data_[y], img_.data_[y],
                   static_cast<std::size_t>(img_.width_) *
@@ -91,6 +103,11 @@ public:
 
   seedimg::pixel &pixel(simg_int x, simg_int y) { return data_[y][x]; }
   seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
+  seedimg::pixel &pixel(simg_int x) {
+    if (x > this->width_ * this->height_ - 1)
+      std::terminate();
+    return pixel(x / this->width_, x % this->width_);
+  }
   seedimg::pixel *row(simg_int y) { return data_[y]; }
   seedimg::pixel **data() { return data_; }
   simg_int width() { return width_; }
@@ -108,7 +125,8 @@ private:
   seedimg::pixel **data_;
 };
 
-bool to(const std::string &filename, std::unique_ptr<seedimg::img> &inp_img);
+bool to(const std::string &filename,
+        const std::unique_ptr<seedimg::img> &inp_img);
 std::unique_ptr<seedimg::img> from(const std::string &filename);
 
 namespace modules {};

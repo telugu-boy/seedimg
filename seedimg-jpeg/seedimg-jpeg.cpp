@@ -1,3 +1,20 @@
+/***********************************************************************
+seedimg - module based image manipulation library written in modern C++
+Copyright (C) 2020 telugu-boy
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+************************************************************************/
 // seedimg-jpeg.cpp : Defines the functions for the static library.
 //
 
@@ -119,7 +136,7 @@ bool seedimg::modules::jpeg::to(const std::string &filename,
   jpeg_compress_struct jenc;
   seedimg_jpeg_error_mgr jerr;
   JSAMPROW rowbuffer = nullptr;
-  simg_int errcode = 0;
+  int errcode = 0;
 
   jenc.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpeg_error_exit;

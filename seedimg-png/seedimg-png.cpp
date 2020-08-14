@@ -1,3 +1,24 @@
+/**********************************************************************
+seedimg -
+        module based image manipulation library written in modern
+            C++ Copyright(C) 2020 telugu
+        -
+        boy
+
+            This program is free software : you can redistribute it and /
+    or modify it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation,
+    either version 3 of the License,
+    or (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+************************************************************************/
 // seedimg-png.cpp : Defines the functions for the static library.
 //
 
@@ -16,7 +37,9 @@ extern "C" {
 #pragma warning(disable : 4996)
 #endif
 
-bool seedimg::modules::png::check(const std::string &filename) noexcept {
+namespace seedimg::modules {
+namespace png {
+bool check(const std::string &filename) noexcept {
   std::error_code ec;
   std::size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{} || size < 8)
@@ -29,8 +52,7 @@ bool seedimg::modules::png::check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 8);
 }
 
-std::unique_ptr<seedimg::img>
-seedimg::modules::png::from(const std::string &filename) {
+std::unique_ptr<seedimg::img> from(const std::string &filename) {
   std::unique_ptr<seedimg::img> res_img = nullptr;
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
@@ -134,8 +156,8 @@ finalise:
   }
 }
 
-bool seedimg::modules::png::to(const std::string &filename,
-                               const std::unique_ptr<seedimg::img> &inp_img) {
+bool to(const std::string &filename,
+        const std::unique_ptr<seedimg::img> &inp_img) {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
   int errcode = 0;
@@ -195,3 +217,5 @@ finalise:
 
   return errcode == 0;
 }
+} // namespace png
+} // namespace seedimg::modules

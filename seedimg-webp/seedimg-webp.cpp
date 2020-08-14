@@ -1,3 +1,20 @@
+/***********************************************************************
+seedimg - module based image manipulation library written in modern C++
+Copyright (C) 2020 telugu-boy
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+************************************************************************/
 // seedimg-webp.cpp : Defines the functions for the static library.
 //
 
@@ -12,8 +29,11 @@ extern "C" {
 
 #include "seedimg-webp.hpp"
 
+namespace seedimg::modules {
+namespace webp {
+
 // TODO: This is an example of a library function
-bool seedimg::modules::webp::check(const std::string &filename) noexcept {
+bool check(const std::string &filename) noexcept {
   std::error_code ec;
   std::size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{} || size < 8)
@@ -29,9 +49,8 @@ bool seedimg::modules::webp::check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 8);
 }
 
-bool seedimg::modules::webp::to(const std::string &filename,
-                                const std::unique_ptr<seedimg::img> &inp_img,
-                                float quality) {
+bool to(const std::string &filename,
+        const std::unique_ptr<seedimg::img> &inp_img, float quality) {
   uint8_t *output = nullptr;
   uint8_t *data = new uint8_t[static_cast<unsigned long>(inp_img->height() *
                                                          inp_img->width()) *
@@ -60,8 +79,7 @@ bool seedimg::modules::webp::to(const std::string &filename,
   WebPFree(output);
   return true;
 }
-std::unique_ptr<seedimg::img>
-seedimg::modules::webp::from(const std::string &filename) {
+std::unique_ptr<seedimg::img> from(const std::string &filename) {
   std::error_code ec;
   size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{})
@@ -92,3 +110,5 @@ seedimg::modules::webp::from(const std::string &filename) {
   WebPFree(inp_img);
   return res_img;
 }
+} // namespace webp
+} // namespace seedimg::modules

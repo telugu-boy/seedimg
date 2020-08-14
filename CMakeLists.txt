@@ -1,3 +1,20 @@
+#[[ 
+seedimg - module based image manipulation library written in modern C++ 
+Copyright (C) 2020 telugu-boy 
+ 
+This program is free software: you can redistribute it and/or modify 
+it under the terms of the GNU Lesser General Public License as published by 
+the Free Software Foundation, either version 3 of the License, or 
+(at your option) any later version. 
+ 
+This program is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+GNU Lesser General Public License for more details. 
+ 
+You should have received a copy of the GNU Lesser General Public License 
+along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+]]
 cmake_minimum_required(VERSION 3.0.0)
 
 # edit this to wherever your vcpkg is
@@ -10,16 +27,25 @@ project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipul
 
 option(BUILD_TESTING "" OFF)
 include(CTest)
+include(CheckCXXCompilerFlag)
 
 include_directories(${VCPKG_DIR}/installed/${VCPKG_TRIPLET}/include ${CMAKE_SOURCE_DIR})
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+set(BUILD_SHARED_LIBS TRUE)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+CHECK_CXX_COMPILER_FLAG(-Wextra COMPILER_SUPPORTS_WEXTRA)
+if(COMPILER_SUPPORTS_WEXTRA)
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+else()
+    set(CMAKE_CXX_FLAGS "-Wall")
+endif()
+
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
