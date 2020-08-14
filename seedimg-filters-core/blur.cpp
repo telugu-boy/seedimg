@@ -188,36 +188,57 @@ void box_blur_single(std::unique_ptr<seedimg::img> &inp_img,
   vertical_blur_single(res_img, inp_img, blur_level);
 }
 
+unsigned int clamped_blur_level(unsigned int blur_level, simg_int width,
+                                simg_int height) {
+  return static_cast<unsigned int>(
+      std::min(static_cast<int>(blur_level),
+               std::min(static_cast<int>((width - 1)) / 2,
+                        static_cast<int>((height - 1)) / 2)));
+}
+
 namespace seedimg::filters {
 void h_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
             std::uint8_t it) {
   if (blur_level == 0)
     return;
-
+  blur_level =
+      clamped_blur_level(blur_level, inp_img->width(), inp_img->height());
+  auto res_img =
+      std::make_unique<seedimg::img>(inp_img->width(), inp_img->height());
   for (std::uint8_t i = 0; i < it; ++i) {
-    // horizontal_blur_single(inp_img, blur_level);
+    if (i % 2 == 0) {
+      horizontal_blur_single(inp_img, res_img, blur_level);
+    } else {
+      horizontal_blur_single(res_img, inp_img, blur_level);
+    }
   }
+  if (it % 2 == 0)
+    inp_img.reset(res_img.release());
 }
 void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
             std::uint8_t it) {
   if (blur_level == 0)
     return;
-  blur_level = static_cast<unsigned int>(
-      std::min(static_cast<int>(blur_level),
-               std::min(static_cast<int>((inp_img->width() - 1)) / 2,
-                        static_cast<int>((inp_img->height() - 1)) / 2)));
+  blur_level =
+      clamped_blur_level(blur_level, inp_img->width(), inp_img->height());
+  auto res_img =
+      std::make_unique<seedimg::img>(inp_img->width(), inp_img->height());
   for (std::uint8_t i = 0; i < it; ++i) {
-    // vertical_blur_single(inp_img, blur_level);
+    if (i % 2 == 0) {
+      vertical_blur_single(inp_img, res_img, blur_level);
+    } else {
+      vertical_blur_single(res_img, inp_img, blur_level);
+    }
   }
+  if (it % 2 == 0)
+    inp_img.reset(res_img.release());
 }
 void blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
           std::uint8_t it) {
   if (blur_level == 0)
     return;
-  blur_level = static_cast<unsigned int>(
-      std::min(static_cast<int>(blur_level),
-               std::min(static_cast<int>((inp_img->width() - 1)) / 2,
-                        static_cast<int>((inp_img->height() - 1)) / 2)));
+  blur_level =
+      clamped_blur_level(blur_level, inp_img->width(), inp_img->height());
   auto res_img =
       std::make_unique<seedimg::img>(inp_img->width(), inp_img->height());
   for (std::uint8_t i = 0; i < it; ++i) {
