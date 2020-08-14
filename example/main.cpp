@@ -27,7 +27,7 @@ seedimg -
 #include <seedimg/seedimg.hpp>
 
 int main() {
-  std::cout << "current path is " << std::filesystem::current_path()
+  std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
     auto a = seedimg_autodetect_from("cat.png");
@@ -35,14 +35,12 @@ int main() {
       // a->crop({32, 115}, {315, 472});
       // seedimg::filters::grayscale(a, true);
       // seedimg::filters::invert(a);
-      seedimg::filters::blur(a, 3, 100);
+      // seedimg::filters::blur(a, 3, 100);
       // seedimg::filters::h_blur(a, 10);
       // seedimg::filters::v_blur(a, 10);
+      seedimg::filters::convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1, 0}});
+
       bool b = seedimg_autodetect_to("biol.jpg", a);
-      /*
-      seedimg::filters::convolution(a, {{  0.0625, 0.125, 0.0625 },
-                                        {  0.125,  0.25,  0.125  },
-                                        {  0.0625, 0.125, 0.0625 }});*/
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;

@@ -60,9 +60,12 @@ void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
                   input->height()));
 
           // TODO: alpha isn't altered, need to add an option for it.
-          outpix.r += pix.r * kernel[dy][dx];
-          outpix.g += pix.g * kernel[dy][dx];
-          outpix.b += pix.b * kernel[dy][dx];
+          outpix.r +=
+              std::max(0.0f, static_cast<float>(pix.r) * kernel[dy][dx]);
+          outpix.g +=
+              std::max(0.0f, static_cast<float>(pix.g) * kernel[dy][dx]);
+          outpix.b +=
+              std::max(0.0f, static_cast<float>(pix.b) * kernel[dy][dx]);
         }
       }
       input->pixel(x, y) = outpix;
