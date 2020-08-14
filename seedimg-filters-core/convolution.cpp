@@ -1,5 +1,6 @@
 ﻿#include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <numeric>
 
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
@@ -21,7 +22,7 @@ void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
           return s + std::accumulate(r.begin(), r.end(), 0.0);
         }));
 
-    if (kernmatrix_normdiv == 0) // prevent zero-division UB,
+    if (kernmatrix_normdiv <= 0) // prevent zero-division UB,
       kernmatrix_normdiv = 1;    // it being zero doesn't mean discard.
 
     for (simg_int r = 0; r < kernel_dims.second; ++r)
@@ -35,24 +36,28 @@ void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
   // of kernel's (width) and (height).
   seedimg::point kernel_origin{kernel_dims.first / 2, kernel_dims.second / 2};
 
-  for (ssize_t y = 0; y < static_cast<ssize_t>(input->height()); ++y) {
-    for (ssize_t x = 0; x < static_cast<ssize_t>(input->width()); ++x) {
+  for (simg_int y = 0; y < input->height(); ++y) {
+    for (simg_int x = 0; x < input->width(); ++x) {
       // output value to be used as an accumulator.
       // this will be resulting pixel in the kernel's origin.
       seedimg::pixel outpix{0, 0, 0, input->pixel(x, y).a};
 
-      for (ssize_t dy = 0; dy < static_cast<ssize_t>(kernel_dims.second);
-           ++dy) {
-        for (ssize_t dx = 0; dx < static_cast<ssize_t>(kernel_dims.first);
-             ++dx) {
+      for (std::size_t dy = 0; dy < kernel_dims.second; ++dy) {
+        for (std::size_t dx = 0; dx < kernel_dims.first; ++dx) {
           // NOTE: for edge handling a mixture of mirroring and wrapping is
           // done. wrapping when it reaches the end, mirroring when it reaches
           // the start.
           auto pix = input->pixel(
-              labs(x + dx - static_cast<ssize_t>(kernel_origin.first)) %
-                  input->width(),
-              labs(y + dy - static_cast<ssize_t>(kernel_origin.second)) %
-                  input->height());
+              static_cast<simg_int>(
+                  static_cast<unsigned long long>(std::llabs(
+                      static_cast<long long>(x) + static_cast<long long>(dx) -
+                      static_cast<long long>(kernel_origin.first))) %
+                  input->width()),
+              static_cast<simg_int>(
+                  static_cast<unsigned long long>(std::llabs(
+                      static_cast<long long>(y) + static_cast<long long>(dy) -
+                      static_cast<long long>(kernel_origin.second))) %
+                  input->height()));
 
           // TODO: alpha isn't altered, need to add an option for it.
           outpix.r += pix.r * kernel[dy][dx];
