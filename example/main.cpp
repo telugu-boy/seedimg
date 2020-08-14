@@ -32,7 +32,7 @@ int main() {
       // a->crop({32, 115}, {315, 472});
       // seedimg::filters::grayscale(a, true);
       // seedimg::filters::invert(a);
-      seedimg::filters::blur(a, 2, 100);
+      seedimg::filters::blur(a, 3, 100);
       // seedimg::filters::h_blur(a, 10);
       // seedimg::filters::v_blur(a, 10);
       bool b = seedimg_autodetect_to("biol.jpg", a);
