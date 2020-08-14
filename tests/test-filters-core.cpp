@@ -1,6 +1,6 @@
-/**********************************************************************
-    seedimg - module based image manipulation library written in modern
-                C++ Copyright(C) 2020 telugu-boy
+/***********************************************************************
+    seedimg - module based image manipulation library written in modern C++
+    Copyright (C) 2020 telugu-boy
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,8 @@ enum class filter_functions {
   CROP,
   BLUR,
   H_BLUR,
-  V_BLUR
+  V_BLUR,
+  KERNEL_CONVOLUTION
 };
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
     {{"grayscale_lum", filter_functions::GRAYSCALE_LUM},
@@ -45,7 +46,8 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
      {"crop", filter_functions::CROP},
      {"blur", filter_functions::BLUR},
      {"h_blur", filter_functions::H_BLUR},
-     {"v_blur", filter_functions::V_BLUR}};
+     {"v_blur", filter_functions::V_BLUR},
+     {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION}};
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -87,6 +89,12 @@ int main(int argc, char *argv[]) {
     break;
   case filter_functions::V_BLUR:
     seedimg::filters::v_blur(img, 10);
+    break;
+  // applies a 3x3 gaussian blur kernel.
+  case filter_functions::KERNEL_CONVOLUTION:
+    seedimg::filters::convolution(img, {{0.0625, 0.125, 0.0625},
+                                        {0.125, 0.25, 0.125},
+                                        {0.0625, 0.125, 0.0625}});
     break;
   }
   char name_buf[256];

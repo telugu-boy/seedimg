@@ -1,4 +1,4 @@
-#[[ 
+﻿#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 add_library(seedimg-filters-core SHARED
     invert.cpp
     grayscale.cpp
-    blur.cpp)
+    blur.cpp
+    convolution.cpp)
 
 target_link_libraries(seedimg-filters-core seedimg)
