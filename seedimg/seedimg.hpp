@@ -22,13 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SEEDIMG_CORE_H
 #define SEEDIMG_CORE_H
 
+#include <algorithm>
 #include <cinttypes>
 #include <cstdlib>
 #include <cstring>
-#include <functional>
 #include <memory>
-#include <optional>
-#include <queue>
 #include <string>
 #include <thread>
 #include <vector>
@@ -87,17 +85,32 @@ public:
   std::vector<std::pair<simg_int, simg_int>> start_end_rows() {
     std::vector<std::pair<simg_int, simg_int>> res;
     auto processor_count =
-        static_cast<simg_int>(std::thread::hardware_concurrency());
-    res.reserve(static_cast<std::size_t>(processor_count));
+        std::min(this->height(),
+                 static_cast<simg_int>(std::thread::hardware_concurrency()));
     if (processor_count == 0)
       processor_count = 1;
-    if (processor_count > this->height_)
-      processor_count = this->height_;
+    res.reserve(static_cast<std::size_t>(processor_count));
     simg_int rows_per_thread = this->height_ / processor_count;
     for (simg_int i = 0; i < processor_count * rows_per_thread;
          i += rows_per_thread)
       res.emplace_back(i, i + rows_per_thread);
     res[res.size() - 1].second += this->height_ % processor_count;
+    return res;
+  }
+
+  std::vector<std::pair<simg_int, simg_int>> start_end_cols() {
+    std::vector<std::pair<simg_int, simg_int>> res;
+    auto processor_count =
+        std::min(this->width(),
+                 static_cast<simg_int>(std::thread::hardware_concurrency()));
+    if (processor_count == 0)
+      processor_count = 1;
+    res.reserve(static_cast<std::size_t>(processor_count));
+    simg_int cols_per_thread = this->width_ / processor_count;
+    for (simg_int i = 0; i < processor_count * cols_per_thread;
+         i += cols_per_thread)
+      res.emplace_back(i, i + cols_per_thread);
+    res[res.size() - 1].second += this->width_ % processor_count;
     return res;
   }
 
@@ -123,7 +136,7 @@ private:
   // width amount of pixels in a row
   // height amount of rows.
   seedimg::pixel **data_;
-};
+}; // namespace seedimg
 
 bool to(const std::string &filename,
         const std::unique_ptr<seedimg::img> &inp_img);

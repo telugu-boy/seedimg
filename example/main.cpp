@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 #include <filesystem>
 #include <iostream>
-
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
 #include <seedimg-jpeg/seedimg-jpeg.hpp>
@@ -36,7 +35,7 @@ int main() {
       // a->crop({32, 115}, {315, 472});
       // seedimg::filters::grayscale(a, true);
       // seedimg::filters::invert(a);
-      seedimg::filters::blur(a, 10);
+      seedimg::filters::blur(a, 3);
       // seedimg::filters::h_blur(a, 10);
       // seedimg::filters::v_blur(a, 10);
       bool b = seedimg_autodetect_to("biol.jpg", a);
