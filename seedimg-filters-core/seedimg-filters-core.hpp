@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-/**********************************************************************
-    seedimg - module based image manipulation library written in modern
-                C++ Copyright(C) 2020 telugu-boy
-=======
-﻿/***********************************************************************
+/***********************************************************************
 seedimg - module based image manipulation library written in modern C++
 Copyright (C) 2020 telugu-boy
 >>>>>>> 0e78ee85b04d91851ed1bbfb63e529a1f89099f5
@@ -36,16 +31,17 @@ bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
           seedimg::point p2) noexcept;
 
 /** Apply a square kernel convolution to an image.
-  * NOTE: if weren't a square kernel, the image stays intact.
-  * NOTE: alpha is passed-as it is, it's not convoluted.
-  */
+ * NOTE: if weren't a square kernel, the image stays intact.
+ * NOTE: alpha is passed-as it is, it's not convoluted.
+ */
 void blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
           std::uint8_t it = 3);
 void h_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
             std::uint8_t it = 3);
 void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
             std::uint8_t it = 3);
-void convolution(std::unique_ptr<seedimg::img>& input, std::vector<std::vector<float>> kernel);
+void convolution(std::unique_ptr<seedimg::img> &input,
+                 std::vector<std::vector<float>> kernel);
 } // namespace seedimg::filters
 
 #endif

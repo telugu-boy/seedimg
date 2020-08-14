@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-/**********************************************************************
-    seedimg - module based image manipulation library written in modern
-                C++ Copyright(C) 2020 telugu-boy
-=======
-﻿/***********************************************************************
-seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 telugu-boy
->>>>>>> 0e78ee85b04d91851ed1bbfb63e529a1f89099f5
+/***********************************************************************
+    seedimg - module based image manipulation library written in modern C++
+    Copyright (C) 2020 telugu-boy
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -98,10 +92,10 @@ int main(int argc, char *argv[]) {
     break;
   // applies a 3x3 gaussian blur kernel.
   case filter_functions::KERNEL_CONVOLUTION:
-    seedimg::filters::convolution(img, {{  0.0625, 0.125, 0.0625 },
-                                        {  0.125,  0.25,  0.125  },
-                                        {  0.0625, 0.125, 0.0625 }});
-      break;
+    seedimg::filters::convolution(img, {{0.0625, 0.125, 0.0625},
+                                        {0.125, 0.25, 0.125},
+                                        {0.0625, 0.125, 0.0625}});
+    break;
   }
   char name_buf[256];
   std::snprintf(name_buf, 256, "tests_output/filters/png/result-%s.png",
