@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 /**********************************************************************
     seedimg - module based image manipulation library written in modern
                 C++ Copyright(C) 2020 telugu-boy
+=======
+﻿/**********************************************************************
+seedimg -
+        module based image manipulation library written in modern
+            C++ Copyright(C) 2020 telugu
+        -
+        boy
+>>>>>>> 0e78ee85b04d91851ed1bbfb63e529a1f89099f5
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -20,11 +29,10 @@
 #include <iostream>
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
-#include <seedimg-jpeg/seedimg-jpeg.hpp>
 #include <seedimg/seedimg.hpp>
 
 int main() {
-  std::cerr << "Current path is " << std::filesystem::current_path()
+  std::cout << "current path is " << std::filesystem::current_path()
             << std::endl;
   {
     auto a = seedimg_autodetect_from("cat.png");
@@ -36,6 +44,10 @@ int main() {
       // seedimg::filters::h_blur(a, 10);
       // seedimg::filters::v_blur(a, 10);
       bool b = seedimg_autodetect_to("biol.jpg", a);
+      /*
+      seedimg::filters::convolution(a, {{  0.0625, 0.125, 0.0625 },
+                                        {  0.125,  0.25,  0.125  },
+                                        {  0.0625, 0.125, 0.0625 }});*/
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;
