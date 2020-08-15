@@ -68,7 +68,6 @@ void rotate_hue(std::unique_ptr<seedimg::img> &inp_img,
 }
 
 void rotate_hue_i(std::unique_ptr<seedimg::img> &inp_img, int angle) {
-  double hue_kernel[9];
-  get_hue_kernel(angle, hue_kernel);
+  rotate_hue(inp_img, inp_img, angle);
 }
 } // namespace seedimg::filters

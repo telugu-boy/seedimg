@@ -35,7 +35,8 @@ enum class filter_functions {
   BLUR,
   H_BLUR,
   V_BLUR,
-  KERNEL_CONVOLUTION
+  KERNEL_CONVOLUTION,
+  ROTATE_HUE,
 };
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
     {{"grayscale_lum", filter_functions::GRAYSCALE_LUM},
@@ -47,7 +48,8 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
      {"blur", filter_functions::BLUR},
      {"h_blur", filter_functions::H_BLUR},
      {"v_blur", filter_functions::V_BLUR},
-     {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION}};
+     {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION},
+     {"rotate_hue", filter_functions::ROTATE_HUE}};
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -95,6 +97,9 @@ int main(int argc, char *argv[]) {
     seedimg::filters::convolution(img, {{0.0625, 0.125, 0.0625},
                                         {0.125, 0.25, 0.125},
                                         {0.0625, 0.125, 0.0625}});
+    break;
+  case filter_functions::ROTATE_HUE:
+    seedimg::filters::rotate_hue_i(img, 180);
     break;
   }
   char name_buf[256];

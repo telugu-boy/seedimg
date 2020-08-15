@@ -41,8 +41,8 @@ int main() {
       // seedimg::filters::v_blur(a, 10);
       // seedimg::filters::convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1,
       // 0}});
-      seedimg::filters::rotate_hue(a, res_img, 120);
-      bool b = seedimg_autodetect_to("biol.jpg", res_img);
+      seedimg::filters::rotate_hue_i(a, 180);
+      bool b = seedimg_autodetect_to("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;
