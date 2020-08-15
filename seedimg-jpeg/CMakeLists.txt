@@ -15,7 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-add_library(seedimg-jpeg SHARED seedimg-jpeg.cpp)
+add_library(seedimg-jpeg ${LIB_TYPE} seedimg-jpeg.cpp)
 
 find_package(JPEG REQUIRED)
 

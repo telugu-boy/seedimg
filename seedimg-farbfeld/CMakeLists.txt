@@ -15,7 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-add_library(seedimg-farbfeld SHARED seedimg-farbfeld.cpp)
+add_library(seedimg-farbfeld ${LIB_TYPE} seedimg-farbfeld.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_link_libraries(seedimg-farbfeld PRIVATE seedimg)
