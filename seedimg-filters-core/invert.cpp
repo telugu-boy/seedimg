@@ -23,8 +23,53 @@
 #include <thread>
 #include <vector>
 
-void invert_worker(std::unique_ptr<seedimg::img> &inp_img, simg_int start_row,
-                   simg_int end_row) noexcept {
+void invert_worker(std::unique_ptr<seedimg::img> &inp_img,
+                   std::unique_ptr<seedimg::img> &res_img, simg_int start_row,
+                   simg_int end_row) {
+  simg_int w = inp_img->width();
+  for (; start_row < end_row; ++start_row) {
+    for (simg_int x = 0; x < w; ++x) {
+      seedimg::pixel pix = inp_img->pixel(x, start_row);
+      res_img->pixel(x, start_row) = {
+          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
+          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
+          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b),
+          pix.a};
+    }
+  }
+}
+
+void invert_worker_alpha(std::unique_ptr<seedimg::img> &inp_img,
+                         std::unique_ptr<seedimg::img> &res_img,
+                         simg_int start_row, simg_int end_row) {
+  simg_int w = inp_img->width();
+  for (; start_row < end_row; ++start_row) {
+    for (simg_int x = 0; x < w; ++x) {
+      seedimg::pixel pix = inp_img->pixel(x, start_row);
+      res_img->pixel(x, start_row) = {
+          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
+          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
+          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b),
+          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.a)};
+    }
+  }
+}
+
+void invert_worker_alpha_only(std::unique_ptr<seedimg::img> &inp_img,
+                              std::unique_ptr<seedimg::img> &res_img,
+                              simg_int start_row, simg_int end_row) {
+  simg_int w = inp_img->width();
+  for (; start_row < end_row; ++start_row) {
+    for (simg_int x = 0; x < w; ++x) {
+      seedimg::pixel pix = inp_img->pixel(x, start_row);
+      res_img->pixel(x, start_row).a =
+          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.a);
+    }
+  }
+}
+
+void invert_i_worker(std::unique_ptr<seedimg::img> &inp_img, simg_int start_row,
+                     simg_int end_row) noexcept {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
     for (simg_int x = 0; x < w; ++x) {
@@ -37,8 +82,8 @@ void invert_worker(std::unique_ptr<seedimg::img> &inp_img, simg_int start_row,
   }
 }
 
-void invert_worker_alpha(std::unique_ptr<seedimg::img> &inp_img,
-                         simg_int start_row, simg_int end_row) noexcept {
+void invert_i_worker_alpha(std::unique_ptr<seedimg::img> &inp_img,
+                           simg_int start_row, simg_int end_row) noexcept {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
     for (simg_int x = 0; x < w; ++x) {
@@ -51,8 +96,8 @@ void invert_worker_alpha(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void invert_worker_alpha_only(std::unique_ptr<seedimg::img> &inp_img,
-                              simg_int start_row, simg_int end_row) noexcept {
+void invert_i_worker_alpha_only(std::unique_ptr<seedimg::img> &inp_img,
+                                simg_int start_row, simg_int end_row) noexcept {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
     for (simg_int x = 0; x < w; ++x) {
@@ -63,30 +108,66 @@ void invert_worker_alpha_only(std::unique_ptr<seedimg::img> &inp_img,
 }
 
 namespace seedimg::filters {
-void invert(std::unique_ptr<seedimg::img> &inp_img) {
+
+void invert(std::unique_ptr<seedimg::img> &inp_img,
+            std::unique_ptr<seedimg::img> &res_img) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   for (std::size_t i = 0; i < workers.size(); i++) {
-    workers.at(i) = std::thread(invert_worker, std::ref(inp_img),
+    workers.at(i) =
+        std::thread(invert_worker, std::ref(inp_img), std::ref(res_img),
+                    start_end.at(i).first, start_end.at(i).second);
+  }
+  for (std::size_t i = 0; i < workers.size(); ++i)
+    workers.at(i).join();
+};
+
+void invert_a(std::unique_ptr<seedimg::img> &inp_img,
+              std::unique_ptr<seedimg::img> &res_img, bool invert_alpha_only) {
+  auto start_end = inp_img->start_end_rows();
+  std::vector<std::thread> workers(start_end.size());
+  if (invert_alpha_only) {
+    for (std::size_t i = 0; i < workers.size(); i++) {
+      workers.at(i) = std::thread(invert_worker_alpha_only, std::ref(inp_img),
+                                  std::ref(res_img), start_end.at(i).first,
+                                  start_end.at(i).second);
+    }
+  } else {
+    for (std::size_t i = 0; i < workers.size(); i++) {
+      workers.at(i) =
+          std::thread(invert_worker_alpha, std::ref(inp_img), std::ref(res_img),
+                      start_end.at(i).first, start_end.at(i).second);
+    }
+  }
+  for (std::size_t i = 0; i < workers.size(); ++i)
+    workers.at(i).join();
+};
+
+void invert_i(std::unique_ptr<seedimg::img> &inp_img) {
+  auto start_end = inp_img->start_end_rows();
+  std::vector<std::thread> workers(start_end.size());
+  for (std::size_t i = 0; i < workers.size(); i++) {
+    workers.at(i) = std::thread(invert_i_worker, std::ref(inp_img),
                                 start_end.at(i).first, start_end.at(i).second);
   }
   for (std::size_t i = 0; i < workers.size(); ++i)
     workers.at(i).join();
 }
 
-void invert_a(std::unique_ptr<seedimg::img> &inp_img, bool invert_alpha_only) {
+void invert_a_i(std::unique_ptr<seedimg::img> &inp_img,
+                bool invert_alpha_only) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   if (invert_alpha_only) {
     for (std::size_t i = 0; i < workers.size(); i++) {
       workers.at(i) =
-          std::thread(invert_worker_alpha_only, std::ref(inp_img),
+          std::thread(invert_i_worker_alpha_only, std::ref(inp_img),
                       start_end.at(i).first, start_end.at(i).second);
     }
   } else {
     for (std::size_t i = 0; i < workers.size(); i++) {
       workers.at(i) =
-          std::thread(invert_worker_alpha, std::ref(inp_img),
+          std::thread(invert_i_worker_alpha, std::ref(inp_img),
                       start_end.at(i).first, start_end.at(i).second);
     }
   }

@@ -23,10 +23,18 @@ Copyright (C) 2020 telugu-boy
 #include <seedimg/seedimg.hpp>
 
 namespace seedimg::filters {
-void grayscale(std::unique_ptr<seedimg::img> &inp_img, bool luminosity = true);
-void invert(std::unique_ptr<seedimg::img> &inp_img);
+void grayscale(std::unique_ptr<seedimg::img> &inp_img,
+               std::unique_ptr<seedimg::img> &res_img, bool luminosity = true);
+void grayscale_i(std::unique_ptr<seedimg::img> &inp_img,
+                 bool luminosity = true);
+void invert(std::unique_ptr<seedimg::img> &inp_img,
+            std::unique_ptr<seedimg::img> &res_img);
 void invert_a(std::unique_ptr<seedimg::img> &inp_img,
+              std::unique_ptr<seedimg::img> &res_img,
               bool invert_alpha_only = false);
+void invert_i(std::unique_ptr<seedimg::img> &inp_img);
+void invert_a_i(std::unique_ptr<seedimg::img> &inp_img,
+                bool invert_alpha_only = false);
 bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
           seedimg::point p2) noexcept;
 

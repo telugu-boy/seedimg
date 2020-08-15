@@ -63,19 +63,19 @@ int main(int argc, char *argv[]) {
   auto img = seedimg_autodetect_from("test_image.png");
   switch (filter_mapping.at(argv[1])) {
   case filter_functions::GRAYSCALE_LUM:
-    seedimg::filters::grayscale(img, true);
+    seedimg::filters::grayscale_i(img, true);
     break;
   case filter_functions::GRAYSCALE_AVG:
-    seedimg::filters::grayscale(img, false);
+    seedimg::filters::grayscale_i(img, false);
     break;
   case filter_functions::INVERT:
-    seedimg::filters::invert(img);
+    seedimg::filters::invert_i(img);
     break;
   case filter_functions::INVERT_A:
-    seedimg::filters::invert_a(img, false);
+    seedimg::filters::invert_a_i(img, false);
     break;
   case filter_functions::INVERT_AO:
-    seedimg::filters::invert_a(img, true);
+    seedimg::filters::invert_a_i(img, true);
     break;
   case filter_functions::CROP:
     img->crop({img->width() / 3, img->height() / 3},

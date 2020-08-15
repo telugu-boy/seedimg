@@ -31,15 +31,16 @@ int main() {
             << std::endl;
   {
     auto a = seedimg_autodetect_from("cat.png");
+    // auto res_img = std::make_unique<seedimg::img>(a->width(), a->height());
     if (a != nullptr) {
-      // a->crop({32, 115}, {315, 472});
-      // seedimg::filters::grayscale(a, true);
-      // seedimg::filters::invert(a);
-      // seedimg::filters::blur(a, 3, 100);
+      // a->crop({122, 166}, {244, 332});
+      // seedimg::filters::grayscale_i(a, true);
+      // seedimg::filters::invert_i(a);
+      // seedimg::filters::blur(a, 2, 100);
       // seedimg::filters::h_blur(a, 10);
       // seedimg::filters::v_blur(a, 10);
-      seedimg::filters::convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1, 0}});
-
+      // seedimg::filters::convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1,
+      // 0}});
       bool b = seedimg_autodetect_to("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

@@ -24,8 +24,37 @@
 #include <vector>
 
 void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
-                                 simg_int start_row,
-                                 simg_int end_row) noexcept {
+                                 std::unique_ptr<seedimg::img> &res_img,
+                                 simg_int start_row, simg_int end_row) {
+  simg_int w = inp_img->width();
+  for (; start_row < end_row; ++start_row) {
+    for (simg_int x = 0; x < w; ++x) {
+      seedimg::pixel &pix = inp_img->pixel(x, start_row);
+      uint8_t linear = static_cast<uint8_t>((0.2126 * (pix.r / 255.0) +
+                                             0.7152 * (pix.g / 255.0) +
+                                             0.0722 * (pix.b / 255.0)) *
+                                            255);
+      res_img->pixel(x, start_row) = {linear, linear, linear, pix.a};
+    }
+  }
+}
+
+void grayscale_worker_average(std::unique_ptr<seedimg::img> &inp_img,
+                              std::unique_ptr<seedimg::img> &res_img,
+                              simg_int start_row, simg_int end_row) {
+  simg_int w = inp_img->width();
+  for (; start_row < end_row; ++start_row) {
+    for (simg_int x = 0; x < w; ++x) {
+      seedimg::pixel &pix = inp_img->pixel(x, start_row);
+      uint8_t avg = (pix.r + pix.g + pix.b) / 3;
+      res_img->pixel(x, start_row) = {avg, avg, avg, pix.a};
+    }
+  }
+}
+
+void grayscale_i_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
+                                   simg_int start_row,
+                                   simg_int end_row) noexcept {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
     for (simg_int x = 0; x < w; ++x) {
@@ -39,8 +68,8 @@ void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void grayscale_worker_average(std::unique_ptr<seedimg::img> &inp_img,
-                              simg_int start_row, simg_int end_row) noexcept {
+void grayscale_i_worker_average(std::unique_ptr<seedimg::img> &inp_img,
+                                simg_int start_row, simg_int end_row) noexcept {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
     for (simg_int x = 0; x < w; ++x) {
@@ -52,19 +81,40 @@ void grayscale_worker_average(std::unique_ptr<seedimg::img> &inp_img,
 }
 
 namespace seedimg::filters {
-void grayscale(std::unique_ptr<seedimg::img> &inp_img, bool luminosity) {
+void grayscale(std::unique_ptr<seedimg::img> &inp_img,
+               std::unique_ptr<seedimg::img> &res_img, bool luminosity) {
+  auto start_end = inp_img->start_end_rows();
+  std::vector<std::thread> workers(start_end.size());
+  if (luminosity) {
+    for (std::size_t i = 0; i < workers.size(); i++) {
+      workers.at(i) = std::thread(
+          grayscale_worker_luminosity, std::ref(inp_img), std::ref(res_img),
+          start_end.at(i).first, start_end.at(i).second);
+    }
+  } else {
+    for (std::size_t i = 0; i < workers.size(); i++) {
+      workers.at(i) = std::thread(grayscale_worker_average, std::ref(inp_img),
+                                  std::ref(res_img), start_end.at(i).first,
+                                  start_end.at(i).second);
+    }
+  }
+  for (std::size_t i = 0; i < workers.size(); ++i)
+    workers.at(i).join();
+}
+
+void grayscale_i(std::unique_ptr<seedimg::img> &inp_img, bool luminosity) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   if (luminosity) {
     for (std::size_t i = 0; i < workers.size(); i++) {
       workers.at(i) =
-          std::thread(grayscale_worker_luminosity, std::ref(inp_img),
+          std::thread(grayscale_i_worker_luminosity, std::ref(inp_img),
                       start_end.at(i).first, start_end.at(i).second);
     }
   } else {
     for (std::size_t i = 0; i < workers.size(); i++) {
       workers.at(i) =
-          std::thread(grayscale_worker_average, std::ref(inp_img),
+          std::thread(grayscale_i_worker_average, std::ref(inp_img),
                       start_end.at(i).first, start_end.at(i).second);
     }
   }
