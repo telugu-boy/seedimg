@@ -40,17 +40,16 @@ void rotate_hue(std::unique_ptr<seedimg::img> &inp_img,
 void rotate_hue_i(std::unique_ptr<seedimg::img> &inp_img, int angle);
 bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
           seedimg::point p2) noexcept;
-
-/** Apply a square kernel convolution to an image.
- * NOTE: if weren't a square kernel, the image stays intact.
- * NOTE: alpha is passed-as it is, it's not convoluted.
- */
 void blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
           std::uint8_t it = 3);
 void h_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
             std::uint8_t it = 3);
 void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
             std::uint8_t it = 3);
+/** Apply a square kernel convolution to an image.
+ * NOTE: if weren't a square kernel, the image stays intact.
+ * NOTE: alpha is passed-as it is, it's not convoluted.
+ */
 void convolution(std::unique_ptr<seedimg::img> &input,
                  std::vector<std::vector<float>> kernel);
 } // namespace seedimg::filters
