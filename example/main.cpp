@@ -32,9 +32,9 @@ int main() {
       // seedimg::filters::crop_i(a, {122, 166}, {244, 332});
       // seedimg::filters::grayscale_i(a, true);
       // seedimg::filters::invert_i(a);
-      // seedimg::filters::blur(a, 10);
-      // seedimg::filters::h_blur(a, 10);
-      // seedimg::filters::v_blur(a, 10);
+      // seedimg::filters::blur_i(a, 10);
+      // seedimg::filters::h_blur_i(a, 10);
+      // seedimg::filters::v_blur_i(a, 10);
       // seedimg::filters::convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1,
       // 0}});
       // seedimg::filters::rotate_hue_i(a, 180);

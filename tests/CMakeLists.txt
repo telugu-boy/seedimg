@@ -56,5 +56,17 @@ set_tests_properties(blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 add_test(kernel_convolution_test ${TESTS_EXE} kernel_convolution)
 set_tests_properties(kernel_convolution_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-add_test(rotate_hue_test ${TESTS_EXE} rotate_hue)
-set_tests_properties(rotate_hue_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+add_test(rotate_cw_test ${TESTS_EXE} rotate_cw)
+set_tests_properties(rotate_cw_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(rotate_180_test ${TESTS_EXE} rotate_180)
+set_tests_properties(rotate_180_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(rotate_ccw_test ${TESTS_EXE} rotate_ccw)
+set_tests_properties(rotate_ccw_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(v_mirror_test ${TESTS_EXE} v_mirror)
+set_tests_properties(v_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(h_mirror_test ${TESTS_EXE} h_mirror)
+set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")

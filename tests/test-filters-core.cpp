@@ -37,6 +37,11 @@ enum class filter_functions {
   V_BLUR,
   KERNEL_CONVOLUTION,
   ROTATE_HUE,
+  ROTATE_CW,
+  ROTATE_180,
+  ROTATE_CCW,
+  V_MIRROR,
+  H_MIRROR,
 };
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
     {{"grayscale_lum", filter_functions::GRAYSCALE_LUM},
@@ -49,7 +54,12 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
      {"h_blur", filter_functions::H_BLUR},
      {"v_blur", filter_functions::V_BLUR},
      {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION},
-     {"rotate_hue", filter_functions::ROTATE_HUE}};
+     {"rotate_hue", filter_functions::ROTATE_HUE},
+     {"rotate_cw", filter_functions::ROTATE_CW},
+     {"rotate_180", filter_functions::ROTATE_180},
+     {"rotate_ccw", filter_functions::ROTATE_CCW},
+     {"v_mirror", filter_functions::V_MIRROR},
+     {"h_mirror", filter_functions::H_MIRROR}};
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -59,9 +69,10 @@ int main(int argc, char *argv[]) {
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
   std::filesystem::create_directories(res_dir + "/png/");
+  /*
   std::filesystem::create_directories(res_dir + "/jpg/");
   std::filesystem::create_directories(res_dir + "/webp/");
-  std::filesystem::create_directories(res_dir + "/farbfeld/");
+  std::filesystem::create_directories(res_dir + "/farbfeld/");*/
   auto img = seedimg_autodetect_from("test_image.png");
   switch (filter_mapping.at(argv[1])) {
   case filter_functions::GRAYSCALE_LUM:
@@ -101,11 +112,27 @@ int main(int argc, char *argv[]) {
   case filter_functions::ROTATE_HUE:
     seedimg::filters::rotate_hue_i(img, 180);
     break;
+  case filter_functions::ROTATE_CW:
+    seedimg::filters::rotate_cw_i(img);
+    break;
+  case filter_functions::ROTATE_180:
+    seedimg::filters::rotate_180_i(img);
+    break;
+  case filter_functions::ROTATE_CCW:
+    seedimg::filters::rotate_ccw_i(img);
+    break;
+  case filter_functions::V_MIRROR:
+    seedimg::filters::v_mirror_i(img);
+    break;
+  case filter_functions::H_MIRROR:
+    seedimg::filters::h_mirror_i(img);
+    break;
   }
   char name_buf[256];
   std::snprintf(name_buf, 256, "tests_output/filters/png/result-%s.png",
                 argv[1]);
   seedimg_autodetect_to(name_buf, img);
+  /*
   std::snprintf(name_buf, 256, "tests_output/filters/jpg/result-%s.jpg",
                 argv[1]);
   seedimg_autodetect_to(name_buf, img);
@@ -114,6 +141,6 @@ int main(int argc, char *argv[]) {
   seedimg_autodetect_to(name_buf, img);
   std::snprintf(name_buf, 256, "tests_output/filters/farbfeld/result-%s.ff",
                 argv[1]);
-  seedimg_autodetect_to(name_buf, img);
+  seedimg_autodetect_to(name_buf, img);*/
   std::cout << "SUCCESS";
 }
