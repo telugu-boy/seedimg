@@ -21,6 +21,7 @@ add_library(seedimg-filters-core ${LIB_TYPE}
     blur.cpp
     convolution.cpp
     rotate_hue.cpp
-    rotate_mirror.cpp)
+    rotate_mirror.cpp
+    crop.cpp)
 
 target_link_libraries(seedimg-filters-core seedimg)

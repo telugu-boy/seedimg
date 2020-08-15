@@ -29,7 +29,7 @@ int main() {
     auto a = seedimg_autodetect_from("cat.png");
     auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
-      // a->crop({122, 166}, {244, 332});
+      // seedimg::filters::crop_i(a, {122, 166}, {244, 332});
       // seedimg::filters::grayscale_i(a, true);
       // seedimg::filters::invert_i(a);
       // seedimg::filters::blur(a, 10);

@@ -87,11 +87,11 @@ public:
     if (processor_count == 0)
       processor_count = 1;
     res.reserve(static_cast<std::size_t>(processor_count));
-    simg_int rows_per_thread = this->height_ / processor_count;
+    simg_int rows_per_thread = this->height() / processor_count;
     for (simg_int i = 0; i < processor_count * rows_per_thread;
          i += rows_per_thread)
       res.emplace_back(i, i + rows_per_thread);
-    res[res.size() - 1].second += this->height_ % processor_count;
+    res[res.size() - 1].second += this->height() % processor_count;
     return res;
   }
 
@@ -103,28 +103,25 @@ public:
     if (processor_count == 0)
       processor_count = 1;
     res.reserve(static_cast<std::size_t>(processor_count));
-    simg_int cols_per_thread = this->width_ / processor_count;
+    simg_int cols_per_thread = this->width() / processor_count;
     for (simg_int i = 0; i < processor_count * cols_per_thread;
          i += cols_per_thread)
       res.emplace_back(i, i + cols_per_thread);
-    res[res.size() - 1].second += this->width_ % processor_count;
+    res[res.size() - 1].second += this->width() % processor_count;
     return res;
   }
 
   seedimg::pixel &pixel(simg_int x, simg_int y) { return data_[y][x]; }
   seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
   seedimg::pixel &pixel(simg_int x) {
-    if (x > this->width_ * this->height_ - 1)
+    if (x > this->width() * this->height() - 1)
       std::terminate();
-    return pixel(x / this->width_, x % this->width_);
+    return pixel(x / this->width(), x % this->width());
   }
   seedimg::pixel *row(simg_int y) { return data_[y]; }
   seedimg::pixel **data() { return data_; }
   simg_int width() { return width_; }
   simg_int height() { return height_; }
-
-  // resizing image manipulation functions
-  bool crop(seedimg::point p1, seedimg::point p2);
 
 private:
   simg_int width_;
