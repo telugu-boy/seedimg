@@ -35,6 +35,9 @@ void invert_a(std::unique_ptr<seedimg::img> &inp_img,
 void invert_i(std::unique_ptr<seedimg::img> &inp_img);
 void invert_a_i(std::unique_ptr<seedimg::img> &inp_img,
                 bool invert_alpha_only = false);
+void rotate_hue(std::unique_ptr<seedimg::img> &inp_img,
+                std::unique_ptr<seedimg::img> &res_img, int angle);
+void rotate_hue_i(std::unique_ptr<seedimg::img> &inp_img, int angle);
 bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
           seedimg::point p2) noexcept;
 
