@@ -16,8 +16,8 @@ double clamp(double num) {
   }
 }
 
-void rotate_hue_worker(std::unique_ptr<seedimg::img> &inp_img,
-                       std::unique_ptr<seedimg::img> &res_img, simg_int start,
+void rotate_hue_worker(simg &inp_img,
+                       simg &res_img, simg_int start,
                        simg_int end, const double hue_kernel[9]) {
 
   for (; start < end; start++) {
@@ -52,8 +52,8 @@ void get_hue_kernel(int angle, double hue_kernel[9]) {
 }
 
 namespace seedimg::filters {
-void rotate_hue(std::unique_ptr<seedimg::img> &inp_img,
-                std::unique_ptr<seedimg::img> &res_img, int angle) {
+void rotate_hue(simg &inp_img,
+                simg &res_img, int angle) {
   double hue_kernel[9];
   get_hue_kernel(angle, hue_kernel);
   auto start_end = inp_img->start_end_rows();
@@ -67,7 +67,7 @@ void rotate_hue(std::unique_ptr<seedimg::img> &inp_img,
     workers.at(i).join();
 }
 
-void rotate_hue_i(std::unique_ptr<seedimg::img> &inp_img, int angle) {
+void rotate_hue_i(simg &inp_img, int angle) {
   rotate_hue(inp_img, inp_img, angle);
 }
 } // namespace seedimg::filters

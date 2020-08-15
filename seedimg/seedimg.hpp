@@ -133,7 +133,11 @@ private:
   // width amount of pixels in a row
   // height amount of rows.
   seedimg::pixel **data_;
-}; // namespace seedimg
+};
+
+std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
+  return std::make_unique<seedimg::img>(width, height);
+}
 
 bool to(const std::string &filename,
         const std::unique_ptr<seedimg::img> &inp_img);
@@ -142,5 +146,7 @@ std::unique_ptr<seedimg::img> from(const std::string &filename);
 namespace modules {};
 namespace filters {};
 } // namespace seedimg
+
+typedef std::unique_ptr<seedimg::img> simg;
 
 #endif

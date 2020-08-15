@@ -64,7 +64,7 @@ bool check(const std::string &filename) {
   return std::memcmp(sig, "farbfeld", 8) == 0;
 }
 
-std::unique_ptr<seedimg::img> from(const std::string &filename) {
+simg from(const std::string &filename) {
   std::ifstream input(filename);
   struct {
     char sig[8];
@@ -106,7 +106,7 @@ std::unique_ptr<seedimg::img> from(const std::string &filename) {
 }
 
 bool to(const std::string &filename,
-        const std::unique_ptr<seedimg::img> &inp_img) {
+        const simg &inp_img) {
   std::ofstream output(filename);
 
   std::uint8_t width_ser[4];

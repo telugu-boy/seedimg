@@ -49,8 +49,8 @@ bool check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 8);
 }
 
-std::unique_ptr<seedimg::img> from(const std::string &filename) {
-  std::unique_ptr<seedimg::img> res_img = nullptr;
+simg from(const std::string &filename) {
+  simg res_img = nullptr;
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
   // chosen 127 as 0 is already taken as a type.
@@ -154,7 +154,7 @@ finalise:
 }
 
 bool to(const std::string &filename,
-        const std::unique_ptr<seedimg::img> &inp_img) {
+        const simg &inp_img) {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
   int errcode = 0;

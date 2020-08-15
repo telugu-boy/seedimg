@@ -27,8 +27,8 @@
 #include <thread>
 #include <vector>
 
-void horizontal_blur_i_single_worker(std::unique_ptr<seedimg::img> &inp_img,
-                                     std::unique_ptr<seedimg::img> &res_img,
+void horizontal_blur_i_single_worker(simg &inp_img,
+                                     simg &res_img,
                                      simg_int start, simg_int end,
                                      unsigned int blur_level) {
   for (simg_int y = start; y < end; ++y) {
@@ -90,8 +90,8 @@ void horizontal_blur_i_single_worker(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void vertical_blur_i_single_worker(std::unique_ptr<seedimg::img> &inp_img,
-                                   std::unique_ptr<seedimg::img> &res_img,
+void vertical_blur_i_single_worker(simg &inp_img,
+                                   simg &res_img,
                                    simg_int start, simg_int end,
                                    unsigned int blur_level) {
   for (simg_int x = start; x < end; ++x) {
@@ -153,8 +153,8 @@ void vertical_blur_i_single_worker(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void horizontal_blur_single_i(std::unique_ptr<seedimg::img> &inp_img,
-                              std::unique_ptr<seedimg::img> &res_img,
+void horizontal_blur_single_i(simg &inp_img,
+                              simg &res_img,
                               unsigned int blur_level) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
@@ -167,8 +167,8 @@ void horizontal_blur_single_i(std::unique_ptr<seedimg::img> &inp_img,
     workers.at(i).join();
 }
 
-void vertical_blur_single_i(std::unique_ptr<seedimg::img> &inp_img,
-                            std::unique_ptr<seedimg::img> &res_img,
+void vertical_blur_single_i(simg &inp_img,
+                            simg &res_img,
                             unsigned int blur_level) {
   auto start_end = inp_img->start_end_cols();
   std::vector<std::thread> workers(start_end.size());
@@ -181,8 +181,8 @@ void vertical_blur_single_i(std::unique_ptr<seedimg::img> &inp_img,
     workers.at(i).join();
 }
 
-void box_blur_single(std::unique_ptr<seedimg::img> &inp_img,
-                     std::unique_ptr<seedimg::img> &res_img,
+void box_blur_single(simg &inp_img,
+                     simg &res_img,
                      unsigned int blur_level) {
   horizontal_blur_single_i(inp_img, res_img, blur_level);
   vertical_blur_single_i(res_img, inp_img, blur_level);
@@ -197,7 +197,7 @@ unsigned int clamped_blur_level(unsigned int blur_level, simg_int width,
 }
 
 namespace seedimg::filters {
-void h_blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+void h_blur_i(simg &inp_img, unsigned int blur_level,
               std::uint8_t it) {
   if (blur_level == 0)
     return;
@@ -215,7 +215,7 @@ void h_blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
   if (it % 2 == 0)
     inp_img.reset(res_img.release());
 }
-void v_blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+void v_blur_i(simg &inp_img, unsigned int blur_level,
               std::uint8_t it) {
   if (blur_level == 0)
     return;
@@ -233,7 +233,7 @@ void v_blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
   if (it % 2 == 0)
     inp_img.reset(res_img.release());
 }
-void blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+void blur_i(simg &inp_img, unsigned int blur_level,
             std::uint8_t it) {
   if (blur_level == 0)
     return;

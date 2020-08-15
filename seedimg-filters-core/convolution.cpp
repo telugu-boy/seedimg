@@ -6,7 +6,7 @@
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
 #include <seedimg/seedimg.hpp>
 
-void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
+void seedimg::filters::convolution(simg &input,
                                    std::vector<std::vector<float>> kernel) {
   seedimg::point kernel_dims{kernel.size() ? kernel[0].size() : 0,
                              kernel.size()};

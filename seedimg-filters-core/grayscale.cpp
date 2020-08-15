@@ -23,8 +23,8 @@
 #include <thread>
 #include <vector>
 
-void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
-                                 std::unique_ptr<seedimg::img> &res_img,
+void grayscale_worker_luminosity(simg &inp_img,
+                                 simg &res_img,
                                  simg_int start_row, simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -39,8 +39,8 @@ void grayscale_worker_luminosity(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void grayscale_worker_average(std::unique_ptr<seedimg::img> &inp_img,
-                              std::unique_ptr<seedimg::img> &res_img,
+void grayscale_worker_average(simg &inp_img,
+                              simg &res_img,
                               simg_int start_row, simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -53,8 +53,8 @@ void grayscale_worker_average(std::unique_ptr<seedimg::img> &inp_img,
 }
 
 namespace seedimg::filters {
-void grayscale(std::unique_ptr<seedimg::img> &inp_img,
-               std::unique_ptr<seedimg::img> &res_img, bool luminosity) {
+void grayscale(simg &inp_img,
+               simg &res_img, bool luminosity) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   if (luminosity) {
@@ -74,7 +74,7 @@ void grayscale(std::unique_ptr<seedimg::img> &inp_img,
     workers.at(i).join();
 }
 
-void grayscale_i(std::unique_ptr<seedimg::img> &inp_img, bool luminosity) {
+void grayscale_i(simg &inp_img, bool luminosity) {
   grayscale(inp_img, inp_img, luminosity);
 }
 } // namespace seedimg::filters

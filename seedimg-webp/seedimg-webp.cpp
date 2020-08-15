@@ -51,7 +51,7 @@ bool check(const std::string &filename) noexcept {
 }
 
 bool to(const std::string &filename,
-        const std::unique_ptr<seedimg::img> &inp_img, float quality) {
+        const simg &inp_img, float quality) {
   uint8_t *output = nullptr;
   uint8_t *data = new uint8_t[static_cast<unsigned long>(inp_img->height() *
                                                          inp_img->width()) *
@@ -80,7 +80,7 @@ bool to(const std::string &filename,
   WebPFree(output);
   return true;
 }
-std::unique_ptr<seedimg::img> from(const std::string &filename) {
+simg from(const std::string &filename) {
   std::error_code ec;
   size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{})

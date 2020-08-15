@@ -62,7 +62,7 @@ bool seedimg::modules::jpeg::check(const std::string &filename) noexcept {
   return !std::memcmp(cmp, header, 3);
 }
 
-std::unique_ptr<seedimg::img>
+simg
 seedimg::modules::jpeg::from(const std::string &filename) {
   auto input = std::fopen(filename.c_str(), "rb");
   if (input == nullptr)
@@ -70,7 +70,7 @@ seedimg::modules::jpeg::from(const std::string &filename) {
 
   jpeg_decompress_struct jdec;
   seedimg_jpeg_error_mgr jerr;
-  std::unique_ptr<seedimg::img> res_img;
+  simg res_img;
   JSAMPROW rowbuffer = nullptr;
   int errcode = 0;
 
@@ -127,7 +127,7 @@ finalise:
  */
 // quality default param = 100, progressive = false
 bool seedimg::modules::jpeg::to(const std::string &filename,
-                                const std::unique_ptr<seedimg::img> &image,
+                                const simg &image,
                                 uint8_t quality, bool progressive) {
 
   auto output = std::fopen(filename.c_str(), "wb");
