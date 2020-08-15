@@ -27,10 +27,10 @@
 #include <thread>
 #include <vector>
 
-void horizontal_blur_single_worker(std::unique_ptr<seedimg::img> &inp_img,
-                                   std::unique_ptr<seedimg::img> &res_img,
-                                   simg_int start, simg_int end,
-                                   unsigned int blur_level) {
+void horizontal_blur_i_single_worker(std::unique_ptr<seedimg::img> &inp_img,
+                                     std::unique_ptr<seedimg::img> &res_img,
+                                     simg_int start, simg_int end,
+                                     unsigned int blur_level) {
   for (simg_int y = start; y < end; ++y) {
     simg_int r = 0, g = 0, b = 0;
     for (simg_int i = 0; i <= blur_level; ++i) {
@@ -90,10 +90,10 @@ void horizontal_blur_single_worker(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void vertical_blur_single_worker(std::unique_ptr<seedimg::img> &inp_img,
-                                 std::unique_ptr<seedimg::img> &res_img,
-                                 simg_int start, simg_int end,
-                                 unsigned int blur_level) {
+void vertical_blur_i_single_worker(std::unique_ptr<seedimg::img> &inp_img,
+                                   std::unique_ptr<seedimg::img> &res_img,
+                                   simg_int start, simg_int end,
+                                   unsigned int blur_level) {
   for (simg_int x = start; x < end; ++x) {
     simg_int r = 0, g = 0, b = 0;
     for (simg_int i = 0; i <= blur_level; ++i) {
@@ -153,29 +153,29 @@ void vertical_blur_single_worker(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void horizontal_blur_single(std::unique_ptr<seedimg::img> &inp_img,
-                            std::unique_ptr<seedimg::img> &res_img,
-                            unsigned int blur_level) {
+void horizontal_blur_single_i(std::unique_ptr<seedimg::img> &inp_img,
+                              std::unique_ptr<seedimg::img> &res_img,
+                              unsigned int blur_level) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   for (std::size_t i = 0; i < workers.size(); i++) {
     workers.at(i) = std::thread(
-        horizontal_blur_single_worker, std::ref(inp_img), std::ref(res_img),
+        horizontal_blur_i_single_worker, std::ref(inp_img), std::ref(res_img),
         start_end.at(i).first, start_end.at(i).second, blur_level);
   }
   for (std::size_t i = 0; i < workers.size(); ++i)
     workers.at(i).join();
 }
 
-void vertical_blur_single(std::unique_ptr<seedimg::img> &inp_img,
-                          std::unique_ptr<seedimg::img> &res_img,
-                          unsigned int blur_level) {
+void vertical_blur_single_i(std::unique_ptr<seedimg::img> &inp_img,
+                            std::unique_ptr<seedimg::img> &res_img,
+                            unsigned int blur_level) {
   auto start_end = inp_img->start_end_cols();
   std::vector<std::thread> workers(start_end.size());
   for (std::size_t i = 0; i < workers.size(); i++) {
-    workers.at(i) = std::thread(vertical_blur_single_worker, std::ref(inp_img),
-                                std::ref(res_img), start_end.at(i).first,
-                                start_end.at(i).second, blur_level);
+    workers.at(i) = std::thread(
+        vertical_blur_i_single_worker, std::ref(inp_img), std::ref(res_img),
+        start_end.at(i).first, start_end.at(i).second, blur_level);
   }
   for (std::size_t i = 0; i < workers.size(); ++i)
     workers.at(i).join();
@@ -184,8 +184,8 @@ void vertical_blur_single(std::unique_ptr<seedimg::img> &inp_img,
 void box_blur_single(std::unique_ptr<seedimg::img> &inp_img,
                      std::unique_ptr<seedimg::img> &res_img,
                      unsigned int blur_level) {
-  horizontal_blur_single(inp_img, res_img, blur_level);
-  vertical_blur_single(res_img, inp_img, blur_level);
+  horizontal_blur_single_i(inp_img, res_img, blur_level);
+  vertical_blur_single_i(res_img, inp_img, blur_level);
 }
 
 unsigned int clamped_blur_level(unsigned int blur_level, simg_int width,
@@ -197,8 +197,8 @@ unsigned int clamped_blur_level(unsigned int blur_level, simg_int width,
 }
 
 namespace seedimg::filters {
-void h_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
-            std::uint8_t it) {
+void h_blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+              std::uint8_t it) {
   if (blur_level == 0)
     return;
   blur_level =
@@ -207,16 +207,16 @@ void h_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
       std::make_unique<seedimg::img>(inp_img->width(), inp_img->height());
   for (std::uint8_t i = 0; i < it; ++i) {
     if (i % 2 == 0) {
-      horizontal_blur_single(inp_img, res_img, blur_level);
+      horizontal_blur_single_i(inp_img, res_img, blur_level);
     } else {
-      horizontal_blur_single(res_img, inp_img, blur_level);
+      horizontal_blur_single_i(res_img, inp_img, blur_level);
     }
   }
   if (it % 2 == 0)
     inp_img.reset(res_img.release());
 }
-void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
-            std::uint8_t it) {
+void v_blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+              std::uint8_t it) {
   if (blur_level == 0)
     return;
   blur_level =
@@ -225,16 +225,16 @@ void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
       std::make_unique<seedimg::img>(inp_img->width(), inp_img->height());
   for (std::uint8_t i = 0; i < it; ++i) {
     if (i % 2 == 0) {
-      vertical_blur_single(inp_img, res_img, blur_level);
+      vertical_blur_single_i(inp_img, res_img, blur_level);
     } else {
-      vertical_blur_single(res_img, inp_img, blur_level);
+      vertical_blur_single_i(res_img, inp_img, blur_level);
     }
   }
   if (it % 2 == 0)
     inp_img.reset(res_img.release());
 }
-void blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
-          std::uint8_t it) {
+void blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+            std::uint8_t it) {
   if (blur_level == 0)
     return;
   blur_level =

@@ -1,10 +1,6 @@
 /**********************************************************************
-seedimg -
-        module based image manipulation library written in modern
-            C++ Copyright(C) 2020 telugu
-        -
-        boy
->>>>>>> 0e78ee85b04d91851ed1bbfb63e529a1f89099f5
+seedimg - module based image manipulation library written in modern
+            C++ Copyright(C) 2020 telugu-boy
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -36,12 +32,12 @@ int main() {
       // a->crop({122, 166}, {244, 332});
       // seedimg::filters::grayscale_i(a, true);
       // seedimg::filters::invert_i(a);
-      // seedimg::filters::blur(a, 1, 100);
+      // seedimg::filters::blur(a, 10);
       // seedimg::filters::h_blur(a, 10);
       // seedimg::filters::v_blur(a, 10);
       // seedimg::filters::convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1,
       // 0}});
-      // seedimg::filters::rotate_hue_i(a, 180);
+      seedimg::filters::rotate_hue_i(a, 180);
       bool b = seedimg_autodetect_to("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

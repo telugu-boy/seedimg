@@ -27,6 +27,7 @@ void grayscale(std::unique_ptr<seedimg::img> &inp_img,
                std::unique_ptr<seedimg::img> &res_img, bool luminosity = true);
 void grayscale_i(std::unique_ptr<seedimg::img> &inp_img,
                  bool luminosity = true);
+
 void invert(std::unique_ptr<seedimg::img> &inp_img,
             std::unique_ptr<seedimg::img> &res_img);
 void invert_a(std::unique_ptr<seedimg::img> &inp_img,
@@ -35,17 +36,37 @@ void invert_a(std::unique_ptr<seedimg::img> &inp_img,
 void invert_i(std::unique_ptr<seedimg::img> &inp_img);
 void invert_a_i(std::unique_ptr<seedimg::img> &inp_img,
                 bool invert_alpha_only = false);
+
 void rotate_hue(std::unique_ptr<seedimg::img> &inp_img,
                 std::unique_ptr<seedimg::img> &res_img, int angle);
 void rotate_hue_i(std::unique_ptr<seedimg::img> &inp_img, int angle);
+
+void rotate_90(std::unique_ptr<seedimg::img> &inp_img,
+               std::unique_ptr<seedimg::img> &res_img);
+void rotate_180(std::unique_ptr<seedimg::img> &inp_img,
+                std::unique_ptr<seedimg::img> &res_img);
+void rotate_270(std::unique_ptr<seedimg::img> &inp_img,
+                std::unique_ptr<seedimg::img> &res_img);
+void rotate_90_i(std::unique_ptr<seedimg::img> &inp_img);
+void rotate_180_i(std::unique_ptr<seedimg::img> &inp_img);
+void rotate_270_i(std::unique_ptr<seedimg::img> &inp_img);
+
+void v_mirror(std::unique_ptr<seedimg::img> &inp_img,
+              std::unique_ptr<seedimg::img> &res_img);
+void h_mirror(std::unique_ptr<seedimg::img> &inp_img,
+              std::unique_ptr<seedimg::img> &res_img);
+void v_mirror_i(std::unique_ptr<seedimg::img> &inp_img);
+void h_mirror_i(std::unique_ptr<seedimg::img> &inp_img);
+
 bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
           seedimg::point p2) noexcept;
-void blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
-          std::uint8_t it = 3);
-void h_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+
+void blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
             std::uint8_t it = 3);
-void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
-            std::uint8_t it = 3);
+void h_blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+              std::uint8_t it = 3);
+void v_blur_i(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
+              std::uint8_t it = 3);
 /** Apply a square kernel convolution to an image.
  * NOTE: if weren't a square kernel, the image stays intact.
  * NOTE: alpha is passed-as it is, it's not convoluted.

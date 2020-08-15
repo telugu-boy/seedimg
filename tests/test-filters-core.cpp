@@ -84,13 +84,13 @@ int main(int argc, char *argv[]) {
               {2 * img->width() / 3, 2 * img->height() / 3});
     break;
   case filter_functions::BLUR:
-    seedimg::filters::blur(img, 10);
+    seedimg::filters::blur_i(img, 10);
     break;
   case filter_functions::H_BLUR:
-    seedimg::filters::h_blur(img, 10);
+    seedimg::filters::h_blur_i(img, 10);
     break;
   case filter_functions::V_BLUR:
-    seedimg::filters::v_blur(img, 10);
+    seedimg::filters::v_blur_i(img, 10);
     break;
   // applies a 3x3 gaussian blur kernel.
   case filter_functions::KERNEL_CONVOLUTION:

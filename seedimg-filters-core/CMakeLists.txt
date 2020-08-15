@@ -20,6 +20,7 @@ add_library(seedimg-filters-core ${LIB_TYPE}
     grayscale.cpp
     blur.cpp
     convolution.cpp
-    rotate_hue.cpp)
+    rotate_hue.cpp
+    rotate_mirror.cpp)
 
 target_link_libraries(seedimg-filters-core seedimg)
