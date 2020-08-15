@@ -127,4 +127,8 @@ bool to(const std::string &filename,
 
   return true;
 }
+
+std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
+  return std::make_unique<seedimg::img>(width, height);
+}
 } // namespace seedimg

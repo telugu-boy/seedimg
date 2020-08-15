@@ -135,9 +135,7 @@ private:
   seedimg::pixel **data_;
 };
 
-std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
-  return std::make_unique<seedimg::img>(width, height);
-}
+std::unique_ptr<seedimg::img> make(simg_int width, simg_int height);
 
 bool to(const std::string &filename,
         const std::unique_ptr<seedimg::img> &inp_img);

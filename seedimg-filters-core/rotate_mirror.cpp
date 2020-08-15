@@ -15,3 +15,81 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
+
+#include "seedimg-filters-core.hpp"
+#include <cstring>
+#include <seedimg/seedimg.hpp>
+
+namespace seedimg::filters {
+void rotate_cw(simg &inp_img, simg &res_img) {
+  if (inp_img == res_img)
+    rotate_cw_i(inp_img);
+  for (simg_int y = 0; y < res_img->height(); ++y) {
+    for (simg_int x = 0; x < res_img->width(); ++x) {
+      res_img->pixel(x, y) = inp_img->pixel(res_img->height() - y - 1, x);
+    }
+  }
+}
+void rotate_180(simg &inp_img, simg &res_img) {
+  for (simg_int y = 0; y < inp_img->height(); ++y) {
+    for (simg_int x = 0; x < inp_img->width(); ++x) {
+      res_img->pixel(x, y) =
+          inp_img->pixel(inp_img->width() - x - 1, inp_img->height() - y - 1);
+    }
+  }
+}
+void rotate_ccw(simg &inp_img, simg &res_img) {
+  if (inp_img == res_img)
+    rotate_ccw_i(inp_img);
+  for (simg_int y = 0; y < res_img->height(); ++y) {
+    for (simg_int x = 0; x < res_img->width(); ++x) {
+      res_img->pixel(x, y) = inp_img->pixel(y, x);
+    }
+  }
+}
+void rotate_cw_i(simg &inp_img) {
+  simg res_img = seedimg::make(inp_img->height(), inp_img->width());
+  rotate_cw(inp_img, res_img);
+  inp_img.reset(res_img.release());
+}
+void rotate_180_i(simg &inp_img) {
+  simg_int m = inp_img->width();
+  simg_int n = inp_img->height();
+  for (simg_int x = 0; x < m / 2; ++x) {
+    for (size_t y = 0; y < n; ++y)
+      std::swap(inp_img->pixel(x, y), inp_img->pixel(m - x - 1, n - y - 1));
+  }
+  if (m % 2 == 0)
+    for (size_t y = 0; y < n / 2; ++y)
+      std::swap(inp_img->pixel(m / 2, y), inp_img->pixel(m / 2, n - y - 1));
+}
+void rotate_ccw_i(simg &inp_img) {
+  simg res_img = seedimg::make(inp_img->height(), inp_img->width());
+  rotate_ccw(inp_img, res_img);
+  inp_img.reset(res_img.release());
+}
+
+void v_mirror(simg &inp_img, simg &res_img) {
+  for (simg_int y = 0; y < inp_img->height(); ++y) {
+    std::memcpy(res_img->row(res_img->height() - y - 1), inp_img->row(y),
+                inp_img->width() * sizeof(seedimg::pixel));
+  }
+}
+void h_mirror(simg &inp_img, simg &res_img) {
+  for (simg_int y = 0; y < res_img->height(); ++y) {
+    for (simg_int x = 0; x < res_img->width(); ++x) {
+      res_img->pixel(inp_img->width() - x - 1, y) = inp_img->pixel(x, y);
+    }
+  }
+}
+void v_mirror_i(simg &inp_img) {
+  simg res_img = seedimg::make(inp_img->width(), inp_img->height());
+  v_mirror(inp_img, res_img);
+  inp_img.reset(res_img.release());
+}
+void h_mirror_i(simg &inp_img) {
+  simg res_img = seedimg::make(inp_img->width(), inp_img->height());
+  h_mirror(inp_img, res_img);
+  inp_img.reset(res_img.release());
+}
+} // namespace seedimg::filters

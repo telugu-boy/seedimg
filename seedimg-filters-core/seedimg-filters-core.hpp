@@ -34,12 +34,12 @@ void invert_a_i(simg &inp_img, bool invert_alpha_only = false);
 void rotate_hue(simg &inp_img, simg &res_img, int angle);
 void rotate_hue_i(simg &inp_img, int angle);
 
-void rotate_90(simg &inp_img, simg &res_img);
+void rotate_cw(simg &inp_img, simg &res_img);
 void rotate_180(simg &inp_img, simg &res_img);
-void rotate_270(simg &inp_img, simg &res_img);
-void rotate_90_i(simg &inp_img);
+void rotate_ccw(simg &inp_img, simg &res_img);
+void rotate_cw_i(simg &inp_img);
 void rotate_180_i(simg &inp_img);
-void rotate_270_i(simg &inp_img);
+void rotate_ccw_i(simg &inp_img);
 
 void v_mirror(simg &inp_img, simg &res_img);
 void h_mirror(simg &inp_img, simg &res_img);
