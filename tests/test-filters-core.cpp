@@ -1,4 +1,4 @@
-/***********************************************************************
+﻿/***********************************************************************
     seedimg - module based image manipulation library written in modern C++
     Copyright (C) 2020 telugu-boy
 
@@ -37,6 +37,11 @@ enum class filter_functions {
   V_BLUR,
   KERNEL_CONVOLUTION,
   ROTATE_HUE,
+  HISTOGRAM,
+  BRIGHTNESS,
+  BRIGHTNESS_A,
+  BLEND,
+  BLEND_A,
 };
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
     {{"grayscale_lum", filter_functions::GRAYSCALE_LUM},
@@ -49,7 +54,12 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
      {"h_blur", filter_functions::H_BLUR},
      {"v_blur", filter_functions::V_BLUR},
      {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION},
-     {"rotate_hue", filter_functions::ROTATE_HUE}};
+     {"rotate_hue", filter_functions::ROTATE_HUE},
+     {"histogram", filter_functions::HISTOGRAM},
+     {"brightness", filter_functions::BRIGHTNESS},
+     {"brightness_alpha", filter_functions::BRIGHTNESS_A},
+     {"blend", filter_functions::BLEND},
+     {"blend_alpha", filter_functions::BLEND_A}};
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -101,6 +111,27 @@ int main(int argc, char *argv[]) {
   case filter_functions::ROTATE_HUE:
     seedimg::filters::rotate_hue_i(img, 180);
     break;
+  case filter_functions::HISTOGRAM:
+    seedimg::filters::histogram(img);
+      break;
+  case filter_functions::BRIGHTNESS:
+    // values in the second argument are percentages.
+    seedimg::filters::brightness_i(img, 20.0);
+      break;
+  case filter_functions::BRIGHTNESS_A:
+    seedimg::filters::brightness_a_i(img, 40.0);
+      break;
+  case filter_functions::BLEND: {
+    auto another_img = std::make_unique<seedimg::img>(*img);  // coooopy coomstructor.
+    seedimg::filters::v_blur(another_img, 10);
+    seedimg::filters::blend_i({img, 50}, {*another_img, 50});
+  }
+
+  case filter_functions::BLEND_A: {
+    auto __another_img = std::make_unique<seedimg::img>(*img);  // coooopy coomstructor.
+    seedimg::filters::v_blur(__another_img, 10);
+    seedimg::filters::blend_i({img, 50}, {*__another_img, 50});
+   }
   }
   char name_buf[256];
   std::snprintf(name_buf, 256, "tests_output/filters/png/result-%s.png",
