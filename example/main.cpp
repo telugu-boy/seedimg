@@ -21,14 +21,17 @@ seedimg -
 #include <iostream>
 
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
+#include <seedimg-filters-core/seedimg-filters-core.hpp>
 #include <seedimg-irdump/irdump.h>
 
 int main() {
   auto inimg = seedimg_autodetect_from("cat.png");
   if (inimg != nullptr) {
-    seedimg_autodetect_to("output.sir", inimg);
+    auto ain_img = std::make_unique<seedimg::img>(*inimg);
+    seedimg::filters::v_blur(ain_img, 20, 4);
+    seedimg::filters::h_blur(ain_img, 10, 8);
 
-    auto __inimg = seedimg::modules::irdump::from("output.sir");
-    seedimg_autodetect_to("output.jpg", __inimg);
+    seedimg::filters::blend_i({inimg, 50}, {*ain_img, 50});
+    seedimg_autodetect_to("boileur.png", inimg);
   }
 }
