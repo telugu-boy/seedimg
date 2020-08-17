@@ -68,9 +68,9 @@ int main(int argc, char *argv[]) {
   }
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
-  std::filesystem::create_directories(res_dir + "/png/");
-  /*
+  // std::filesystem::create_directories(res_dir + "/png/");
   std::filesystem::create_directories(res_dir + "/jpg/");
+  /*
   std::filesystem::create_directories(res_dir + "/webp/");
   std::filesystem::create_directories(res_dir + "/farbfeld/");*/
   auto img = seedimg_autodetect_from("test_image.png");
@@ -129,13 +129,14 @@ int main(int argc, char *argv[]) {
     break;
   }
   char name_buf[256];
+  /*
   std::snprintf(name_buf, 256, "tests_output/filters/png/result-%s.png",
                 argv[1]);
-  seedimg_autodetect_to(name_buf, img);
-  /*
+  seedimg_autodetect_to(name_buf, img);*/
   std::snprintf(name_buf, 256, "tests_output/filters/jpg/result-%s.jpg",
                 argv[1]);
   seedimg_autodetect_to(name_buf, img);
+  /*
   std::snprintf(name_buf, 256, "tests_output/filters/webp/result-%s.webp",
                 argv[1]);
   seedimg_autodetect_to(name_buf, img);

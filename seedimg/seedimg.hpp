@@ -52,29 +52,19 @@ public:
   static constexpr std::uint8_t MAX_PIXEL_VALUE = UINT8_MAX;
   img() : width_(0), height_(0), data_(nullptr) {}
   img(simg_int w, simg_int h) : width_{w}, height_{h} {
-    data_ = reinterpret_cast<seedimg::pixel **>(std::malloc(
-        static_cast<std::size_t>(height_) * sizeof(seedimg::pixel *)));
-    if (data_ == nullptr)
-      std::terminate();
-    for (simg_int r = 0; r < height_; ++r) {
-      data_[r] = reinterpret_cast<seedimg::pixel *>(std::malloc(
-          static_cast<std::size_t>(width_) * sizeof(seedimg::pixel)));
-      if (data_[r] == nullptr)
-        std::terminate();
-    }
+    data_ = reinterpret_cast<seedimg::pixel *>(std::malloc(
+        static_cast<std::size_t>(height_ * width_) * sizeof(seedimg::pixel *)));
   }
+  img(simg_int w, simg_int h, seedimg::pixel *u_data)
+      : width_{w}, height_{h}, data_{u_data} {}
   img(seedimg::img const &img_) : img(img_.width_, img_.height_) {
-    for (simg_int y = 0; y < img_.height_; ++y) {
-      std::memcpy(this->data_[y], img_.data_[y],
-                  static_cast<std::size_t>(img_.width_) *
-                      sizeof(seedimg::pixel));
-    }
+    std::memcpy(this->data_, img_.data_,
+                static_cast<std::size_t>(img_.width_ * img_.height_) *
+                    sizeof(seedimg::pixel));
   }
 
   ~img() {
     if (data_ != nullptr) {
-      for (simg_int r = 0; r < height_; ++r)
-        std::free(data_[r]);
       std::free(data_);
     }
   }
@@ -111,15 +101,17 @@ public:
     return res;
   }
 
-  seedimg::pixel &pixel(simg_int x, simg_int y) { return data_[y][x]; }
+  seedimg::pixel &pixel(simg_int x, simg_int y) {
+    return data_[y * this->width_ + x];
+  }
   seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
   seedimg::pixel &pixel(simg_int x) {
     if (x > this->width() * this->height() - 1)
       std::terminate();
     return pixel(x / this->width(), x % this->width());
   }
-  seedimg::pixel *row(simg_int y) { return data_[y]; }
-  seedimg::pixel **data() { return data_; }
+  seedimg::pixel *row(simg_int y) { return data_ + y * this->width_; }
+  seedimg::pixel *data() { return data_; }
   simg_int width() { return width_; }
   simg_int height() { return height_; }
 
@@ -129,7 +121,7 @@ private:
   // stored in row major order
   // width amount of pixels in a row
   // height amount of rows.
-  seedimg::pixel **data_;
+  seedimg::pixel *data_;
 };
 
 std::unique_ptr<seedimg::img> make(simg_int width, simg_int height);

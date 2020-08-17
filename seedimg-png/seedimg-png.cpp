@@ -56,7 +56,7 @@ simg from(const std::string &filename) {
   // chosen 127 as 0 is already taken as a type.
   uint8_t color_type = 127;
   uint8_t bit_depth = 0;
-  uint8_t interlace_type = 127;
+  int interlace_passes = 1;
   int errcode = 0;
 
   auto fp = std::fopen(filename.c_str(), "rb");
@@ -105,10 +105,9 @@ simg from(const std::string &filename) {
   png_set_sig_bytes(png_ptr, 8);
   png_read_info(png_ptr, info_ptr);
 
-  png_set_interlace_handling(png_ptr);
+  interlace_passes = png_set_interlace_handling(png_ptr);
   color_type = png_get_color_type(png_ptr, info_ptr);
   bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-  interlace_type = png_get_interlace_type(png_ptr, info_ptr);
   res_img =
       std::make_unique<seedimg::img>(png_get_image_width(png_ptr, info_ptr),
                                      png_get_image_height(png_ptr, info_ptr));
@@ -136,7 +135,11 @@ simg from(const std::string &filename) {
   png_read_update_info(png_ptr, info_ptr);
 
   // This will load the png into the vectors. (non interlaced pngs only)
-  png_read_image(png_ptr, reinterpret_cast<png_bytepp>(res_img->data()));
+  for (int pass = 0; pass < interlace_passes; pass++) {
+    for (size_t y = 0; y < res_img->height(); y++)
+      png_read_row(png_ptr, reinterpret_cast<png_bytep>(res_img->row(y)),
+                   nullptr);
+  }
 
 finalise:
   if (fp != nullptr)
@@ -153,8 +156,7 @@ finalise:
   }
 }
 
-bool to(const std::string &filename,
-        const simg &inp_img) {
+bool to(const std::string &filename, const simg &inp_img) {
   png_structp png_ptr = nullptr;
   png_infop info_ptr = nullptr;
   int errcode = 0;
@@ -200,7 +202,9 @@ bool to(const std::string &filename,
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_write_info(png_ptr, info_ptr);
 
-  png_write_image(png_ptr, reinterpret_cast<png_bytepp>(inp_img->data()));
+  for (simg_int y = 0; y < inp_img->height(); ++y) {
+    png_write_row(png_ptr, reinterpret_cast<png_bytep>(inp_img->row(y)));
+  }
 
   png_write_end(png_ptr, nullptr);
 

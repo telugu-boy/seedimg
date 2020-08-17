@@ -27,7 +27,7 @@ int main() {
             << std::endl;
   {
     auto a = seedimg_autodetect_from("cat.png");
-    auto res_img = seedimg::make(a->width(), a->height());
+    // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // seedimg::filters::crop_i(a, {122, 166}, {244, 332});
       // seedimg::filters::grayscale_i(a, true);
