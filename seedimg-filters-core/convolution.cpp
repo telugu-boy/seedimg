@@ -1,4 +1,24 @@
-﻿#include <algorithm>
+/***********************************************************************
+seedimg - module based image manipulation library written in modern C++
+Copyright (C) 2020 tripulse
+
+    This program is free software : you can redistribute it and /
+    or modify it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation,
+    either version 3 of the License,
+    or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+************************************************************************/
+
+
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <numeric>
@@ -6,6 +26,9 @@
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
 #include <seedimg/seedimg.hpp>
 
+
+// TODO: this convolutional algorithm has problems with negative values.
+//       find a viable way to work with them.
 void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
                                    std::vector<std::vector<float>> kernel) {
   seedimg::point kernel_dims{kernel.size() ? kernel[0].size() : 0,
@@ -18,16 +41,11 @@ void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
   {
     // will be used as the divisor to normalize all the kernel elements.
     auto kernmatrix_normdiv = std::abs(std::accumulate(
-        kernel.begin(), kernel.end(), 0.0, [](float s, auto r) -> float {
-          return s + std::accumulate(r.begin(), r.end(), 0.0);
-        }));
+      kernel.begin(), kernel.end(), 0.0, [](float s, auto r) -> float {
+      return s + std::accumulate(r.begin(), r.end(), 0.0); }));
 
-    if (kernmatrix_normdiv <= 0) // prevent zero-division UB,
-      kernmatrix_normdiv = 1;    // it being zero doesn't mean discard.
-
-    for (simg_int r = 0; r < kernel_dims.second; ++r)
-      std::transform(
-          kernel[r].begin(), kernel[r].end(), kernel[r].begin(),
+      for (simg_int r = 0; r < kernel_dims.second; ++r)
+        std::transform(kernel[r].begin(), kernel[r].end(), kernel[r].begin(),
           [&](auto elem) -> float { return elem / kernmatrix_normdiv; });
   }
 
@@ -40,7 +58,7 @@ void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
     for (simg_int x = 0; x < input->width(); ++x) {
       // output value to be used as an accumulator.
       // this will be resulting pixel in the kernel's origin.
-      seedimg::pixel outpix{0, 0, 0, input->pixel(x, y).a};
+      struct { float r=0, g=0, b=0, a=0; } outpix;
 
       for (std::size_t dy = 0; dy < kernel_dims.second; ++dy) {
         for (std::size_t dx = 0; dx < kernel_dims.first; ++dx) {
@@ -60,15 +78,17 @@ void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
                   input->height()));
 
           // TODO: alpha isn't altered, need to add an option for it.
-          outpix.r +=
-              std::max(0.0f, static_cast<float>(pix.r) * kernel[dy][dx]);
-          outpix.g +=
-              std::max(0.0f, static_cast<float>(pix.g) * kernel[dy][dx]);
-          outpix.b +=
-              std::max(0.0f, static_cast<float>(pix.b) * kernel[dy][dx]);
+          outpix.r += static_cast<float>(pix.r) * kernel[dy][dx];
+          outpix.g += static_cast<float>(pix.g) * kernel[dy][dx];
+          outpix.b += static_cast<float>(pix.b) * kernel[dy][dx];
+          outpix.a += static_cast<float>(pix.a) * kernel[dy][dx];
         }
       }
-      input->pixel(x, y) = outpix;
+
+      input->pixel(x, y) = { static_cast<std::uint8_t>(outpix.r),
+                             static_cast<std::uint8_t>(outpix.g),
+                             static_cast<std::uint8_t>(outpix.b),
+                             static_cast<std::uint8_t>(outpix.a) };
     }
   }
 }
