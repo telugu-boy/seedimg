@@ -1,4 +1,4 @@
-/**********************************************************************
+﻿/**********************************************************************
     seedimg - module based image manipulation library written in modern
                 C++ Copyright(C) 2020 telugu-boy
 
@@ -25,7 +25,7 @@
 
 #include <seedimg/seedimg.hpp>
 
-enum class img_type { unknown = 0, png, jpeg, webp, farbfeld };
+enum class img_type { unknown = 0, png, jpeg, webp, farbfeld, irdump };
 
 enum img_type seedimg_match_ext(const std::string &ext) noexcept;
 

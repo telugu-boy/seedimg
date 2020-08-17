@@ -135,10 +135,6 @@ private:
   seedimg::pixel **data_;
 }; // namespace seedimg
 
-bool to(const std::string &filename,
-        const std::unique_ptr<seedimg::img> &inp_img);
-std::unique_ptr<seedimg::img> from(const std::string &filename);
-
 namespace modules {};
 namespace filters {};
 } // namespace seedimg

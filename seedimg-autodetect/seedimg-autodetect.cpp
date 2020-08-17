@@ -1,4 +1,4 @@
-/**********************************************************************
+﻿/**********************************************************************
     seedimg - module based image manipulation library written in modern
                 C++ Copyright(C) 2020 telugu-boy
 
@@ -22,6 +22,7 @@
 #include <seedimg-jpeg/seedimg-jpeg.hpp>
 #include <seedimg-png/seedimg-png.hpp>
 #include <seedimg-webp/seedimg-webp.hpp>
+#include <seedimg-irdump/irdump.h>
 #include <seedimg/seedimg.hpp>
 
 #include "seedimg-autodetect.hpp"
@@ -35,6 +36,8 @@ enum img_type seedimg_match_ext(const std::string &ext) noexcept {
     return img_type::webp;
   if (ext == "ff" || ext == "farbfeld")
     return img_type::farbfeld;
+  if (ext == "sir")
+    return img_type::irdump;
   return img_type::unknown;
 }
 
@@ -84,6 +87,8 @@ bool seedimg_autodetect_to(const std::string &filename,
     return seedimg::modules::webp::to(filename, image);
   case img_type::farbfeld:
     return seedimg::modules::farbfeld::to(filename, image);
+  case img_type::irdump:
+    return seedimg::modules::irdump::to(filename, image);
   default:
     return false;
   }
