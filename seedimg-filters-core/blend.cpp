@@ -50,6 +50,10 @@ namespace seedimg::filters {
   void blend(std::pair<std::unique_ptr<seedimg::img>&, const std::uint8_t> input,
              std::pair<seedimg::img, const std::uint8_t> other,
              std::unique_ptr<seedimg::img>& output) {
+    if(input.first->width() != other.first.width() ||
+       input.first->height() != other.first.height())
+      return;
+
     auto start_end = input.first->start_end_rows();
     std::vector<std::thread> workers(start_end.size());
 
