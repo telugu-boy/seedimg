@@ -23,8 +23,8 @@
 #include <thread>
 #include <vector>
 
-void invert_worker(std::unique_ptr<seedimg::img> &inp_img,
-                   std::unique_ptr<seedimg::img> &res_img, simg_int start_row,
+void invert_worker(simg &inp_img,
+                   simg &res_img, simg_int start_row,
                    simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -39,8 +39,8 @@ void invert_worker(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void invert_worker_alpha(std::unique_ptr<seedimg::img> &inp_img,
-                         std::unique_ptr<seedimg::img> &res_img,
+void invert_worker_alpha(simg &inp_img,
+                         simg &res_img,
                          simg_int start_row, simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -55,8 +55,8 @@ void invert_worker_alpha(std::unique_ptr<seedimg::img> &inp_img,
   }
 }
 
-void invert_worker_alpha_only(std::unique_ptr<seedimg::img> &inp_img,
-                              std::unique_ptr<seedimg::img> &res_img,
+void invert_worker_alpha_only(simg &inp_img,
+                              simg &res_img,
                               simg_int start_row, simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -70,8 +70,8 @@ void invert_worker_alpha_only(std::unique_ptr<seedimg::img> &inp_img,
 
 namespace seedimg::filters {
 
-void invert(std::unique_ptr<seedimg::img> &inp_img,
-            std::unique_ptr<seedimg::img> &res_img) {
+void invert(simg &inp_img,
+            simg &res_img) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   for (std::size_t i = 0; i < workers.size(); i++) {
@@ -83,8 +83,8 @@ void invert(std::unique_ptr<seedimg::img> &inp_img,
     workers.at(i).join();
 };
 
-void invert_a(std::unique_ptr<seedimg::img> &inp_img,
-              std::unique_ptr<seedimg::img> &res_img, bool invert_alpha_only) {
+void invert_a(simg &inp_img,
+              simg &res_img, bool invert_alpha_only) {
   auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   if (invert_alpha_only) {
@@ -104,11 +104,11 @@ void invert_a(std::unique_ptr<seedimg::img> &inp_img,
     workers.at(i).join();
 };
 
-void invert_i(std::unique_ptr<seedimg::img> &inp_img) {
+void invert_i(simg &inp_img) {
   invert(inp_img, inp_img);
 }
 
-void invert_a_i(std::unique_ptr<seedimg::img> &inp_img,
+void invert_a_i(simg &inp_img,
                 bool invert_alpha_only) {
   invert_a(inp_img, inp_img, invert_alpha_only);
 }

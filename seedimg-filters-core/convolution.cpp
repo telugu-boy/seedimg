@@ -27,9 +27,7 @@ Copyright (C) 2020 tripulse
 #include <seedimg/seedimg.hpp>
 
 
-// TODO: this convolutional algorithm has problems with negative values.
-//       find a viable way to work with them.
-void seedimg::filters::convolution(std::unique_ptr<seedimg::img> &input,
+void seedimg::filters::convolution(simg &input,
                                    std::vector<std::vector<float>> kernel) {
   seedimg::point kernel_dims{kernel.size() ? kernel[0].size() : 0,
                              kernel.size()};

@@ -1,6 +1,6 @@
-﻿/***********************************************************************
+/***********************************************************************
 seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 telugu-boy
+Copyright (C) 2020 telugu-boy, tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -22,53 +22,51 @@ Copyright (C) 2020 telugu-boy
 #include <seedimg/seedimg.hpp>
 
 namespace seedimg::filters {
-void grayscale(std::unique_ptr<seedimg::img> &inp_img,
-               std::unique_ptr<seedimg::img> &res_img, bool luminosity = true);
-void grayscale_i(std::unique_ptr<seedimg::img> &inp_img,
-                 bool luminosity = true);
-void invert(std::unique_ptr<seedimg::img> &inp_img,
-            std::unique_ptr<seedimg::img> &res_img);
-void invert_a(std::unique_ptr<seedimg::img> &inp_img,
-              std::unique_ptr<seedimg::img> &res_img,
-              bool invert_alpha_only = false);
-void invert_i(std::unique_ptr<seedimg::img> &inp_img);
-void invert_a_i(std::unique_ptr<seedimg::img> &inp_img,
-                bool invert_alpha_only = false);
-void rotate_hue(std::unique_ptr<seedimg::img> &inp_img,
-                std::unique_ptr<seedimg::img> &res_img, int angle);
-void rotate_hue_i(std::unique_ptr<seedimg::img> &inp_img, int angle);
-bool crop(std::unique_ptr<seedimg::img> &inp_img, seedimg::point p1,
-          seedimg::point p2) noexcept;
-void blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
-          std::uint8_t it = 3);
-void h_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
-            std::uint8_t it = 3);
-void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
-            std::uint8_t it = 3);
+void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
+void grayscale_i(simg &inp_img, bool luminosity = true);
+
+void invert(simg &inp_img, simg &res_img);
+void invert_a(simg &inp_img, simg &res_img, bool invert_alpha_only = false);
+void invert_i(simg &inp_img);
+void invert_a_i(simg &inp_img, bool invert_alpha_only = false);
+
+void rotate_hue(simg &inp_img, simg &res_img, int angle);
+void rotate_hue_i(simg &inp_img, int angle);
+
+void rotate_cw(simg &inp_img, simg &res_img);
+void rotate_180(simg &inp_img, simg &res_img);
+void rotate_ccw(simg &inp_img, simg &res_img);
+void rotate_cw_i(simg &inp_img);
+void rotate_180_i(simg &inp_img);
+void rotate_ccw_i(simg &inp_img);
+
+void v_mirror(simg &inp_img, simg &res_img);
+void h_mirror(simg &inp_img, simg &res_img);
+void v_mirror_i(simg &inp_img);
+void h_mirror_i(simg &inp_img);
+
+bool crop(simg &inp_img, simg &res_img, seedimg::point p1, seedimg::point p2);
+bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2);
+
+void blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it = 3);
+void h_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it = 3);
+void v_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it = 3);
 
 /** Apply a square kernel convolution to an image.
  * NOTE: if weren't a square kernel, the image stays intact.
  * NOTE: alpha is passed-as it is, it's not convoluted.
  */
-void convolution(std::unique_ptr<seedimg::img> &input,
-                 std::vector<std::vector<float>> kernel);
+void convolution(simg &input, std::vector<std::vector<float>> kernel);
 
-void brightness(std::unique_ptr<seedimg::img>& input,
-                std::unique_ptr<seedimg::img>& output,
-                std::uint8_t intensity);
-void brightness_i(std::unique_ptr<seedimg::img>& image,
-                  std::uint8_t intensity);
-void brightness_a(std::unique_ptr<seedimg::img>& input,
-                  std::unique_ptr<seedimg::img>& output,
-                  std::uint8_t intensity);
-void brightness_a_i(std::unique_ptr<seedimg::img>& image,
-                    std::uint8_t intensity);
+void brightness(simg& input, simg& output, std::uint8_t intensity);
+void brightness_i(simg& image, std::uint8_t intensity);
+void brightness_a(simg& input, simg& output, std::uint8_t intensity);
+void brightness_a_i(simg& image, std::uint8_t intensity);
 
-void blend(std::pair<std::unique_ptr<seedimg::img>&, const std::uint8_t> input,
+void blend(std::pair<simg&, const std::uint8_t> input,
            std::pair<seedimg::img, const std::uint8_t> other,
-           std::unique_ptr<seedimg::img>& output);
-
-void blend_i(std::pair<std::unique_ptr<seedimg::img>&, const std::uint8_t> input,
+           simg& output);
+void blend_i(std::pair<simg&, const std::uint8_t> input,
              std::pair<seedimg::img, const std::uint8_t> other);
 } // namespace seedimg::filters
 

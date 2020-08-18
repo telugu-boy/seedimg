@@ -1,7 +1,6 @@
-﻿/**********************************************************************
-seedimg -
-        module based image manipulation library written in modern
-            C++ Copyright(C) 2020 telugu-boy, tripulse
+/**********************************************************************
+seedimg - module based image manipulation library written in modern
+            C++ Copyright(C) 2020 telugu-boy
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -25,13 +24,27 @@ seedimg -
 #include <seedimg-irdump/irdump.h>
 
 int main() {
-  auto inimg = seedimg_autodetect_from("cat.png");
-  if (inimg != nullptr) {
-    auto ain_img = std::make_unique<seedimg::img>(*inimg);
-    seedimg::filters::v_blur(ain_img, 20, 4);
-    seedimg::filters::h_blur(ain_img, 10, 8);
-
-    seedimg::filters::blend_i({inimg, 50}, {*ain_img, 50});
-    seedimg_autodetect_to("boileur.png", inimg);
+  std::cout << "Current path is " << std::filesystem::current_path()
+            << std::endl;
+  {
+    auto a = seedimg_autodetect_from("cat.png");
+    // auto res_img = seedimg::make(a->width(), a->height());
+    if (a != nullptr) {
+      // seedimg::filters::crop_i(a, {122, 166}, {244, 332});
+      // seedimg::filters::grayscale_i(a, true);
+      // seedimg::filters::invert_i(a);
+      // seedimg::filters::blur_i(a, 10);
+      // seedimg::filters::h_blur_i(a, 10);
+      // seedimg::filters::v_blur_i(a, 10);
+      // seedimg::filters::convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1,
+      // 0}});
+      // seedimg::filters::rotate_hue_i(a, 180);
+      // seedimg::filters::h_mirror_i(a);
+      bool b = seedimg_autodetect_to("biol.jpg", a);
+      // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
+    } else {
+      std::cerr << "failed" << std::endl;
+    }
+    std::cerr << "done" << std::endl;
   }
 }

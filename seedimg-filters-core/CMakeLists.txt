@@ -1,4 +1,4 @@
-﻿#[[ 
+#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -22,6 +22,8 @@ add_library(seedimg-filters-core ${LIB_TYPE}
     convolution.cpp
     rotate_hue.cpp
     brightness.cpp
-    blend.cpp)
+    blend.cpp
+    rotate_mirror.cpp
+    crop.cpp)
 
 target_link_libraries(seedimg-filters-core seedimg)
