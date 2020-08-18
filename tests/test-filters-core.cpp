@@ -37,7 +37,6 @@ enum class filter_functions {
   V_BLUR,
   KERNEL_CONVOLUTION,
   ROTATE_HUE,
-  HISTOGRAM,
   BRIGHTNESS,
   BRIGHTNESS_A,
   BLEND,
@@ -55,7 +54,6 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
      {"v_blur", filter_functions::V_BLUR},
      {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION},
      {"rotate_hue", filter_functions::ROTATE_HUE},
-     {"histogram", filter_functions::HISTOGRAM},
      {"brightness", filter_functions::BRIGHTNESS},
      {"brightness_alpha", filter_functions::BRIGHTNESS_A},
      {"blend", filter_functions::BLEND},
@@ -111,9 +109,6 @@ int main(int argc, char *argv[]) {
   case filter_functions::ROTATE_HUE:
     seedimg::filters::rotate_hue_i(img, 180);
     break;
-  case filter_functions::HISTOGRAM:
-    seedimg::filters::histogram(img);
-      break;
   case filter_functions::BRIGHTNESS:
     // values in the second argument are percentages.
     seedimg::filters::brightness_i(img, 20.0);

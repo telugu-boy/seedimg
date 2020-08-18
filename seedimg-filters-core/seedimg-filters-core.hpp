@@ -53,10 +53,6 @@ void v_blur(std::unique_ptr<seedimg::img> &inp_img, unsigned int blur_level,
 void convolution(std::unique_ptr<seedimg::img> &input,
                  std::vector<std::vector<float>> kernel);
 
-
-typedef struct { std::array<std::size_t, 256> r{},g{},b{},a{}; } histogram_result;
-histogram_result histogram(std::unique_ptr<seedimg::img>& input);
-
 void brightness(std::unique_ptr<seedimg::img>& input,
                 std::unique_ptr<seedimg::img>& output,
                 std::uint8_t intensity);

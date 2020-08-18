@@ -1,6 +1,6 @@
-﻿/**********************************************************************
-    seedimg - module based image manipulation library written in modern
-                C++ Copyright(C) 2020 tripulse
+﻿/***********************************************************************
+seedimg - module based image manipulation library written in modern C++
+Copyright (C) 2020 tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -17,9 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#include "seedimg-filters-core.hpp"
+#include "utils.hpp"
 
-namespace seedimg::filters {
+namespace seedimg::utils {
 histogram_result histogram(std::unique_ptr<seedimg::img>& input) {
   histogram_result result;
 

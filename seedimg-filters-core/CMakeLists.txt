@@ -21,7 +21,6 @@ add_library(seedimg-filters-core ${LIB_TYPE}
     blur.cpp
     convolution.cpp
     rotate_hue.cpp
-    histogram.cpp
     brightness.cpp
     blend.cpp)
 

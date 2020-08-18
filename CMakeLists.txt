@@ -68,6 +68,7 @@ add_subdirectory(seedimg-autodetect)
 
 # dependent project
 add_subdirectory(example)
+add_subdirectory(seedimg-utils)
 
 # tests
 if (${BUILD_TESTING})

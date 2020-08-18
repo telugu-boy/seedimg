@@ -1,4 +1,4 @@
-/**********************************************************************
+﻿/**********************************************************************
     seedimg - module based image manipulation library written in modern
                 C++ Copyright(C) 2020 telugu-boy
 
@@ -137,6 +137,9 @@ private:
 
 namespace modules {};
 namespace filters {};
+
+/** Some miscallenious utilities. */
+namespace utils {};
 } // namespace seedimg
 
 #endif
