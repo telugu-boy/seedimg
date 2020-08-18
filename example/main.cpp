@@ -18,9 +18,10 @@ seedimg - module based image manipulation library written in modern
 ************************************************************************/
 #include <filesystem>
 #include <iostream>
+
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
-#include <seedimg/seedimg.hpp>
+#include <seedimg-irdump/irdump.h>
 
 int main() {
   std::cout << "Current path is " << std::filesystem::current_path()

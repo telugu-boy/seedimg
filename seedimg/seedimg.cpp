@@ -30,57 +30,6 @@
 #include "seedimg.hpp"
 
 namespace seedimg {
-std::unique_ptr<seedimg::img> from(const std::string &filename) {
-  std::ifstream infile(filename, std::ios::binary);
-  if (infile.fail())
-    return nullptr;
-
-  std::size_t width, height;
-  infile.read(reinterpret_cast<char *>(&width), sizeof(width));
-  infile.read(reinterpret_cast<char *>(&height), sizeof(height));
-
-  std::error_code ec;
-  auto size = std::filesystem::file_size(filename, ec);
-
-  // check if the data size is equal to the retrieved rectangular area.
-  // if not, then just don't return any results, partial data isn't supported.
-  if (ec != std::error_code{} ||
-      size != sizeof(seedimg::pixel) * width * height + sizeof(width) +
-                  sizeof(height))
-    return nullptr;
-
-  auto image = std::make_unique<seedimg::img>(width, height);
-  const auto stride =
-      sizeof(seedimg::pixel) * static_cast<std::size_t>(image->width());
-
-  for (simg_int y = 0; y < image->height(); ++y)
-    infile.read(reinterpret_cast<char *>(image->row(y)),
-                static_cast<long>(stride));
-
-  return image;
-}
-
-bool to(const std::string &filename,
-        const std::unique_ptr<seedimg::img> &image) {
-  std::ofstream outfile(filename, std::ios::binary);
-  if (outfile.fail())
-    return false;
-
-  outfile.write(reinterpret_cast<const char *>(image->width()),
-                sizeof(image->width()));
-  outfile.write(reinterpret_cast<const char *>(image->height()),
-                sizeof(image->height()));
-
-  const auto stride =
-      sizeof(seedimg::pixel) * static_cast<std::size_t>(image->width());
-
-  for (simg_int y = 0; y < image->height(); ++y)
-    outfile.write(reinterpret_cast<const char *>(image->row(y)),
-                  static_cast<long>(stride));
-
-  return true;
-}
-
 std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
   return std::make_unique<seedimg::img>(width, height);
 }

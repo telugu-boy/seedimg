@@ -1,6 +1,6 @@
-﻿/**********************************************************************
-    seedimg - module based image manipulation library written in modern
-                C++ Copyright(C) 2020 telugu-boy
+﻿/***********************************************************************
+seedimg - module based image manipulation library written in modern C++
+Copyright (C) 2020 tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -16,26 +16,20 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#ifndef SEEDIMG_AUTODETECT_H
-#define SEEDIMG_AUTODETECT_H
 
-#include <memory>
-#include <optional>
-#include <string>
+#ifndef UTILS_HPP
+#define UTILS_HPP
 
 #include <seedimg/seedimg.hpp>
 
-enum class img_type { unknown = 0, png, jpeg, webp, farbfeld, irdump };
+namespace seedimg::utils {
+typedef struct { std::array<std::size_t, 256> r{},g{},b{},a{}; } histogram_result;
 
-enum img_type seedimg_match_ext(const std::string &ext) noexcept;
-
-std::optional<enum img_type>
-seedimg_imgtype(const std::string &filename) noexcept;
-
-simg
-seedimg_autodetect_from(const std::string &filename);
-
-bool seedimg_autodetect_to(const std::string &filename,
-                           const simg &image);
-
-#endif
+/**
+ * @brief Calculate how many pixels are thereof certain pixelvalue for all channels.
+ * @param input Input image to do the analysis on.
+ * @return a structure of 4 channels as 256-length arrays.
+ */
+histogram_result histogram(std::unique_ptr<seedimg::img>& input);
+}
+#endif // UTILS_HPP

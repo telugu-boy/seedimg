@@ -1,4 +1,4 @@
-/**********************************************************************
+﻿/**********************************************************************
     seedimg - module based image manipulation library written in modern
                 C++ Copyright(C) 2020 telugu-boy
 
@@ -126,12 +126,11 @@ private:
 
 std::unique_ptr<seedimg::img> make(simg_int width, simg_int height);
 
-bool to(const std::string &filename,
-        const std::unique_ptr<seedimg::img> &inp_img);
-std::unique_ptr<seedimg::img> from(const std::string &filename);
-
 namespace modules {};
 namespace filters {};
+
+/** Some miscallenious utilities. */
+namespace utils {};
 } // namespace seedimg
 
 typedef std::unique_ptr<seedimg::img> simg;

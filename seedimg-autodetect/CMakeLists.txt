@@ -1,4 +1,4 @@
-#[[ 
+﻿#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -23,4 +23,5 @@ target_link_libraries(seedimg-autodetect
     seedimg-webp
     seedimg-farbfeld
     seedimg-filters-core
+    seedimg-irdump
 )

@@ -1,6 +1,6 @@
-﻿/**********************************************************************
-    seedimg - module based image manipulation library written in modern
-                C++ Copyright(C) 2020 telugu-boy
+﻿/***********************************************************************
+seedimg - module based image manipulation library written in modern C++
+Copyright (C) 2020 tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -16,26 +16,24 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#ifndef SEEDIMG_AUTODETECT_H
-#define SEEDIMG_AUTODETECT_H
 
-#include <memory>
-#include <optional>
-#include <string>
+#include "utils.hpp"
 
-#include <seedimg/seedimg.hpp>
+namespace seedimg::utils {
+histogram_result histogram(std::unique_ptr<seedimg::img>& input) {
+  histogram_result result;
 
-enum class img_type { unknown = 0, png, jpeg, webp, farbfeld, irdump };
+  for(simg_int y = 0; y < input->height(); ++y) {
+    for(simg_int x = 0; x < input->width(); ++x) {
+      auto& pix = input->pixel(x,y);
 
-enum img_type seedimg_match_ext(const std::string &ext) noexcept;
+      ++result.r[pix.r];
+      ++result.g[pix.g];
+      ++result.b[pix.b];
+      ++result.a[pix.a];
+    }
+  }
 
-std::optional<enum img_type>
-seedimg_imgtype(const std::string &filename) noexcept;
-
-simg
-seedimg_autodetect_from(const std::string &filename);
-
-bool seedimg_autodetect_to(const std::string &filename,
-                           const simg &image);
-
-#endif
+  return result;
+}
+}
