@@ -16,61 +16,60 @@ static inline void to_u32be(simg_int n, std::uint8_t *out) {
 }
 
 namespace seedimg::modules::irdump {
-  bool to(const std::filesystem::path          filepath,
-          const std::unique_ptr<seedimg::img>& input)
-  {
-    std::ofstream output(filepath);
+bool to(const std::string &filename, const simg &input) {
+  std::ofstream output(filename);
 
-    struct {
-      char width[4];
-      char height[4];
-    } rawinfo;
+  struct {
+    char width[4];
+    char height[4];
+  } rawinfo;
 
-    to_u32be(input->width(), reinterpret_cast<std::uint8_t*>(rawinfo.width));
-    to_u32be(input->height(), reinterpret_cast<std::uint8_t*>(rawinfo.height));
+  to_u32be(input->width(), reinterpret_cast<std::uint8_t *>(rawinfo.width));
+  to_u32be(input->height(), reinterpret_cast<std::uint8_t *>(rawinfo.height));
 
+  try {
+    output.write(rawinfo.width, 4).write(rawinfo.height, 4);
+  } catch (std::fstream::failure) {
+    return false;
+  }
+
+  const auto rowstride = input->width() * sizeof(pixel);
+  for (simg_int r = 0; r < input->height(); ++r) {
     try {
-      output.write(rawinfo.width, 4)
-            .write(rawinfo.height, 4);
-    } catch (std::fstream::failure)
-    { return false; }
-
-
-    const auto rowstride = input->width() * sizeof(pixel);
-    for(simg_int r = 0; r < input->height(); ++r) {
-      try {
-          output.write(reinterpret_cast<char*>(input->row(r)), rowstride);
-      } catch(std::fstream::failure)
-      { return false; }
+      output.write(reinterpret_cast<char *>(input->row(r)),
+                   static_cast<std::streamsize>(rowstride));
+    } catch (std::fstream::failure) {
+      return false;
     }
-
-    return true;
   }
 
-  std::unique_ptr<seedimg::img>
-  from(const std::filesystem::path filepath) {
-    std::ifstream input(filepath);
-
-    struct {
-      char width[4];
-      char height[4];
-    } rawinfo;
-
-    input.read(rawinfo.width, 4)
-         .read(rawinfo.height, 4);
-
-    auto image = std::make_unique<img>
-        (from_u32be(reinterpret_cast<std::uint8_t*>(rawinfo.width)),
-         from_u32be(reinterpret_cast<std::uint8_t*>(rawinfo.height)));
-
-    const auto rowstride = image->width() * sizeof(pixel);
-    for(simg_int r = 0; r < image->height(); ++r) {
-      try {
-          input.read(reinterpret_cast<char*>(image->row(r)), rowstride);
-      } catch(std::fstream::failure)
-      { return nullptr; }
-    }
-
-    return image;
-  }
+  return true;
 }
+
+std::unique_ptr<seedimg::img> from(const std::string &filename) {
+  std::ifstream input(filename);
+
+  struct {
+    char width[4];
+    char height[4];
+  } rawinfo;
+
+  input.read(rawinfo.width, 4).read(rawinfo.height, 4);
+
+  auto image = std::make_unique<img>(
+      from_u32be(reinterpret_cast<std::uint8_t *>(rawinfo.width)),
+      from_u32be(reinterpret_cast<std::uint8_t *>(rawinfo.height)));
+
+  const auto rowstride = image->width() * sizeof(pixel);
+  for (simg_int r = 0; r < image->height(); ++r) {
+    try {
+      input.read(reinterpret_cast<char *>(image->row(r)),
+                 static_cast<std::streamsize>(rowstride));
+    } catch (std::fstream::failure) {
+      return nullptr;
+    }
+  }
+
+  return image;
+}
+} // namespace seedimg::modules::irdump

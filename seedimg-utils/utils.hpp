@@ -1,6 +1,6 @@
 ﻿/***********************************************************************
-seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 tripulse
+    seedimg - module based image manipulation library written in modern C++
+    Copyright (C) 2020 tripulse, telugu-boy
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -17,19 +17,21 @@ Copyright (C) 2020 tripulse
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef SEEDIMG_UTILS_HPP
+#define SEEDIMG_UTILS_HPP
 
 #include <seedimg/seedimg.hpp>
 
 namespace seedimg::utils {
-typedef struct { std::array<std::size_t, 256> r{},g{},b{},a{}; } histogram_result;
+typedef struct {
+  std::array<std::size_t, 256> r, g, b, a;
+} histogram_result;
 
 /**
- * @brief Calculate how many pixels are thereof certain pixelvalue for all channels.
+ * @brief Calculate how many r, g, b, a components total in an image
  * @param input Input image to do the analysis on.
  * @return a structure of 4 channels as 256-length arrays.
  */
-histogram_result histogram(std::unique_ptr<seedimg::img>& input);
-}
+histogram_result histogram(simg &input);
+} // namespace seedimg::utils
 #endif // UTILS_HPP

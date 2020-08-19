@@ -60,6 +60,9 @@ add_subdirectory(seedimg-webp)
 add_subdirectory(seedimg-farbfeld)
 add_subdirectory(seedimg-irdump)
 
+# utils
+add_subdirectory(seedimg-utils)
+
 # filter modules
 add_subdirectory(seedimg-filters-core)
 
@@ -68,7 +71,6 @@ add_subdirectory(seedimg-autodetect)
 
 # dependent project
 add_subdirectory(example)
-add_subdirectory(seedimg-utils)
 
 # tests
 if (${BUILD_TESTING})

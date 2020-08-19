@@ -17,10 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 add_library(seedimg-png ${LIB_TYPE} seedimg-png.cpp)
 
-find_package(libpng CONFIG REQUIRED)
+find_package(PNG REQUIRED)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-png PRIVATE png_static seedimg)
+    target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} seedimg)
 else()
-    target_link_libraries(seedimg-png PRIVATE png_static seedimg stdc++fs)
+    target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} seedimg stdc++fs)
 endif()
+
+target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} seedimg)

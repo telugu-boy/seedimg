@@ -1,6 +1,6 @@
 ﻿/***********************************************************************
-seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 tripulse
+    seedimg - module based image manipulation library written in modern C++
+    Copyright (C) 2020 tripulse, telugu-boy
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -18,14 +18,15 @@ Copyright (C) 2020 tripulse
 ************************************************************************/
 
 #include "utils.hpp"
+#include <seedimg/seedimg.hpp>
 
 namespace seedimg::utils {
-histogram_result histogram(std::unique_ptr<seedimg::img>& input) {
+histogram_result histogram(std::unique_ptr<seedimg::img> &input) {
   histogram_result result;
 
-  for(simg_int y = 0; y < input->height(); ++y) {
-    for(simg_int x = 0; x < input->width(); ++x) {
-      auto& pix = input->pixel(x,y);
+  for (simg_int y = 0; y < input->height(); ++y) {
+    for (simg_int x = 0; x < input->width(); ++x) {
+      auto &pix = input->pixel(x, y);
 
       ++result.r[pix.r];
       ++result.g[pix.g];
@@ -36,4 +37,4 @@ histogram_result histogram(std::unique_ptr<seedimg::img>& input) {
 
   return result;
 }
-}
+} // namespace seedimg::utils

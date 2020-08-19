@@ -1,6 +1,6 @@
 ﻿#[[
 seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 tripulse
+Copyright (C) 2020 tripulse, telugu-boy
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -17,3 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
 add_library(seedimg-utils ${LIB_TYPE} utils.cpp)
+
+target_link_libraries(seedimg-utils PRIVATE seedimg)
+target_include_directories(seedimg-utils PRIVATE seedimg)
