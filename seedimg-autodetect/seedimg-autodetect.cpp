@@ -19,10 +19,10 @@
 #include <filesystem>
 
 #include <seedimg-farbfeld/seedimg-farbfeld.hpp>
+#include <seedimg-irdump/irdump.hpp>
 #include <seedimg-jpeg/seedimg-jpeg.hpp>
 #include <seedimg-png/seedimg-png.hpp>
 #include <seedimg-webp/seedimg-webp.hpp>
-#include <seedimg-irdump/irdump.h>
 #include <seedimg/seedimg.hpp>
 
 #include "seedimg-autodetect.hpp"
@@ -56,8 +56,7 @@ seedimg_imgtype(const std::string &filename) noexcept {
   return img_type::unknown;
 }
 
-simg
-seedimg_autodetect_from(const std::string &filename) {
+simg seedimg_autodetect_from(const std::string &filename) {
   auto type = seedimg_imgtype(filename);
   if (type == std::nullopt)
     return nullptr;
@@ -75,8 +74,7 @@ seedimg_autodetect_from(const std::string &filename) {
   }
 }
 
-bool seedimg_autodetect_to(const std::string &filename,
-                           const simg &image) {
+bool seedimg_autodetect_to(const std::string &filename, const simg &image) {
   std::string extension_type = filename.substr(filename.rfind('.') + 1);
   switch (seedimg_match_ext(extension_type)) {
   case img_type::png:

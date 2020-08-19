@@ -21,7 +21,6 @@ seedimg - module based image manipulation library written in modern
 
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
-#include <seedimg-irdump/irdump.h>
 
 int main() {
   std::cout << "Current path is " << std::filesystem::current_path()
@@ -40,6 +39,7 @@ int main() {
       // 0}});
       // seedimg::filters::rotate_hue_i(a, 180);
       // seedimg::filters::h_mirror_i(a);
+      seedimg::filters::brightness_a_i(a, 40);
       bool b = seedimg_autodetect_to("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

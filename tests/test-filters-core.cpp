@@ -122,21 +122,17 @@ int main(int argc, char *argv[]) {
     break;
   case filter_functions::BRIGHTNESS:
     // values in the second argument are percentages.
-    seedimg::filters::brightness_i(img, 20.0);
+    seedimg::filters::brightness_i(img, 20);
     break;
   case filter_functions::BRIGHTNESS_A:
-    seedimg::filters::brightness_a_i(img, 40.0);
+    seedimg::filters::brightness_a_i(img, 40);
     break;
   case filter_functions::BLEND: {
-    auto another_img =
-        std::make_unique<seedimg::img>(*img); // coooopy coomstructor.
-    seedimg::filters::v_blur_i(another_img, 10);
+    auto another_img = std::make_unique<seedimg::img>(*img);
     seedimg::filters::blend_i({img, 50}, {another_img, 50});
   } break;
   case filter_functions::BLEND_A: {
-    auto another_img =
-        std::make_unique<seedimg::img>(*img); // coooopy coomstructor.
-    seedimg::filters::v_blur_i(another_img, 10);
+    auto another_img = std::make_unique<seedimg::img>(*img);
     seedimg::filters::blend_i({img, 50}, {another_img, 50});
   } break;
   case filter_functions::ROTATE_CW:

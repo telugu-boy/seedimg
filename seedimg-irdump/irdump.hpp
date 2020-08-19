@@ -1,5 +1,5 @@
-﻿#ifndef IRDUMP_H
-#define IRDUMP_H
+﻿#ifndef SEEDIMG_IRDUMP_H
+#define SEEDIMG_IRDUMP_H
 
 #include <filesystem>
 #include <seedimg/seedimg.hpp>

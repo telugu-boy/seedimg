@@ -62,7 +62,7 @@ set_tests_properties(rotate_hue_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS
 add_test(brightness_test ${TESTS_EXE} brightness)
 set_tests_properties(brightness_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-add_test(brightness_alpha_test ${TESTS_EXE} kbrightness_alpha)
+add_test(brightness_alpha_test ${TESTS_EXE} brightness_alpha)
 set_tests_properties(brightness_alpha_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(blend_test ${TESTS_EXE} blend)
