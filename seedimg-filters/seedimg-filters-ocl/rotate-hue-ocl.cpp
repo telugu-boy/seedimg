@@ -78,9 +78,9 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
 
   // get default device (CPUs, GPUs) of the default platform
   std::vector<cl::Device> all_devices;
-  default_platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
+  default_platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
   if (all_devices.size() == 0) {
-    std::cerr << " No devices found. Check OpenCL installation!\n";
+    std::cerr << " No GPUs found. Check OpenCL installation!\n";
     exit(1);
   }
   cl::Device default_device = all_devices[0];
@@ -107,12 +107,14 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
 
   // create buffers on device (allocate space on GPU)
   cl::Buffer hue_kernel_buf{context, CL_MEM_READ_ONLY, sizeof(float) * 9};
-  cl::Buffer inp_img_buf{context, CL_MEM_READ_WRITE,
+  cl::Buffer inp_img_buf{context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
                          sizeof(seedimg::pixel) * inp_img->width() *
-                             inp_img->height()};
-  cl::Buffer res_img_buf{context, CL_MEM_READ_WRITE,
+                             inp_img->height(),
+                         inp_img->data()};
+  cl::Buffer res_img_buf{context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
                          sizeof(seedimg::pixel) * res_img->width() *
-                             res_img->height()};
+                             res_img->height(),
+                         res_img->data()};
 
   // create a queue (a queue of commands that the GPU will execute)
   cl::CommandQueue queue(context, default_device);
@@ -120,10 +122,6 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   // push write commands to queue
   queue.enqueueWriteBuffer(hue_kernel_buf, CL_TRUE, 0, sizeof(float) * 9,
                            hue_kernel);
-  queue.enqueueWriteBuffer(inp_img_buf, CL_TRUE, 0,
-                           sizeof(seedimg::pixel) * inp_img->width() *
-                               inp_img->height(),
-                           inp_img->data());
 
   cl_int err;
 
