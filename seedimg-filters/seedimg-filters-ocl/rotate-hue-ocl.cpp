@@ -31,8 +31,6 @@
 #include "seedimg-filters-ocl.hpp"
 #include <seedimg/seedimg.hpp>
 
-#define BUFFER_ENTRY_COUNT 256
-
 using namespace std;
 
 const double PI = 4 * std::atan(1);
@@ -136,6 +134,7 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   err = queue.finish();
 
   // read result from GPU to here
+
   err = queue.enqueueReadBuffer(res_img_buf, CL_TRUE, 0,
                                 sizeof(seedimg::pixel) * res_img->width() *
                                     res_img->height(),
