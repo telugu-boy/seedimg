@@ -18,18 +18,18 @@
 
 #define CL_TARGET_OPENCL_VERSION 110
 
-#include "seedimg-filters-core.hpp"
-#include <iostream>
-#include <seedimg/seedimg.hpp>
-
-#include <CL/cl.hpp>
-
 // Standard library to make some things easier.
 #include <cmath>
 #include <fstream>
+#include <iostream>
 #include <streambuf>
 #include <string>
 #include <vector>
+
+#include <CL/cl.hpp>
+
+#include "seedimg-filters-ocl.hpp"
+#include <seedimg/seedimg.hpp>
 
 #define BUFFER_ENTRY_COUNT 256
 
@@ -62,8 +62,8 @@ void get_hue_kernel(int angle, float hue_kernel[9]) {
   hue_kernel[8] = 0.072f + cosr * 0.928f + sinr * 0.072f;
 }
 
-namespace seedimg::filters {
-void rotate_hue_ocl(simg &inp_img, simg &res_img, int angle) {
+namespace seedimg::filters::ocl {
+void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   // get all platforms (drivers), e.g. NVIDIA
   std::vector<cl::Platform> all_platforms;
   cl::Platform::get(&all_platforms);
@@ -143,4 +143,4 @@ void rotate_hue_ocl(simg &inp_img, simg &res_img, int angle) {
                                     res_img->height(),
                                 res_img->data());
 }
-} // namespace seedimg::filters
+} // namespace seedimg::filters::ocl

@@ -350,6 +350,7 @@ example/*.webp
 .vscode/**
 **/*.pro
 **/*.autosave
+CMakeLists.user.txt
 
 #cmake generated folder
 build/**

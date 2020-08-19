@@ -20,26 +20,29 @@ seedimg - module based image manipulation library written in modern
 #include <iostream>
 
 #include <seedimg-autodetect/seedimg-autodetect.hpp>
-#include <seedimg-filters-core/seedimg-filters-core.hpp>
+//#include <seedimg-filters-core/seedimg-filters-core.hpp>
+#include <seedimg-filters-ocl/seedimg-filters-ocl.hpp>
 
 int main() {
+  using namespace seedimg::filters;
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
     auto a = seedimg_autodetect_from("cat.png");
     // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
-      // seedimg::filters::crop_i(a, {122, 166}, {244, 332});
-      // seedimg::filters::grayscale_i(a, true);
-      // seedimg::filters::invert_i(a);
-      // seedimg::filters::blur_i(a, 10);
-      // seedimg::filters::h_blur_i(a, 10);
-      // seedimg::filters::v_blur_i(a, 10);
-      // seedimg::filters::convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1,
+      // crop_i(a, {122, 166}, {244, 332});
+      // grayscale_i(a, true);
+      // invert_i(a);
+      // blur_i(a, 10);
+      // h_blur_i(a, 10);
+      // v_blur_i(a, 10);
+      // convolution(a, {{0, -1, 0}, {-1, 5, -1}, {0, -1,
       // 0}});
-      // seedimg::filters::rotate_hue_i(a, 180);
-      // seedimg::filters::h_mirror_i(a);
-      // bool b = seedimg_autodetect_to("biol.jpg", a);
+      // rotate_hue_i(a, 180);
+      // h_mirror_i(a);
+      ocl::rotate_hue(a, a, 180);
+      bool b = seedimg_autodetect_to("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;

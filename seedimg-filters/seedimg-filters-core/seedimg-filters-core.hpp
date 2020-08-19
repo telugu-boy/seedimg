@@ -1,6 +1,6 @@
 /***********************************************************************
-seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 telugu-boy, tripulse
+    seedimg - module based image manipulation library written in modern C++
+    Copyright (C) 2020 telugu-boy, tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -67,6 +67,7 @@ void blend(std::pair<simg &, const std::uint8_t> input,
            std::pair<simg &, const std::uint8_t> other, simg &output);
 void blend_i(std::pair<simg &, const std::uint8_t> input,
              std::pair<simg &, const std::uint8_t> other);
+namespace ocl {}
 } // namespace seedimg::filters
 
 #endif

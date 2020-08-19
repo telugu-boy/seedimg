@@ -6,4 +6,7 @@ find_package(OpenCL REQUIRED)
 include_directories(${OpenCL_INCLUDE_DIRS})
 link_directories(${OpenCL_LIBRARY})
 target_link_libraries(seedimg-filters-ocl ${OpenCL_LIBRARY} seedimg)
-target_include_directories(seedimg-filters-ocl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/seedimg-filters/seedimg-filters-core" seedimg)
+target_include_directories(seedimg-filters-ocl PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    "${CMAKE_SOURCE_DIR}/seedimg-filters"
+    seedimg)
