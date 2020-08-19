@@ -33,4 +33,8 @@ namespace seedimg {
 std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
   return std::make_unique<seedimg::img>(width, height);
 }
+std::unique_ptr<seedimg::img>
+make(const std::unique_ptr<seedimg::img> &inp_img) {
+  return std::make_unique<seedimg::img>(*inp_img);
+}
 } // namespace seedimg

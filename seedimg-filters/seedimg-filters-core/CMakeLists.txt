@@ -1,4 +1,4 @@
-#[[ 
+#[[
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  

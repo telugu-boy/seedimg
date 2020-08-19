@@ -39,7 +39,7 @@ int main() {
       // 0}});
       // seedimg::filters::rotate_hue_i(a, 180);
       // seedimg::filters::h_mirror_i(a);
-      bool b = seedimg_autodetect_to("biol.jpg", a);
+      // bool b = seedimg_autodetect_to("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;

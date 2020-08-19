@@ -62,6 +62,14 @@ public:
                 static_cast<std::size_t>(img_.width_ * img_.height_) *
                     sizeof(seedimg::pixel));
   }
+  img(seedimg::img &&other) : width_{0}, height_{0}, data_{nullptr} {
+    this->width_ = other.width_;
+    this->height_ = other.height_;
+    this->data_ = other.data_;
+    other.width_ = 0;
+    other.height_ = 0;
+    other.data_ = nullptr;
+  }
 
   ~img() {
     if (data_ != nullptr) {
@@ -125,6 +133,8 @@ private:
 };
 
 std::unique_ptr<seedimg::img> make(simg_int width, simg_int height);
+std::unique_ptr<seedimg::img>
+make(const std::unique_ptr<seedimg::img> &inp_img);
 
 namespace modules {};
 namespace filters {};
