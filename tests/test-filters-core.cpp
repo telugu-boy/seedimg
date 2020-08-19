@@ -47,27 +47,30 @@ enum class filter_functions {
   V_MIRROR,
   H_MIRROR,
 };
+
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
-    {{"grayscale_lum", filter_functions::GRAYSCALE_LUM},
-     {"grayscale_avg", filter_functions::GRAYSCALE_AVG},
-     {"invert", filter_functions::INVERT},
-     {"invert_alpha", filter_functions::INVERT_A},
-     {"invert_alpha_only", filter_functions::INVERT_AO},
-     {"crop", filter_functions::CROP},
-     {"blur", filter_functions::BLUR},
-     {"h_blur", filter_functions::H_BLUR},
-     {"v_blur", filter_functions::V_BLUR},
-     {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION},
-     {"rotate_hue", filter_functions::ROTATE_HUE},
-     {"brightness", filter_functions::BRIGHTNESS},
-     {"brightness_alpha", filter_functions::BRIGHTNESS_A},
-     {"blend", filter_functions::BLEND},
-     {"blend_alpha", filter_functions::BLEND_A},
-     {"rotate_cw", filter_functions::ROTATE_CW},
-     {"rotate_180", filter_functions::ROTATE_180},
-     {"rotate_ccw", filter_functions::ROTATE_CCW},
-     {"v_mirror", filter_functions::V_MIRROR},
-     {"h_mirror", filter_functions::H_MIRROR}};
+    {
+        {"grayscale_lum", filter_functions::GRAYSCALE_LUM},
+        {"grayscale_avg", filter_functions::GRAYSCALE_AVG},
+        {"invert", filter_functions::INVERT},
+        {"invert_alpha", filter_functions::INVERT_A},
+        {"invert_alpha_only", filter_functions::INVERT_AO},
+        {"crop", filter_functions::CROP},
+        {"blur", filter_functions::BLUR},
+        {"h_blur", filter_functions::H_BLUR},
+        {"v_blur", filter_functions::V_BLUR},
+        {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION},
+        {"rotate_hue", filter_functions::ROTATE_HUE},
+        {"brightness", filter_functions::BRIGHTNESS},
+        {"brightness_alpha", filter_functions::BRIGHTNESS_A},
+        {"blend", filter_functions::BLEND},
+        {"blend_alpha", filter_functions::BLEND_A},
+        {"rotate_cw", filter_functions::ROTATE_CW},
+        {"rotate_180", filter_functions::ROTATE_180},
+        {"rotate_ccw", filter_functions::ROTATE_CCW},
+        {"v_mirror", filter_functions::V_MIRROR},
+        {"h_mirror", filter_functions::H_MIRROR},
+};
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
