@@ -62,7 +62,7 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
      {"brightness", filter_functions::BRIGHTNESS},
      {"brightness_alpha", filter_functions::BRIGHTNESS_A},
      {"blend", filter_functions::BLEND},
-     {"blend_alpha", filter_functions::BLEND_A}};
+     {"blend_alpha", filter_functions::BLEND_A},
      {"rotate_cw", filter_functions::ROTATE_CW},
      {"rotate_180", filter_functions::ROTATE_180},
      {"rotate_ccw", filter_functions::ROTATE_CCW},
@@ -123,21 +123,22 @@ int main(int argc, char *argv[]) {
   case filter_functions::BRIGHTNESS:
     // values in the second argument are percentages.
     seedimg::filters::brightness_i(img, 20.0);
-      break;
+    break;
   case filter_functions::BRIGHTNESS_A:
     seedimg::filters::brightness_a_i(img, 40.0);
-      break;
+    break;
   case filter_functions::BLEND: {
-    auto another_img = std::make_unique<seedimg::img>(*img);  // coooopy coomstructor.
-    seedimg::filters::v_blur(another_img, 10);
-    seedimg::filters::blend_i({img, 50}, {*another_img, 50});
-  }
-
+    auto another_img =
+        std::make_unique<seedimg::img>(*img); // coooopy coomstructor.
+    seedimg::filters::v_blur_i(another_img, 10);
+    seedimg::filters::blend_i({img, 50}, {another_img, 50});
+  } break;
   case filter_functions::BLEND_A: {
-    auto __another_img = std::make_unique<seedimg::img>(*img);  // coooopy coomstructor.
-    seedimg::filters::v_blur(__another_img, 10);
-    seedimg::filters::blend_i({img, 50}, {*__another_img, 50});
-   }
+    auto another_img =
+        std::make_unique<seedimg::img>(*img); // coooopy coomstructor.
+    seedimg::filters::v_blur_i(another_img, 10);
+    seedimg::filters::blend_i({img, 50}, {another_img, 50});
+  } break;
   case filter_functions::ROTATE_CW:
     seedimg::filters::rotate_cw_i(img);
     break;

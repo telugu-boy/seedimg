@@ -58,16 +58,15 @@ void v_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it = 3);
  */
 void convolution(simg &input, std::vector<std::vector<float>> kernel);
 
-void brightness(simg& input, simg& output, std::uint8_t intensity);
-void brightness_i(simg& image, std::uint8_t intensity);
-void brightness_a(simg& input, simg& output, std::uint8_t intensity);
-void brightness_a_i(simg& image, std::uint8_t intensity);
+void brightness(simg &input, simg &output, std::uint8_t intensity);
+void brightness_i(simg &image, std::uint8_t intensity);
+void brightness_a(simg &input, simg &output, std::uint8_t intensity);
+void brightness_a_i(simg &image, std::uint8_t intensity);
 
-void blend(std::pair<simg&, const std::uint8_t> input,
-           std::pair<seedimg::img, const std::uint8_t> other,
-           simg& output);
-void blend_i(std::pair<simg&, const std::uint8_t> input,
-             std::pair<seedimg::img, const std::uint8_t> other);
+void blend(std::pair<simg &, const std::uint8_t> input,
+           std::pair<simg &, const std::uint8_t> other, simg &output);
+void blend_i(std::pair<simg &, const std::uint8_t> input,
+             std::pair<simg &, const std::uint8_t> other);
 } // namespace seedimg::filters
 
 #endif

@@ -17,85 +17,77 @@ Copyright (C) 2020 tripulse
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-
 #include <seedimg-filters-core/seedimg-filters-core.hpp>
-#define CLAMP(x, a,b) ((x) < (a) ? (a) : (x) > (b) ? (b) : (x))
+#define CLAMP(x, a, b) ((x) < (a) ? (a) : (x) > (b) ? (b) : (x))
 
 namespace seedimg::filters {
-  void brightness_worker(std::unique_ptr<seedimg::img>& input,
-                         std::unique_ptr<seedimg::img>& output,
-                         simg_int start_row,
-                         simg_int end_row,
-                         std::uint32_t intensity) {
-    for(; start_row < end_row; ++start_row) {
-      for(simg_int x = 0; x < input->width(); ++x) {
-        auto& pix = input->pixel(x,start_row);
+void brightness_worker(simg &input, simg &output, simg_int start_row,
+                       simg_int end_row, std::uint32_t intensity) {
+  for (; start_row < end_row; ++start_row) {
+    for (simg_int x = 0; x < input->width(); ++x) {
+      auto &pix = input->pixel(x, start_row);
 
-        output->pixel(x,start_row) = {static_cast<std::uint8_t>(pix.r * intensity/255),
-                                      static_cast<std::uint8_t>(pix.g * intensity/255),
-                                      static_cast<std::uint8_t>(pix.b * intensity/255),
-                                      pix.a};
-      }
+      output->pixel(x, start_row) = {
+          static_cast<std::uint8_t>(pix.r * intensity / 255),
+          static_cast<std::uint8_t>(pix.g * intensity / 255),
+          static_cast<std::uint8_t>(pix.b * intensity / 255), pix.a};
     }
-  }
-
-  void brightness_alpha_worker(
-      std::unique_ptr<seedimg::img>& input,
-      std::unique_ptr<seedimg::img>& output,
-      simg_int start_row,
-      simg_int end_row,
-      std::uint32_t intensity) {
-    for(; start_row < end_row; ++start_row) {
-      for(simg_int x = 0; x < input->width(); ++x) {
-        auto& pix = input->pixel(x,start_row);
-
-        output->pixel(x,start_row) = {static_cast<std::uint8_t>(pix.r * intensity/255),
-                                      static_cast<std::uint8_t>(pix.g * intensity/255),
-                                      static_cast<std::uint8_t>(pix.b * intensity/255),
-                                      static_cast<std::uint8_t>(pix.a * intensity/255)};
-      }
-    }
-  }
-
-  void brightness(std::unique_ptr<seedimg::img>& input,
-                  std::unique_ptr<seedimg::img>& output,
-                  std::uint8_t intensity) {
-    intensity = CLAMP(intensity, 0, 100) * 255/100;
-
-    auto start_end = input->start_end_rows();
-    std::vector<std::thread> workers(start_end.size());
-    for (std::size_t i = 0; i < workers.size(); i++) {
-      workers.at(i) =
-          std::thread(brightness_worker, std::ref(input), std::ref(output),
-                      start_end.at(i).first, start_end.at(i).second, intensity);
-    }
-    for (std::size_t i = 0; i < workers.size(); ++i)
-      workers.at(i).join();
-  }
-
-  void brightness_a(std::unique_ptr<seedimg::img>& input,
-                    std::unique_ptr<seedimg::img>& output,
-                    std::uint8_t intensity) {
-    intensity = CLAMP(intensity, 0, 100) * 255/100;
-
-    auto start_end = input->start_end_rows();
-    std::vector<std::thread> workers(start_end.size());
-    for (std::size_t i = 0; i < workers.size(); i++) {
-      workers.at(i) =
-          std::thread(brightness_alpha_worker, std::ref(input), std::ref(output),
-                      start_end.at(i).first, start_end.at(i).second, intensity);
-    }
-    for (std::size_t i = 0; i < workers.size(); ++i)
-      workers.at(i).join();
-  }
-
-  void brightness_i(std::unique_ptr<seedimg::img>& image,
-                    std::uint8_t intensity) {
-    brightness(image, image, intensity);
-  }
-
-  void brightness_a_i(std::unique_ptr<seedimg::img>& image,
-                      std::uint8_t intensity) {
-    brightness_a(image, image, intensity);
   }
 }
+
+void brightness_alpha_worker(simg &input, simg &output, simg_int start_row,
+                             simg_int end_row, std::uint32_t intensity) {
+  for (; start_row < end_row; ++start_row) {
+    for (simg_int x = 0; x < input->width(); ++x) {
+      auto &pix = input->pixel(x, start_row);
+
+      output->pixel(x, start_row) = {
+          static_cast<std::uint8_t>(pix.r * intensity / 255),
+          static_cast<std::uint8_t>(pix.g * intensity / 255),
+          static_cast<std::uint8_t>(pix.b * intensity / 255),
+          static_cast<std::uint8_t>(pix.a * intensity / 255)};
+    }
+  }
+}
+
+void brightness(std::unique_ptr<seedimg::img> &input,
+                std::unique_ptr<seedimg::img> &output, std::uint8_t intensity) {
+  intensity = CLAMP(intensity, 0, 100) * 255 / 100;
+
+  auto start_end = input->start_end_rows();
+  std::vector<std::thread> workers(start_end.size());
+  for (std::size_t i = 0; i < workers.size(); i++) {
+    workers.at(i) =
+        std::thread(brightness_worker, std::ref(input), std::ref(output),
+                    start_end.at(i).first, start_end.at(i).second, intensity);
+  }
+  for (std::size_t i = 0; i < workers.size(); ++i)
+    workers.at(i).join();
+}
+
+void brightness_a(std::unique_ptr<seedimg::img> &input,
+                  std::unique_ptr<seedimg::img> &output,
+                  std::uint8_t intensity) {
+  intensity = CLAMP(intensity, 0, 100) * 255 / 100;
+
+  auto start_end = input->start_end_rows();
+  std::vector<std::thread> workers(start_end.size());
+  for (std::size_t i = 0; i < workers.size(); i++) {
+    workers.at(i) =
+        std::thread(brightness_alpha_worker, std::ref(input), std::ref(output),
+                    start_end.at(i).first, start_end.at(i).second, intensity);
+  }
+  for (std::size_t i = 0; i < workers.size(); ++i)
+    workers.at(i).join();
+}
+
+void brightness_i(std::unique_ptr<seedimg::img> &image,
+                  std::uint8_t intensity) {
+  brightness(image, image, intensity);
+}
+
+void brightness_a_i(std::unique_ptr<seedimg::img> &image,
+                    std::uint8_t intensity) {
+  brightness_a(image, image, intensity);
+}
+} // namespace seedimg::filters
