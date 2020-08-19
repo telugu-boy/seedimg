@@ -50,8 +50,7 @@ void brightness_alpha_worker(simg &input, simg &output, simg_int start_row,
   }
 }
 
-void brightness(std::unique_ptr<seedimg::img> &input,
-                std::unique_ptr<seedimg::img> &output, std::uint8_t intensity) {
+void brightness(simg &input, simg &output, std::uint8_t intensity) {
   intensity = CLAMP(intensity, 0, 100) * 255 / 100;
 
   auto start_end = input->start_end_rows();
@@ -65,9 +64,7 @@ void brightness(std::unique_ptr<seedimg::img> &input,
     workers.at(i).join();
 }
 
-void brightness_a(std::unique_ptr<seedimg::img> &input,
-                  std::unique_ptr<seedimg::img> &output,
-                  std::uint8_t intensity) {
+void brightness_a(simg &input, simg &output, std::uint8_t intensity) {
   intensity = CLAMP(intensity, 0, 100) * 255 / 100;
 
   auto start_end = input->start_end_rows();
@@ -81,13 +78,11 @@ void brightness_a(std::unique_ptr<seedimg::img> &input,
     workers.at(i).join();
 }
 
-void brightness_i(std::unique_ptr<seedimg::img> &image,
-                  std::uint8_t intensity) {
+void brightness_i(simg &image, std::uint8_t intensity) {
   brightness(image, image, intensity);
 }
 
-void brightness_a_i(std::unique_ptr<seedimg::img> &image,
-                    std::uint8_t intensity) {
+void brightness_a_i(simg &image, std::uint8_t intensity) {
   brightness_a(image, image, intensity);
 }
 } // namespace seedimg::filters
