@@ -54,17 +54,13 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 add_subdirectory(seedimg)
 
 # image modules
-add_subdirectory(seedimg-jpeg)
-add_subdirectory(seedimg-png)
-add_subdirectory(seedimg-webp)
-add_subdirectory(seedimg-farbfeld)
-add_subdirectory(seedimg-irdump)
+add_subdirectory(seedimg-formats)
 
 # utils
 add_subdirectory(seedimg-utils)
 
 # filter modules
-add_subdirectory(seedimg-filters-core)
+add_subdirectory(seedimg-filters)
 
 # automatic detection of image types:
 add_subdirectory(seedimg-autodetect)

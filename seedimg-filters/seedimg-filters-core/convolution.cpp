@@ -17,15 +17,13 @@ Copyright (C) 2020 tripulse
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <numeric>
 
-#include <seedimg-filters-core/seedimg-filters-core.hpp>
+#include "seedimg-filters-core.hpp"
 #include <seedimg/seedimg.hpp>
-
 
 void seedimg::filters::convolution(simg &input,
                                    std::vector<std::vector<float>> kernel) {
@@ -39,11 +37,13 @@ void seedimg::filters::convolution(simg &input,
   {
     // will be used as the divisor to normalize all the kernel elements.
     auto kernmatrix_normdiv = std::abs(std::accumulate(
-      kernel.begin(), kernel.end(), 0.0, [](float s, auto r) -> float {
-      return s + std::accumulate(r.begin(), r.end(), 0.0); }));
+        kernel.begin(), kernel.end(), 0.0, [](float s, auto r) -> float {
+          return s + std::accumulate(r.begin(), r.end(), 0.0);
+        }));
 
-      for (simg_int r = 0; r < kernel_dims.second; ++r)
-        std::transform(kernel[r].begin(), kernel[r].end(), kernel[r].begin(),
+    for (simg_int r = 0; r < kernel_dims.second; ++r)
+      std::transform(
+          kernel[r].begin(), kernel[r].end(), kernel[r].begin(),
           [&](auto elem) -> float { return elem / kernmatrix_normdiv; });
   }
 
@@ -56,7 +56,9 @@ void seedimg::filters::convolution(simg &input,
     for (simg_int x = 0; x < input->width(); ++x) {
       // output value to be used as an accumulator.
       // this will be resulting pixel in the kernel's origin.
-      struct { float r=0, g=0, b=0, a=0; } outpix;
+      struct {
+        float r = 0, g = 0, b = 0, a = 0;
+      } outpix;
 
       for (std::size_t dy = 0; dy < kernel_dims.second; ++dy) {
         for (std::size_t dx = 0; dx < kernel_dims.first; ++dx) {
@@ -83,10 +85,10 @@ void seedimg::filters::convolution(simg &input,
         }
       }
 
-      input->pixel(x, y) = { static_cast<std::uint8_t>(outpix.r),
-                             static_cast<std::uint8_t>(outpix.g),
-                             static_cast<std::uint8_t>(outpix.b),
-                             static_cast<std::uint8_t>(outpix.a) };
+      input->pixel(x, y) = {static_cast<std::uint8_t>(outpix.r),
+                            static_cast<std::uint8_t>(outpix.g),
+                            static_cast<std::uint8_t>(outpix.b),
+                            static_cast<std::uint8_t>(outpix.a)};
     }
   }
 }

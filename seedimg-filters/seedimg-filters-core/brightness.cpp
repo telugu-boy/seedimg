@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#include <seedimg-filters-core/seedimg-filters-core.hpp>
+#include "seedimg-filters-core.hpp"
 #define CLAMP(x, a, b) ((x) < (a) ? (a) : (x) > (b) ? (b) : (x))
 
 namespace seedimg::filters {

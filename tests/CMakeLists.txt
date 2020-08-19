@@ -19,6 +19,7 @@ set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
 target_link_libraries(tests seedimg-filters-core seedimg-autodetect stdc++fs)
+target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
 file(COPY test_image.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
 
 include_directories(../)

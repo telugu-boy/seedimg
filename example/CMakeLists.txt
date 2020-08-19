@@ -26,4 +26,7 @@ target_link_libraries(${APP_EXE}
     seedimg-autodetect
 )
 
-include_directories(../)
+target_include_directories(${APP_EXE} PRIVATE
+    "${CMAKE_SOURCE_DIR}/seedimg"
+    "${CMAKE_SOURCE_DIR}/seedimg-filters"
+    "${CMAKE_SOURCE_DIR}/seedimg-autodetect")
