@@ -15,7 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.2)
 
 # edit this to wherever your vcpkg is
 set(VCPKG_DIR ../vcpkg CACHE PATH "path to vcpkg root")
@@ -29,7 +29,7 @@ option(BUILD_TESTING "" OFF)
 include(CTest)
 include(CheckCXXCompilerFlag)
 
-include_directories(${VCPKG_DIR}/installed/${VCPKG_TRIPLET}/include ${CMAKE_SOURCE_DIR})
+include_directories(${VCPKG_DIR}/installed/${VCPKG_TRIPLET}/include "${CMAKE_SOURCE_DIR}/include")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
@@ -50,25 +50,16 @@ endif()
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-# core
-add_subdirectory(seedimg)
 
-# image modules
-add_subdirectory(seedimg-formats)
-
-# utils
-add_subdirectory(seedimg-utils)
-
-# filter modules
-add_subdirectory(seedimg-filters)
-
-# automatic detection of image types:
-add_subdirectory(seedimg-autodetect)
-
-# dependent project
-add_subdirectory(example)
+add_subdirectory(src)
 
 # tests
 if (${BUILD_TESTING})
     add_subdirectory(tests)
 endif()
+
+# dependent project
+add_subdirectory(example)
+
+
+

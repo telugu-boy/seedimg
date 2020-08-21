@@ -22,8 +22,8 @@
 #include <iostream>
 #include <unordered_map>
 
-#include <seedimg-autodetect/seedimg-autodetect.hpp>
-#include <seedimg-filters-core/seedimg-filters-core.hpp>
+#include <seedimg-autodetect.hpp>
+#include <seedimg-filters/seedimg-filters-core.hpp>
 
 enum class filter_functions {
   GRAYSCALE_LUM,

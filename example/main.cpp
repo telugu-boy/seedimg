@@ -19,9 +19,9 @@ seedimg - module based image manipulation library written in modern
 #include <filesystem>
 #include <iostream>
 
-#include <seedimg-autodetect/seedimg-autodetect.hpp>
-//#include <seedimg-filters-core/seedimg-filters-core.hpp>
-#include <seedimg-filters-ocl/seedimg-filters-ocl.hpp>
+#include <seedimg-autodetect.hpp>
+#include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-filters/seedimg-filters-ocl.hpp>
 
 int main() {
   using namespace seedimg::filters;
@@ -29,7 +29,7 @@ int main() {
             << std::endl;
   {
     auto a = seedimg_autodetect_from("cat.png");
-    // auto res_img = seedimg::make(a->width(), a->height());
+    auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // crop_i(a, {122, 166}, {244, 332});
       // grayscale_i(a, true);
@@ -41,8 +41,11 @@ int main() {
       // 0}});
       // rotate_hue_i(a, 180);
       // h_mirror_i(a);
-      ocl::rotate_hue(a, a, 180);
-      bool b = seedimg_autodetect_to("biol.jpg", a);
+      for (int i = 170; i < 190; i++) {
+        ocl::rotate_hue(a, res_img, i);
+        bool b =
+            seedimg_autodetect_to("biol" + std::to_string(i) + ".jpg", res_img);
+      }
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;
