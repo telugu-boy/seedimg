@@ -46,6 +46,7 @@ int main() {
         bool b =
             seedimg_autodetect_to("biol" + std::to_string(i) + ".jpg", res_img);
       }
+      seedimg_autodetect_to("boil.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;

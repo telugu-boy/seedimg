@@ -109,19 +109,21 @@ public:
     return res;
   }
 
-  seedimg::pixel &pixel(simg_int x, simg_int y) {
+  seedimg::pixel &pixel(simg_int x, simg_int y) noexcept {
     return data_[y * this->width_ + x];
   }
-  seedimg::pixel &pixel(seedimg::point p) { return pixel(p.first, p.second); }
+  seedimg::pixel &pixel(seedimg::point p) noexcept {
+    return pixel(p.first, p.second);
+  }
   seedimg::pixel &pixel(simg_int x) {
     if (x > this->width() * this->height() - 1)
       std::terminate();
     return pixel(x / this->width(), x % this->width());
   }
-  seedimg::pixel *row(simg_int y) { return data_ + y * this->width_; }
-  seedimg::pixel *data() { return data_; }
-  simg_int width() { return width_; }
-  simg_int height() { return height_; }
+  seedimg::pixel *row(simg_int y) noexcept { return data_ + y * this->width_; }
+  seedimg::pixel *data() noexcept { return data_; }
+  simg_int width() noexcept { return width_; }
+  simg_int height() noexcept { return height_; }
 
 private:
   simg_int width_;

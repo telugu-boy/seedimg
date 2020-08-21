@@ -130,15 +130,13 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   rotate_hue.setArg(2, res_img_buf);
   err = queue.enqueueNDRangeKernel(
       rotate_hue, cl::NullRange,
-      cl::NDRange(round_up(inp_img->width() * inp_img->width(), 128)),
+      cl::NDRange(round_up(inp_img->width() * inp_img->height(), 128)),
       cl::NDRange(128));
   err = queue.finish();
 
-  // read result from GPU to here
-
-  err = queue.enqueueReadBuffer(res_img_buf, CL_TRUE, 0,
-                                sizeof(seedimg::pixel) * res_img->width() *
-                                    res_img->height(),
-                                res_img->data());
+  queue.enqueueReadBuffer(res_img_buf, CL_TRUE, 0,
+                          sizeof(seedimg::pixel) * res_img->width() *
+                              res_img->height(),
+                          res_img->data());
 }
 } // namespace seedimg::filters::ocl
