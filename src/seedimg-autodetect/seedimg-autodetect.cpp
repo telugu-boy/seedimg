@@ -27,7 +27,7 @@
 
 #include "seedimg-autodetect.hpp"
 
-enum img_type seedimg_match_ext(const std::string &ext) noexcept {
+enum img_type match_ext(const std::string &ext) noexcept {
   if (ext == "png")
     return img_type::png;
   if (ext == "jpeg" || ext == "jpg" || ext == "jfif")
@@ -41,8 +41,7 @@ enum img_type seedimg_match_ext(const std::string &ext) noexcept {
   return img_type::unknown;
 }
 
-std::optional<enum img_type>
-seedimg_imgtype(const std::string &filename) noexcept {
+std::optional<enum img_type> imgtype(const std::string &filename) noexcept {
   if (!std::filesystem::exists(filename))
     return std::nullopt;
   if (seedimg::modules::png::check(filename))
@@ -56,11 +55,12 @@ seedimg_imgtype(const std::string &filename) noexcept {
   return img_type::unknown;
 }
 
-simg seedimg_autodetect_from(const std::string &filename) {
-  auto type = seedimg_imgtype(filename);
+namespace seedimg {
+simg load(const std::string &filename) {
+  auto type = imgtype(filename);
   if (type == std::nullopt)
     return nullptr;
-  switch (*seedimg_imgtype(filename)) {
+  switch (*imgtype(filename)) {
   case img_type::png:
     return seedimg::modules::png::from(filename);
   case img_type::jpeg:
@@ -74,9 +74,9 @@ simg seedimg_autodetect_from(const std::string &filename) {
   }
 }
 
-bool seedimg_autodetect_to(const std::string &filename, const simg &image) {
+bool save(const std::string &filename, const simg &image) {
   std::string extension_type = filename.substr(filename.rfind('.') + 1);
-  switch (seedimg_match_ext(extension_type)) {
+  switch (match_ext(extension_type)) {
   case img_type::png:
     return seedimg::modules::png::to(filename, image);
   case img_type::jpeg:
@@ -91,3 +91,4 @@ bool seedimg_autodetect_to(const std::string &filename, const simg &image) {
     return false;
   }
 }
+} // namespace seedimg

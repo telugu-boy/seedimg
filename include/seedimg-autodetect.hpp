@@ -27,13 +27,14 @@
 
 enum class img_type { unknown = 0, png, jpeg, webp, farbfeld, irdump };
 
-enum img_type seedimg_match_ext(const std::string &ext) noexcept;
+enum img_type match_ext(const std::string &ext) noexcept;
 
-std::optional<enum img_type>
-seedimg_imgtype(const std::string &filename) noexcept;
+std::optional<enum img_type> imgtype(const std::string &filename) noexcept;
 
-simg seedimg_autodetect_from(const std::string &filename);
+namespace seedimg {
+simg load(const std::string &filename);
 
-bool seedimg_autodetect_to(const std::string &filename, const simg &image);
+bool save(const std::string &filename, const simg &image);
+} // namespace seedimg
 
 #endif
