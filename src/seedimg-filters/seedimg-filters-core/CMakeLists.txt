@@ -15,19 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-set(APP_EXE example)
+add_library(seedimg-filters-core ${LIB_TYPE}
+    invert.cpp
+    grayscale.cpp
+    blur.cpp
+    convolution.cpp
+    rotate_hue.cpp
+    brightness.cpp
+    blend.cpp
+    rotate_mirror.cpp
+    crop.cpp)
 
-add_executable(${APP_EXE} main.cpp)
-
-file(COPY cat.png DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
-
-target_link_libraries(${APP_EXE} 
-    seedimg-filters-core
-    seedimg-filters-ocl
-    seedimg-autodetect
-)
-
-target_include_directories(${APP_EXE} PRIVATE
-    "${CMAKE_SOURCE_DIR}/seedimg"
-    "${CMAKE_SOURCE_DIR}/seedimg-filters"
-    "${CMAKE_SOURCE_DIR}/seedimg-autodetect")
+target_link_libraries(seedimg-filters-core PRIVATE seedimg)
+target_include_directories(seedimg-filters-core PRIVATE seedimg)

@@ -1,5 +1,0 @@
-add_subdirectory(seedimg-jpeg)
-add_subdirectory(seedimg-png)
-add_subdirectory(seedimg-webp)
-add_subdirectory(seedimg-farbfeld)
-add_subdirectory(seedimg-irdump)

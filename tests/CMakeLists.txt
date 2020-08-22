@@ -1,4 +1,4 @@
-﻿#[[ 
+#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
-target_link_libraries(tests seedimg-filters-core seedimg-autodetect stdc++fs)
+target_link_libraries(tests seedimg-filters-core seedimg-autodetect seedimg-filters-ocl stdc++fs)
 target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
 file(COPY test_image.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
 
@@ -51,9 +51,6 @@ set_tests_properties(h_blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 add_test(v_blur_test ${TESTS_EXE} v_blur)
 set_tests_properties(v_blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-add_test(blur_test ${TESTS_EXE} blur)
-set_tests_properties(blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
-
 add_test(kernel_convolution_test ${TESTS_EXE} kernel_convolution)
 set_tests_properties(kernel_convolution_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
@@ -70,7 +67,7 @@ add_test(blend_test ${TESTS_EXE} blend)
 set_tests_properties(blend_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(blend_alpha_test ${TESTS_EXE} blend_alpha)
-set_tests_properties(kernel_convolution_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+set_tests_properties(blend_alpha_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(rotate_cw_test ${TESTS_EXE} rotate_cw)
 set_tests_properties(rotate_cw_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
@@ -86,3 +83,7 @@ set_tests_properties(v_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(h_mirror_test ${TESTS_EXE} h_mirror)
 set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(rotate_hue_ocl_test ${TESTS_EXE} rotate_hue_ocl)
+set_tests_properties(rotate_hue_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+

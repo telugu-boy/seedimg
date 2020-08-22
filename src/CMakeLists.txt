@@ -1,4 +1,4 @@
-#[[
+#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -15,19 +15,19 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-set(APP_EXE example)
 
-add_executable(${APP_EXE} main.cpp)
+# core
+add_subdirectory(seedimg)
 
-file(COPY cat.png DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
+# image modules
+add_subdirectory(seedimg-formats)
 
-target_link_libraries(${APP_EXE} 
-    seedimg-filters-core
-    seedimg-filters-ocl
-    seedimg-autodetect
-)
+# utils
+add_subdirectory(seedimg-utils)
 
-target_include_directories(${APP_EXE} PRIVATE
-    "${CMAKE_SOURCE_DIR}/seedimg"
-    "${CMAKE_SOURCE_DIR}/seedimg-filters"
-    "${CMAKE_SOURCE_DIR}/seedimg-autodetect")
+# filter modules
+add_subdirectory(seedimg-filters)
+
+# automatic detection of image types:
+add_subdirectory(seedimg-autodetect)
+
