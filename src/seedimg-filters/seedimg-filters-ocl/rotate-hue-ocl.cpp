@@ -66,21 +66,11 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   auto context = ocl_singleton::instance().context;
   auto device = ocl_singleton::instance().device;
   auto sources = ocl_singleton::instance().sources;
+  auto program = ocl_singleton::instance().program;
 
-  // calculates for each element; C = A + B
   std::string kernel_code =
 #include "cl_kernels/rotate_hue_kernel.clh"
       ;
-
-  sources.push_back({kernel_code.c_str(), kernel_code.length()});
-
-  cl::Program program(context, sources);
-  if (program.build({device}) != CL_SUCCESS) {
-    std::cout << "Error building: "
-              << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)
-              << std::endl;
-    exit(1);
-  }
 
   float hue_kernel[9];
   get_hue_kernel(angle, hue_kernel);
@@ -120,5 +110,9 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
                           sizeof(seedimg::pixel) * res_img->width() *
                               res_img->height(),
                           res_img->data());
+}
+
+void rotate_hue_i(simg &inp_img, int angle) {
+  rotate_hue(inp_img, inp_img, angle);
 }
 } // namespace seedimg::filters::ocl

@@ -24,6 +24,7 @@
 
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-filters/seedimg-filters-ocl.hpp>
 
 enum class filter_functions {
   GRAYSCALE_LUM,
@@ -46,6 +47,7 @@ enum class filter_functions {
   ROTATE_CCW,
   V_MIRROR,
   H_MIRROR,
+  ROTATE_HUE_OCL,
 };
 
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
@@ -70,6 +72,7 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"rotate_ccw", filter_functions::ROTATE_CCW},
         {"v_mirror", filter_functions::V_MIRROR},
         {"h_mirror", filter_functions::H_MIRROR},
+        {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
 };
 
 int main(int argc, char *argv[]) {
@@ -153,6 +156,8 @@ int main(int argc, char *argv[]) {
   case filter_functions::H_MIRROR:
     seedimg::filters::h_mirror_i(img);
     break;
+  case filter_functions::ROTATE_HUE_OCL:
+    seedimg::filters::ocl::rotate_hue_i(img, 180);
   }
   char name_buf[256];
   /*

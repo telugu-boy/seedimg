@@ -42,13 +42,11 @@ int main() {
       // 0}});
       // rotate_hue_i(a, 180);
       // h_mirror_i(a);
-      ocl::rotate_hue(a, a, 180);
-      /*
-    for (int i = 170; i < 190; i++) {
-      ocl::rotate_hue(a, res_img, i);
-      bool b =
-          seedimg_autodetect_to("biol" + std::to_string(i) + ".jpg", res_img);
-    }*/
+      for (int i = 0; i <= 360; i++) {
+        ocl::rotate_hue(a, res_img, i);
+        bool b = seedimg_autodetect_to(
+            "violing/biol" + std::to_string(i) + ".jpg", res_img);
+      }
       seedimg_autodetect_to("boil.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

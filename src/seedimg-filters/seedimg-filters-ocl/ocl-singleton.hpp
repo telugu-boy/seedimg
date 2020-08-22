@@ -31,6 +31,7 @@ public:
   cl::Context context;
   cl::Device device;
   cl::Program::Sources sources;
+  cl::Program program;
 
   static ocl_singleton &instance(std::size_t plat = 0, std::size_t dev = 0) {
     static ocl_singleton singleton(plat, dev);
@@ -58,6 +59,21 @@ private:
     }
     device = all_devices[dev];
     context = {device};
+
+    const std::string kernels[] = {
+#include "cl_kernels/rotate_hue_kernel.clh"
+    };
+
+    for (auto &kernel : kernels)
+      sources.push_back({kernel.c_str(), kernel.length()});
+
+    program = {context, sources};
+    if (program.build({device}) != CL_SUCCESS) {
+      std::cout << "Error building: "
+                << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)
+                << std::endl;
+      exit(1);
+    }
   }
 };
 
