@@ -28,6 +28,7 @@
 
 #include <CL/cl.hpp>
 
+#include "ocl-singleton.hpp"
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 #include <seedimg.hpp>
 
@@ -62,28 +63,9 @@ void get_hue_kernel(int angle, float hue_kernel[9]) {
 
 namespace seedimg::filters::ocl {
 void rotate_hue(simg &inp_img, simg &res_img, int angle) {
-  // get all platforms (drivers), e.g. NVIDIA
-  std::vector<cl::Platform> all_platforms;
-  cl::Platform::get(&all_platforms);
-
-  if (all_platforms.size() == 0) {
-    std::cout << " No platforms found. Check OpenCL installation!\n";
-    exit(1);
-  }
-  cl::Platform default_platform = all_platforms[1];
-  std::cout << "Using platform: "
-            << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
-
-  // get default device (CPUs, GPUs) of the default platform
-  std::vector<cl::Device> all_devices;
-  default_platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
-  if (all_devices.size() == 0) {
-    std::cerr << " No GPUs found. Check OpenCL installation!\n";
-    exit(1);
-  }
-  cl::Device default_device = all_devices[0];
-  cl::Context context({default_device});
-  cl::Program::Sources sources;
+  auto context = ocl_singleton::instance().context;
+  auto device = ocl_singleton::instance().device;
+  auto sources = ocl_singleton::instance().sources;
 
   // calculates for each element; C = A + B
   std::string kernel_code =
@@ -93,9 +75,9 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   sources.push_back({kernel_code.c_str(), kernel_code.length()});
 
   cl::Program program(context, sources);
-  if (program.build({default_device}) != CL_SUCCESS) {
+  if (program.build({device}) != CL_SUCCESS) {
     std::cout << "Error building: "
-              << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device)
+              << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)
               << std::endl;
     exit(1);
   }
@@ -115,7 +97,7 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
                          res_img->data()};
 
   // create a queue (a queue of commands that the GPU will execute)
-  cl::CommandQueue queue(context, default_device);
+  cl::CommandQueue queue(context, device);
 
   // push write commands to queue
   queue.enqueueWriteBuffer(hue_kernel_buf, CL_TRUE, 0, sizeof(float) * 9,

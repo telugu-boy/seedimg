@@ -26,31 +26,32 @@
 class ocl_singleton {
 public:
   std::vector<cl::Platform> all_platforms;
-  cl::Platform default_platform;
+  cl::Platform platform;
   std::vector<cl::Device> all_devices;
   cl::Context context;
   cl::Device device;
-  static ocl_singleton &instance() {
-    static ocl_singleton singleton;
+  cl::Program::Sources sources;
+
+  static ocl_singleton &instance(std::size_t plat = 0, std::size_t dev = 0) {
+    static ocl_singleton singleton(plat, dev);
     return singleton;
   }
   ocl_singleton(ocl_singleton const &) = delete;
   void operator=(ocl_singleton const &) = delete;
 
 private:
-  ocl_singleton(std::size_t platform = 0, std::size_t dev = 0) {
+  ocl_singleton(std::size_t plat, std::size_t dev) {
     // get all platforms (drivers), e.g. NVIDIA
     cl::Platform::get(&all_platforms);
-
     if (all_platforms.size() == 0) {
       std::cout << " No platforms found. Check OpenCL installation!\n";
       exit(1);
     }
-    default_platform = all_platforms[platform];
-    std::cout << "Using platform: "
-              << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
+    platform = all_platforms[plat];
+    std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>()
+              << "\n";
 
-    default_platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
+    platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
     if (all_devices.size() == 0) {
       std::cout << " No GPUs found. Check OpenCL installation!\n";
       exit(1);
