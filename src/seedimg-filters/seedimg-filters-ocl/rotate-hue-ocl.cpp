@@ -68,10 +68,6 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   auto sources = ocl_singleton::instance().sources;
   auto program = ocl_singleton::instance().program;
 
-  std::string kernel_code =
-#include "cl_kernels/rotate_hue_kernel.clh"
-      ;
-
   float hue_kernel[9];
   get_hue_kernel(angle, hue_kernel);
 
