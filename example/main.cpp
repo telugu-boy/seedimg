@@ -37,11 +37,11 @@ int main() {
       // invert_i(a);
       // blur_i(a, 10);
       // h_blur_i(a, 10);
-      v_blur_i(a, 100, 1);
+      // v_blur_i(a, 100, 1);
       // convolution(a, {{-1, 1, -1}, {-2, 4, -2}, {-1, 1, -1}});
       // rotate_hue_i(a, 180);
       // h_mirror_i(a);
-      // ocl::rotate_hue_i(a, -90);
+      ocl::rotate_hue_i(a, -90);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
