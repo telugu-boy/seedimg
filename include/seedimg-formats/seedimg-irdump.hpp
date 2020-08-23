@@ -32,4 +32,4 @@ simg from(const std::string &filename);
 } // namespace irdump
 } // namespace seedimg::modules
 
-#endif // IRDUMP_H
+#endif

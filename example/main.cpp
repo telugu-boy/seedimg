@@ -29,8 +29,8 @@ int main() {
             << std::endl;
   {
     ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("cat.png");
-    auto res_img = seedimg::make(a->width(), a->height());
+    auto a = seedimg::load("barbara_gray.bmp");
+    // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // crop_i(a, {122, 166}, {244, 332});
       // grayscale_i(a, true);
@@ -41,7 +41,7 @@ int main() {
       // convolution(a, {{-1, 1, -1}, {-2, 4, -2}, {-1, 1, -1}});
       // rotate_hue_i(a, 180);
       // h_mirror_i(a);
-      ocl::rotate_hue_i(a, -90);
+      // ocl::rotate_hue_i(a, -90);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

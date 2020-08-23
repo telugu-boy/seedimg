@@ -18,6 +18,7 @@
 ************************************************************************/
 #include <filesystem>
 
+#include <seedimg-formats/seedimg-bmp.hpp>
 #include <seedimg-formats/seedimg-farbfeld.hpp>
 #include <seedimg-formats/seedimg-irdump.hpp>
 #include <seedimg-formats/seedimg-jpeg.hpp>
@@ -36,6 +37,8 @@ enum img_type match_ext(const std::string &ext) noexcept {
     return img_type::webp;
   if (ext == "ff" || ext == "farbfeld")
     return img_type::farbfeld;
+  if (ext == "bmp" || ext == "dib")
+    return img_type::bmp;
   if (ext == "sir")
     return img_type::irdump;
   return img_type::unknown;
@@ -50,6 +53,8 @@ std::optional<enum img_type> imgtype(const std::string &filename) noexcept {
     return img_type::jpeg;
   if (seedimg::modules::webp::check(filename))
     return img_type::webp;
+  if (seedimg::modules::bmp::check(filename))
+    return img_type::bmp;
   if (seedimg::modules::farbfeld::check(filename))
     return img_type::farbfeld;
   return img_type::unknown;
@@ -67,6 +72,8 @@ simg load(const std::string &filename) {
     return seedimg::modules::jpeg::from(filename);
   case img_type::webp:
     return seedimg::modules::webp::from(filename);
+  case img_type::bmp:
+    return seedimg::modules::bmp::from(filename);
   case img_type::farbfeld:
     return seedimg::modules::farbfeld::from(filename);
   default:
@@ -84,6 +91,8 @@ bool save(const std::string &filename, const simg &image) {
   case img_type::webp:
     return seedimg::modules::webp::to(filename, image);
   case img_type::farbfeld:
+    return seedimg::modules::farbfeld::to(filename, image);
+  case img_type::bmp:
     return seedimg::modules::farbfeld::to(filename, image);
   case img_type::irdump:
     return seedimg::modules::irdump::to(filename, image);

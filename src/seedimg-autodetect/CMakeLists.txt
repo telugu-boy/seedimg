@@ -23,6 +23,7 @@ target_link_libraries(seedimg-autodetect
     seedimg-jpeg 
     seedimg-webp
     seedimg-farbfeld
+    seedimg-bmp
     seedimg-irdump
 )
 

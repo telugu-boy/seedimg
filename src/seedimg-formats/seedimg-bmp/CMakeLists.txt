@@ -1,6 +1,6 @@
 #[[
 seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 tripulse, telugu-boy
+Copyright (C) 2020 telugu-boy
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -15,11 +15,10 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
+add_library(seedimg-bmp ${LIB_TYPE} seedimg-bmp.cpp)
 
-
-add_subdirectory(seedimg-jpeg)
-add_subdirectory(seedimg-png)
-add_subdirectory(seedimg-webp)
-add_subdirectory(seedimg-farbfeld)
-add_subdirectory(seedimg-bmp)
-add_subdirectory(seedimg-irdump)
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_link_libraries(seedimg-bmp PRIVATE seedimg)
+else()
+    target_link_libraries(seedimg-bmp PRIVATE stdc++fs seedimg)
+endif()
