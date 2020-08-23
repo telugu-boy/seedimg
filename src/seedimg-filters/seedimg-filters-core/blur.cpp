@@ -16,9 +16,9 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <seedimg-filters/seedimg-filters-core.hpp>
 #include <cmath>
 #include <cstdint>
+#include <seedimg-filters/seedimg-filters-core.hpp>
 // #include <immintrin.h>
 #include <algorithm>
 #include <memory>
@@ -203,7 +203,7 @@ void h_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
       horizontal_blur_single_i(res_img, inp_img, blur_level);
     }
   }
-  if (it % 2 == 0)
+  if (it % 2 == 0 || it == 1)
     inp_img.reset(res_img.release());
 }
 void v_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
@@ -220,7 +220,7 @@ void v_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
       vertical_blur_single_i(res_img, inp_img, blur_level);
     }
   }
-  if (it % 2 == 0)
+  if (it % 2 == 0 || it == 1)
     inp_img.reset(res_img.release());
 }
 void blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
