@@ -38,30 +38,28 @@ void pixel_add_worker(simg &image, simg &other, simg_int start_row,
 }
 
 void blend(std::pair<simg &, const std::uint8_t> input,
-           std::pair<seedimg::img, const std::uint8_t> other, simg &output) {
-  if (input.first->width() != other.first.width() ||
-      input.first->height() != other.first.height())
+           std::pair<simg &, const std::uint8_t> other, simg &output) {
+  if (input.first->width() != other.first->width() ||
+      input.first->height() != other.first->height())
     return;
-
-  auto other_img = std::make_unique<seedimg::img>(other.first);
 
   // reduce the image gain as needed.
   brightness_a(input.first, output, input.second);
-  brightness_a_i(other_img, other.second);
+  brightness_a_i(other.first, other.second);
 
   auto start_end = input.first->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
 
   for (std::size_t i = 0; i < workers.size(); i++)
     workers.at(i) =
-        std::thread(pixel_add_worker, std::ref(output), std::ref(other_img),
+        std::thread(pixel_add_worker, std::ref(output), std::ref(other.first),
                     start_end.at(i).first, start_end.at(i).second);
   for (std::size_t i = 0; i < workers.size(); ++i)
     workers.at(i).join();
 }
 
 void blend_i(std::pair<simg &, const std::uint8_t> input,
-             std::pair<seedimg::img, const std::uint8_t> other) {
+             std::pair<simg &, const std::uint8_t> other) {
   blend(input, other, input.first);
 }
 

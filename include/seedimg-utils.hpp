@@ -34,4 +34,4 @@ typedef struct {
  */
 histogram_result histogram(simg &input);
 } // namespace seedimg::utils
-#endif // UTILS_HPP
+#endif
