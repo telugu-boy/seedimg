@@ -45,8 +45,7 @@ private:
     // get all platforms (drivers), e.g. NVIDIA
     cl::Platform::get(&all_platforms);
     if (all_platforms.size() == 0) {
-      std::cout << " No platforms found. Check OpenCL installation!\n";
-      exit(1);
+      throw std::runtime_error("No platforms found");
     }
     platform = all_platforms[plat];
     std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>()
@@ -54,8 +53,7 @@ private:
 
     platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
     if (all_devices.size() == 0) {
-      std::cout << " No GPUs found. Check OpenCL installation!\n";
-      exit(1);
+      throw std::runtime_error("No GPUs found");
     }
     device = all_devices[dev];
     context = {device};
