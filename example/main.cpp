@@ -42,7 +42,7 @@ int main() {
       // 0}});
       // rotate_hue_i(a, 180);
       // h_mirror_i(a);
-      ocl::rotate_hue(a, a, -90);
+      ocl::rotate_hue_i(a, -90);
       seedimg::save("boil.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

@@ -49,7 +49,7 @@ private:
     }
     platform = all_platforms[plat];
     std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>()
-              << "\n";
+              << std::endl;
 
     platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
     if (all_devices.size() == 0) {
@@ -62,15 +62,17 @@ private:
 #include "cl_kernels/rotate_hue_kernel.clh"
     };
 
+    // didn't use emplace back because it's 2 values and slower as they're not
+    // large at all. std::pair<const char*, ::size_t> is the definition of
+    // cl::Program::Sources.
     for (auto &kernel : kernels)
       sources.push_back({kernel.c_str(), kernel.length()});
 
     program = {context, sources};
     if (program.build({device}) != CL_SUCCESS) {
-      std::cout << "Error building: "
-                << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)
-                << std::endl;
-      exit(1);
+      throw std::runtime_error(
+          "Error building: " +
+          program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device));
     }
   }
 };
