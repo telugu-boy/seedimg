@@ -68,15 +68,12 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   auto sources = ocl_singleton::instance().sources;
   auto program = ocl_singleton::instance().program;
 
-  std::string kernel_code =
-#include "cl_kernels/rotate_hue_kernel.clh"
-      ;
-
   float hue_kernel[9];
   get_hue_kernel(angle, hue_kernel);
 
   // create buffers on device (allocate space on GPU)
-  cl::Buffer hue_kernel_buf{context, CL_MEM_READ_ONLY, sizeof(float) * 9};
+  cl::Buffer hue_kernel_buf{context, CL_MEM_READ_ONLY, sizeof(float) * 9,
+                            hue_kernel};
   cl::Buffer inp_img_buf{context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
                          sizeof(seedimg::pixel) * inp_img->width() *
                              inp_img->height(),
@@ -89,22 +86,13 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   // create a queue (a queue of commands that the GPU will execute)
   cl::CommandQueue queue(context, device);
 
-  // push write commands to queue
-  queue.enqueueWriteBuffer(hue_kernel_buf, CL_TRUE, 0, sizeof(float) * 9,
-                           hue_kernel);
-
-  cl_int err;
-
   cl::Kernel rotate_hue(program, "rotate_hue");
 
   rotate_hue.setArg(0, hue_kernel_buf);
   rotate_hue.setArg(1, inp_img_buf);
   rotate_hue.setArg(2, res_img_buf);
-  err = queue.enqueueNDRangeKernel(
-      rotate_hue, cl::NullRange,
-      cl::NDRange(round_up(inp_img->width() * inp_img->height(), 128)),
-      cl::NDRange(128));
-  err = queue.finish();
+  queue.enqueueTask(rotate_hue);
+  queue.finish();
 
   queue.enqueueReadBuffer(res_img_buf, CL_TRUE, 0,
                           sizeof(seedimg::pixel) * res_img->width() *
