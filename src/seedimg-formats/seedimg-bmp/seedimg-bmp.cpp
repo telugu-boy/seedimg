@@ -23,10 +23,12 @@
 
 // http://www.ece.ualberta.ca/~elliott/ee552/studentAppNotes/2003_w/misc/bmp_file_format/bmp_file_format.htm
 
+static std::uint32_t data_offset;
 constexpr unsigned ih_offset = 14;
 constexpr unsigned ih_size = 4;
 
-simg from_1_bpp(simg &img, std::ifstream &file) {
+void from_1_bpp(simg &img, std::ifstream &file) {
+  file.seekg(data_offset);
   simg_int offset = 0;
   const simg_int line_width = ((img->width() + 7) / 8 + 3) / 4 * 4;
   int pix;
@@ -70,11 +72,15 @@ simg from(const std::string &filename) {
     return nullptr;
   }
 
+  static std::uint32_t data_offset;
   std::uint32_t width, height;
   std::uint16_t bpp;
   constexpr unsigned wh_offset = ih_offset + ih_size;
   constexpr unsigned bpp_offset = wh_offset + 10;
 
+  data_offset =
+      static_cast<std::uint32_t>(bytes[0 + 10] | (bytes[1 + 10] << 8) |
+                                 (bytes[2 + 10] << 16) | (bytes[3 + 10] << 24));
   width = static_cast<std::uint32_t>(
       bytes[0 + wh_offset] | (bytes[1 + wh_offset] << 8) |
       (bytes[2 + wh_offset] << 16) | (bytes[3 + wh_offset] << 24));
@@ -85,7 +91,10 @@ simg from(const std::string &filename) {
                                    (bytes[1 + bpp_offset] << 8));
 
   auto res = seedimg::make(width, height);
-  switch (bpp) { case 1: }
+  switch (bpp) {
+  case 1:
+    from_1_bpp(res, input);
+  }
 }
 } // namespace bmp
 } // namespace seedimg::modules
