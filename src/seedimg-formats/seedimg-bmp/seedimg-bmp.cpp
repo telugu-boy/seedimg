@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
+#include <cmath>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -23,29 +24,8 @@
 
 // http://www.ece.ualberta.ca/~elliott/ee552/studentAppNotes/2003_w/misc/bmp_file_format/bmp_file_format.htm
 
-static std::uint32_t data_offset;
 constexpr unsigned ih_offset = 14;
 constexpr unsigned ih_size = 4;
-
-void from_1_bpp(simg &img, std::ifstream &file) {
-  file.seekg(data_offset);
-  simg_int offset = 0;
-  const simg_int line_width = ((img->width() + 7) / 8 + 3) / 4 * 4;
-  int pix;
-  for (simg_int y = 0; y < img->height(); ++y) {
-    for (simg_int x = 0; x < line_width; ++x) {
-      file.read(reinterpret_cast<char *>(&pix), 1);
-      if (x * 8 < img->width()) {
-        for (simg_int b = 0; b < 8; ++b) {
-          if (x * 8 + b < img->width()) {
-            *(reinterpret_cast<std::uint8_t *>(img->data()) + offset) =
-                static_cast<std::uint8_t>((pix & (1 << (7 - b))) ? 1 : 0);
-          }
-        }
-      }
-    }
-  }
-}
 
 namespace seedimg::modules {
 namespace bmp {
@@ -74,9 +54,8 @@ simg from(const std::string &filename) {
 
   static std::uint32_t data_offset;
   std::uint32_t width, height;
-  std::uint16_t bpp;
+  unsigned padding;
   constexpr unsigned wh_offset = ih_offset + ih_size;
-  constexpr unsigned bpp_offset = wh_offset + 10;
 
   data_offset =
       static_cast<std::uint32_t>(bytes[0 + 10] | (bytes[1 + 10] << 8) |
@@ -85,15 +64,14 @@ simg from(const std::string &filename) {
       bytes[0 + wh_offset] | (bytes[1 + wh_offset] << 8) |
       (bytes[2 + wh_offset] << 16) | (bytes[3 + wh_offset] << 24));
   height = static_cast<std::uint32_t>(
-      bytes[4 + wh_offset] | (bytes[5 + wh_offset] << 8) |
-      (bytes[6 + wh_offset] << 16) | (bytes[7 + wh_offset] << 24));
-  bpp = static_cast<std::uint16_t>(bytes[0 + bpp_offset] |
-                                   (bytes[1 + bpp_offset] << 8));
-
-  auto res = seedimg::make(width, height);
-  switch (bpp) {
-  case 1:
-    from_1_bpp(res, input);
+      std::abs(bytes[4 + wh_offset] | (bytes[5 + wh_offset] << 8) |
+               (bytes[6 + wh_offset] << 16) | (bytes[7 + wh_offset] << 24)));
+  padding = width % 4;
+  input.seekg(data_offset);
+  for (simg_int y = 0; y < height; ++y) {
+    try {
+      i
+    }
   }
 }
 } // namespace bmp

@@ -28,21 +28,21 @@ int main() {
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("barbara_gray.bmp");
+    // ocl::init_ocl_singleton(1, 0);
+    auto a = seedimg::load("smp.bmp");
     // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
-      // crop_i(a, {122, 166}, {244, 332});
+      // crop_i(a, {0, 0}, {319, 567});
       // grayscale_i(a, true);
       // invert_i(a);
       // blur_i(a, 10);
       // h_blur_i(a, 10);
-      // v_blur_i(a, 100, 1);
+      // v_blur_i(a, 30, 1);
       // convolution(a, {{-1, 1, -1}, {-2, 4, -2}, {-1, 1, -1}});
       // rotate_hue_i(a, 180);
       // h_mirror_i(a);
       // ocl::rotate_hue_i(a, -90);
-      seedimg::save("biol.jpg", a);
+      seedimg::save("boil.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;
