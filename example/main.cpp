@@ -28,7 +28,7 @@ int main() {
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    ocl::init_ocl_singleton(1, 0);
+    // ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("cat.png");
     auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
