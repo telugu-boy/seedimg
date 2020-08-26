@@ -40,8 +40,8 @@ bool check(const std::string &filename) noexcept {
   return res;
 }
 
-bool to(const std::string &filename, const std::vector<const simg &> &inp_img) {
-}
+bool to(const std::string &filename,
+        const std::vector<std::reference_wrapper<const simg>> &inp_img) {}
 
 std::vector<simg> from(const std::string &filename) {}
 
