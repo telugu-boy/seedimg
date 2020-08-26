@@ -74,10 +74,12 @@ simg load(const std::string &filename) {
     return seedimg::modules::webp::from(filename);
   case img_type::farbfeld:
     return seedimg::modules::farbfeld::from(filename);
-  case img_type::tiff:
+  case img_type::tiff: {
     // this will return the first one only. use the full function to get the
     // entire vector.
-    return std::move(seedimg::modules::tiff::from(filename).at(0));
+    return std::make_unique<seedimg::img>(
+        seedimg::modules::tiff::from(filename, 1)[0]);
+  }
   default:
     return nullptr;
   }
@@ -95,7 +97,7 @@ bool save(const std::string &filename, const simg &image) {
   case img_type::farbfeld:
     return seedimg::modules::farbfeld::to(filename, image);
   case img_type::tiff:
-    return seedimg::modules::tiff::to(filename, {image});
+    return seedimg::modules::tiff::to(filename, {*image});
   case img_type::irdump:
     return seedimg::modules::irdump::to(filename, image);
   default:

@@ -31,6 +31,7 @@ int main() {
     // ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("thiff.tiff");
     auto res_img = seedimg::make(a->width(), a->height());
+    bool b = seedimg::save("fille.tiff", a);
     if (a != nullptr) {
       // crop_i(a, {122, 166}, {244, 332});
       // grayscale_i(a, true);
