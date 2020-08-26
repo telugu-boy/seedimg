@@ -25,7 +25,7 @@
 namespace seedimg::modules {
 namespace tiff {
 bool check(const std::string &filename) noexcept;
-bool to(const std::string &filename, const std::vector<simg> &inp_img);
+bool to(const std::string &filename, const std::vector<const simg &> &inp_img);
 std::vector<simg> from(const std::string &filename);
 } // namespace tiff
 } // namespace seedimg::modules
