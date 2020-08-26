@@ -21,11 +21,11 @@
 
 #include <cstring>
 #include <filesystem>
-#include <ifstream>
+#include <fstream>
 #include <vector>
 
 extern "C" {
-#include <tiff.h>
+#include <tiffio.h>
 }
 
 #include <seedimg-formats/seedimg-tiff.hpp>
@@ -33,20 +33,17 @@ extern "C" {
 namespace seedimg::modules {
 namespace tiff {
 bool check(const std::string &filename) noexcept {
-  std::error_code ec;
-  std::size_t size = std::filesystem::file_size(filename, ec);
-  if (ec != std::error_code{} || size < 8)
-    return false;
+  bool res;
+  TIFF *img = TIFFOpen(filename.c_str(), "r");
+  if ((res = img))
+    TIFFClose(img);
+  return res;
+}
 
-  std::ifstream file(filename, std::ios::binary);
-  std::uint8_t cmp[8] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
-  std::uint8_t header[8] = {};
-  file.read(reinterpret_cast<char *>(header), 8);
-  return !std::memcmp(cmp, header, 8);
+bool to(const std::string &filename, const std::vector<const simg &> &inp_img) {
 }
 
 std::vector<simg> from(const std::string &filename) {}
 
-bool to(const std::string &filename, const std::vector<simg> &inp_img) {}
 } // namespace tiff
 } // namespace seedimg::modules
