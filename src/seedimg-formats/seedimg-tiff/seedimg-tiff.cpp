@@ -40,10 +40,11 @@ bool check(const std::string &filename) noexcept {
   return res;
 }
 
-bool to(const std::string &filename,
-        const std::vector<std::reference_wrapper<const simg>> &inp_img) {}
+bool to(const std::string &filename, const std::vector<seedimg::img> &inp_img) {
+}
 
-std::vector<simg> from(const std::string &filename) {}
+std::vector<seedimg::img> from(const std::string &filename,
+                               std::size_t max_frames) {}
 
 } // namespace tiff
 } // namespace seedimg::modules

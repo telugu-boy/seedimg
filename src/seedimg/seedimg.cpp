@@ -170,4 +170,5 @@ bool anim::trim(std::size_t start, std::size_t end) {
 
 auto anim::begin() { return data.begin(); }
 auto anim::end() { return data.end(); }
+
 } // namespace seedimg
