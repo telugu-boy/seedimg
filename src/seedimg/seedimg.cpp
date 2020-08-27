@@ -163,8 +163,8 @@ bool anim::remove(std::size_t index) {
 bool anim::trim(std::size_t start, std::size_t end) {
   if (start > end || end >= data.size())
     return false;
-  data.erase(data.begin() + static_cast<int>(start));
-  data.erase(data.begin() + static_cast<int>(end - start));
+  data.erase(data.begin(), data.begin() + static_cast<int>(start));
+  data.erase(data.begin() + static_cast<int>(end - start), data.end());
   return true;
 }
 
