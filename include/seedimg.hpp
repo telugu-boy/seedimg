@@ -78,10 +78,39 @@ private:
   // height amount of rows.
   seedimg::pixel *data_;
 };
+} // namespace seedimg
 
+typedef std::shared_ptr<seedimg::img> simg;
+
+namespace seedimg {
 std::shared_ptr<seedimg::img> make(simg_int width, simg_int height);
 std::shared_ptr<seedimg::img>
 make(const std::shared_ptr<seedimg::img> &inp_img);
+
+// Animations or for files storing more than one image GIF, TIFF, etc. APNG
+// support might be added as a separate module.
+class anim {
+public:
+  std::size_t framerate;
+
+  anim();
+  anim(std::size_t size, std::size_t framerate = 30);
+  anim(seedimg::anim const &anim_);
+  anim(seedimg::anim &&other);
+
+  simg &operator[](std::size_t i);
+
+  void add(simg img);
+  bool insert(simg img, std::size_t index);
+  bool remove(std::size_t index);
+  bool trim(std::size_t start, std::size_t end);
+
+  auto begin();
+  auto end();
+
+private:
+  std::vector<simg> data;
+};
 
 namespace modules {};
 namespace filters {};
@@ -89,7 +118,5 @@ namespace filters {};
 /** Some miscallenious utilities. */
 namespace utils {};
 } // namespace seedimg
-
-typedef std::shared_ptr<seedimg::img> simg;
 
 #endif
