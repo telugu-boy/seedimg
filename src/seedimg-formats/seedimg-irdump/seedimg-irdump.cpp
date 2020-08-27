@@ -46,7 +46,7 @@ bool to(const std::string &filename, const simg &input) {
   return true;
 }
 
-std::unique_ptr<seedimg::img> from(const std::string &filename) {
+std::shared_ptr<seedimg::img> from(const std::string &filename) {
   std::ifstream input(filename);
 
   struct {
@@ -56,7 +56,7 @@ std::unique_ptr<seedimg::img> from(const std::string &filename) {
 
   input.read(rawinfo.width, 4).read(rawinfo.height, 4);
 
-  auto image = std::make_unique<img>(
+  auto image = std::make_shared<img>(
       from_u32be(reinterpret_cast<std::uint8_t *>(rawinfo.width)),
       from_u32be(reinterpret_cast<std::uint8_t *>(rawinfo.height)));
 

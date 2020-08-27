@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#include <seedimg-filters/seedimg-filters-core.hpp>
 #include <algorithm>
 #include <cstring>
+#include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg.hpp>
 
 namespace seedimg::filters {
@@ -51,7 +51,7 @@ void rotate_ccw(simg &inp_img, simg &res_img) {
 void rotate_cw_i(simg &inp_img) {
   simg res_img = seedimg::make(inp_img->height(), inp_img->width());
   rotate_cw(inp_img, res_img);
-  inp_img.reset(res_img.release());
+  inp_img.reset(res_img.get());
 }
 void rotate_180_i(simg &inp_img) {
   // reverse each row
@@ -61,7 +61,7 @@ void rotate_180_i(simg &inp_img) {
 void rotate_ccw_i(simg &inp_img) {
   simg res_img = seedimg::make(inp_img->height(), inp_img->width());
   rotate_ccw(inp_img, res_img);
-  inp_img.reset(res_img.release());
+  inp_img.reset(res_img.get());
 }
 
 void v_mirror(simg &inp_img, simg &res_img) {
@@ -80,7 +80,7 @@ void h_mirror(simg &inp_img, simg &res_img) {
 void v_mirror_i(simg &inp_img) {
   simg res_img = seedimg::make(inp_img->width(), inp_img->height());
   v_mirror(inp_img, res_img);
-  inp_img.reset(res_img.release());
+  inp_img.reset(res_img.get());
 }
 void h_mirror_i(simg &inp_img) {
   for (simg_int y = 0; y < inp_img->height(); ++y) {

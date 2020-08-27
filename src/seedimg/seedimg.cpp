@@ -35,6 +35,8 @@ img::img() : width_(0), height_(0), data_(nullptr) {}
 img::img(simg_int w, simg_int h) : width_{w}, height_{h} {
   data_ = reinterpret_cast<seedimg::pixel *>(std::malloc(
       static_cast<std::size_t>(height_ * width_) * sizeof(seedimg::pixel *)));
+  if (data_ == nullptr)
+    throw std::bad_alloc();
 }
 img::img(simg_int w, simg_int h, seedimg::pixel *u_data)
     : width_{w}, height_{h}, data_{u_data} {}
@@ -108,11 +110,11 @@ seedimg::pixel *img::data() noexcept { return data_; }
 simg_int img::width() noexcept { return width_; }
 simg_int img::height() noexcept { return height_; }
 
-std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
-  return std::make_unique<seedimg::img>(width, height);
+std::shared_ptr<seedimg::img> make(simg_int width, simg_int height) {
+  return std::make_shared<seedimg::img>(width, height);
 }
-std::unique_ptr<seedimg::img>
-make(const std::unique_ptr<seedimg::img> &inp_img) {
-  return std::make_unique<seedimg::img>(*inp_img);
+std::shared_ptr<seedimg::img>
+make(const std::shared_ptr<seedimg::img> &inp_img) {
+  return std::make_shared<seedimg::img>(*inp_img);
 }
 } // namespace seedimg

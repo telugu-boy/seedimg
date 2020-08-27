@@ -74,7 +74,7 @@ simg from(const std::string &filename) {
   if (ec != std::error_code{})
     return nullptr;
   int width, height;
-  auto data = std::make_unique<uint8_t[]>(size);
+  auto data = std::make_shared<uint8_t[]>(size);
 
   // read into data
   std::ifstream file(filename, std::ios::binary);
@@ -85,7 +85,7 @@ simg from(const std::string &filename) {
   if (!success)
     return nullptr;
 
-  return std::make_unique<seedimg::img>(
+  return std::make_shared<seedimg::img>(
       static_cast<simg_int>(width), static_cast<simg_int>(height),
       reinterpret_cast<seedimg::pixel *>(
           WebPDecodeRGBA(data.get(), size, &width, &height)));

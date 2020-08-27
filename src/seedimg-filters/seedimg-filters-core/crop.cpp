@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#include <seedimg-filters/seedimg-filters-core.hpp>
 #include <algorithm>
 #include <cstring>
+#include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg.hpp>
 
 inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
@@ -61,7 +61,7 @@ bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
   auto res_img = seedimg::make(dims.first, dims.second);
   bool result = crop(inp_img, res_img, p1, p2);
   if (result)
-    inp_img.reset(res_img.release());
+    inp_img.reset(res_img.get());
   return result;
 }
 } // namespace seedimg::filters

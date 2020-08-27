@@ -84,7 +84,7 @@ simg from(const std::string &filename) {
   if (std::memcmp(rawinfo.sig, "farbfeld", 8) != 0)
     return nullptr;
 
-  auto result = std::make_unique<seedimg::img>(fu32be(rawinfo.width),
+  auto result = std::make_shared<seedimg::img>(fu32be(rawinfo.width),
                                                fu32be(rawinfo.height));
 
   uint8_t rawpixel[8];

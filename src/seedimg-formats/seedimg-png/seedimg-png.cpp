@@ -109,7 +109,7 @@ simg from(const std::string &filename) {
   color_type = png_get_color_type(png_ptr, info_ptr);
   bit_depth = png_get_bit_depth(png_ptr, info_ptr);
   res_img =
-      std::make_unique<seedimg::img>(png_get_image_width(png_ptr, info_ptr),
+      std::make_shared<seedimg::img>(png_get_image_width(png_ptr, info_ptr),
                                      png_get_image_height(png_ptr, info_ptr));
 
   if (bit_depth == 16)

@@ -79,9 +79,9 @@ private:
   seedimg::pixel *data_;
 };
 
-std::unique_ptr<seedimg::img> make(simg_int width, simg_int height);
-std::unique_ptr<seedimg::img>
-make(const std::unique_ptr<seedimg::img> &inp_img);
+std::shared_ptr<seedimg::img> make(simg_int width, simg_int height);
+std::shared_ptr<seedimg::img>
+make(const std::shared_ptr<seedimg::img> &inp_img);
 
 namespace modules {};
 namespace filters {};
@@ -90,6 +90,6 @@ namespace filters {};
 namespace utils {};
 } // namespace seedimg
 
-typedef std::unique_ptr<seedimg::img> simg;
+typedef std::shared_ptr<seedimg::img> simg;
 
 #endif

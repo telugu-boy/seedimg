@@ -21,7 +21,6 @@
 #define SEEDIMG_OCL_SINGLETON_H
 
 #include <CL/cl.hpp>
-#include <iostream>
 
 class ocl_singleton {
 public:
@@ -33,48 +32,13 @@ public:
   cl::Program::Sources sources;
   cl::Program program;
 
-  static ocl_singleton &instance(std::size_t plat = 0, std::size_t dev = 0) {
-    static ocl_singleton singleton(plat, dev);
-    return singleton;
-  }
+  static ocl_singleton &instance(std::size_t plat = 0, std::size_t dev = 0);
+
   ocl_singleton(ocl_singleton const &) = delete;
   void operator=(ocl_singleton const &) = delete;
 
 private:
-  ocl_singleton(std::size_t plat, std::size_t dev) {
-    // get all platforms (drivers), e.g. NVIDIA
-    cl::Platform::get(&all_platforms);
-    if (all_platforms.size() == 0) {
-      throw std::runtime_error("No platforms found");
-    }
-    platform = all_platforms[plat];
-    std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>()
-              << std::endl;
-
-    platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
-    if (all_devices.size() == 0) {
-      throw std::runtime_error("No GPUs found");
-    }
-    device = all_devices[dev];
-    context = {device};
-
-    const std::string kernels[] = {
-#include "cl_kernels/rotate_hue_kernel.clh"
-    };
-
-    // didn't use emplace back because it's 2 values and slower as they're not
-    // large at all. std::pair<const char*, ::size_t> is the definition of
-    // cl::Program::Sources.
-    for (auto &kernel : kernels)
-      sources.push_back({kernel.c_str(), kernel.length()});
-
-    program = {context, sources};
-    if (program.build({device}) != CL_SUCCESS) {
-      throw std::runtime_error(
-          "Error building: " +
-          program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device));
-    }
-  }
+  ocl_singleton(std::size_t plat, std::size_t dev);
 };
 
 #endif
