@@ -58,11 +58,24 @@ img::img(seedimg::img &&other) : width_{0}, height_{0}, data_{nullptr} {
   other.data_ = nullptr;
 }
 
-img::~img() {
-  if (data_ != nullptr) {
-    std::free(data_);
-  }
+img &img::operator=(img other) {
+  std::swap(this->data_, other.data_);
+  std::swap(this->width_, other.width_);
+  std::swap(this->height_, other.height_);
+  return *this;
 }
+img &img::operator=(img &&other) {
+  if (&other != this) {
+    delete data_;
+    data_ = other.data_;
+    other.data_ = nullptr;
+    width_ = other.width_;
+    height_ = other.height_;
+  }
+  return *this;
+}
+
+img::~img() { std::free(data_); }
 
 std::vector<std::pair<simg_int, simg_int>> img::start_end_rows() {
   std::vector<std::pair<simg_int, simg_int>> res;
@@ -143,6 +156,17 @@ anim::anim(seedimg::anim &&other) {
   framerate = other.framerate;
   other.framerate = 0;
   data = std::move(other.data);
+}
+
+anim &anim::operator=(anim other) {
+  this->data.swap(other.data);
+  return *this;
+}
+anim &anim::operator=(anim &&other) {
+  if (&other != this) {
+    this->data = std::move(other.data);
+  }
+  return *this;
 }
 
 simg &anim::operator[](std::size_t i) { return data[i]; }

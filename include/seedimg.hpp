@@ -55,6 +55,8 @@ public:
   img(simg_int w, simg_int h, seedimg::pixel *u_data);
   img(seedimg::img const &img_);
   img(seedimg::img &&other);
+  img &operator=(img other);
+  img &operator=(img &&other);
 
   ~img();
 
@@ -97,6 +99,8 @@ public:
   anim(std::size_t size, std::size_t framerate = 30);
   anim(seedimg::anim const &anim_);
   anim(seedimg::anim &&other);
+  anim &operator=(anim other);
+  anim &operator=(anim &&other);
 
   simg &operator[](std::size_t i);
 
