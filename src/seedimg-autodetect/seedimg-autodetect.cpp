@@ -77,8 +77,7 @@ simg load(const std::string &filename) {
   case img_type::tiff: {
     // this will return the first one only. use the full function to get the
     // entire vector.
-    return std::make_unique<seedimg::img>(
-        seedimg::modules::tiff::from(filename, 1)[0]);
+    return seedimg::modules::tiff::from(filename, 1)[0];
   }
   default:
     return nullptr;

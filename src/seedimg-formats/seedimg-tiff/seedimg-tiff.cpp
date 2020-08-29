@@ -40,11 +40,24 @@ bool check(const std::string &filename) noexcept {
   return res;
 }
 
-bool to(const std::string &filename, const std::vector<seedimg::img> &inp_img) {
-}
+bool to(const std::string &filename, const anim &inp_img) {}
 
-std::vector<seedimg::img> from(const std::string &filename,
-                               std::size_t max_frames) {}
+anim from(const std::string &filename, std::size_t max_frames) {
+  anim res{};
+  std::size_t cnt = 0;
+  TIFF *img = TIFFOpen(filename.c_str(), "r");
+  if (img) {
+    do {
+      uint32_t w, h;
+      TIFFGetField(img, TIFFTAG_IMAGEWIDTH, &w);
+      TIFFGetField(img, TIFFTAG_IMAGELENGTH, &h);
+      simg res = seedimg::make(w, h);
+      TIFFReadRGBAImage(img, w, h, reinterpret_cast<uint32_t *>(res->data()));
+    } while (TIFFReadDirectory(img) && ++cnt < max_frames);
+  }
+  TIFFClose(img);
+  return res;
+}
 
 } // namespace tiff
 } // namespace seedimg::modules
