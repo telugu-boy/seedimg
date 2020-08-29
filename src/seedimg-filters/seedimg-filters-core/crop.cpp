@@ -61,7 +61,7 @@ bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
   auto res_img = seedimg::make(dims.first, dims.second);
   bool result = crop(inp_img, res_img, p1, p2);
   if (result)
-    inp_img.reset(res_img.get());
+    inp_img = res_img;
   return result;
 }
 } // namespace seedimg::filters

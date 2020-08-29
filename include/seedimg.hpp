@@ -19,13 +19,9 @@
 #ifndef SEEDIMG_CORE_H
 #define SEEDIMG_CORE_H
 
-#include <algorithm>
 #include <cinttypes>
-#include <cstdlib>
-#include <cstring>
+#include <initializer_list>
 #include <memory>
-#include <string>
-#include <thread>
 #include <vector>
 
 typedef std::size_t simg_int;
@@ -97,6 +93,8 @@ public:
 
   anim();
   anim(std::size_t size, std::size_t framerate = 30);
+  anim(simg images...);
+  anim(std::initializer_list<simg> images, std::size_t framerate = 0);
   anim(seedimg::anim const &anim_);
   anim(seedimg::anim &&other);
   anim &operator=(anim other);

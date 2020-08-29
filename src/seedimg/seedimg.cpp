@@ -19,13 +19,8 @@
 // seedimg.cpp : Defines the functions for the static library.
 //
 
-#include <algorithm>
-#include <cstdlib>
 #include <cstring>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <optional>
+#include <thread>
 
 #include <seedimg.hpp>
 
@@ -145,6 +140,13 @@ anim::anim() { framerate = 0; }
 anim::anim(std::size_t size, std::size_t framerate) {
   this->framerate = framerate;
   data = std::vector<simg>(size);
+}
+
+anim::anim(simg images...) : anim() { data = std::vector<simg>{images}; }
+
+anim::anim(std::initializer_list<simg> images, std::size_t framerate) {
+  this->framerate = framerate;
+  data = images;
 }
 
 anim::anim(seedimg::anim const &anim_) {

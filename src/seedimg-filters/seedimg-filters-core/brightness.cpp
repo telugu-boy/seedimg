@@ -18,6 +18,7 @@
 ************************************************************************/
 
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <thread>
 #define CLAMP(x, a, b) ((x) < (a) ? (a) : (x) > (b) ? (b) : (x))
 
 namespace seedimg::filters {

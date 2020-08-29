@@ -51,8 +51,10 @@ anim from(const std::string &filename, std::size_t max_frames) {
       uint32_t w, h;
       TIFFGetField(img, TIFFTAG_IMAGEWIDTH, &w);
       TIFFGetField(img, TIFFTAG_IMAGELENGTH, &h);
-      simg res = seedimg::make(w, h);
-      TIFFReadRGBAImage(img, w, h, reinterpret_cast<uint32_t *>(res->data()));
+      simg decompressed = seedimg::make(w, h);
+      TIFFReadRGBAImage(img, w, h,
+                        reinterpret_cast<uint32 *>(decompressed->data()), 0);
+      res.add(decompressed);
     } while (TIFFReadDirectory(img) && ++cnt < max_frames);
   }
   TIFFClose(img);

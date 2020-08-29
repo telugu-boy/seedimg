@@ -37,7 +37,7 @@ enum img_type match_ext(const std::string &ext) noexcept {
     return img_type::webp;
   if (ext == "ff" || ext == "farbfeld")
     return img_type::farbfeld;
-  if (ext == "tiff")
+  if (ext == "tiff" || ext == "tif")
     return img_type::tiff;
   if (ext == "sir")
     return img_type::irdump;
@@ -96,7 +96,7 @@ bool save(const std::string &filename, const simg &image) {
   case img_type::farbfeld:
     return seedimg::modules::farbfeld::to(filename, image);
   case img_type::tiff:
-    return seedimg::modules::tiff::to(filename, {*image});
+    return seedimg::modules::tiff::to(filename, image);
   case img_type::irdump:
     return seedimg::modules::irdump::to(filename, image);
   default:

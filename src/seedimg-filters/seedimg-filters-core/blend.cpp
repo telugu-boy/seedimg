@@ -1,6 +1,6 @@
 ﻿/***********************************************************************
-seedimg - module based image manipulation library written in modern C++
-Copyright (C) 2020 tripulse
+    seedimg - module based image manipulation library written in modern C++
+    Copyright (C) 2020 telugu-boy, tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,8 @@ Copyright (C) 2020 tripulse
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
+
+#include <thread>
 
 #include <seedimg-filters/seedimg-filters-core.hpp>
 

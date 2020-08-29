@@ -29,9 +29,8 @@ int main() {
             << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("thiff.tiff");
-    auto res_img = seedimg::make(a->width(), a->height());
-    bool b = seedimg::save("fille.tiff", a);
+    auto a = seedimg::load("cat.png");
+    // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // crop_i(a, {122, 166}, {244, 332});
       // grayscale_i(a, true);
@@ -41,8 +40,8 @@ int main() {
       // v_blur_i(a, 100, 1);
       // convolution(a, {{-1, 1, -1}, {-2, 4, -2}, {-1, 1, -1}});
       // rotate_hue_i(a, 180);
-      // h_mirror_i(a);
-      ocl::rotate_hue_i(a, -90);
+      v_mirror_i(a);
+      // ocl::rotate_hue_i(a, -90);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
