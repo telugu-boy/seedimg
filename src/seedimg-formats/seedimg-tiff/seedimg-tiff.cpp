@@ -52,8 +52,16 @@ anim from(const std::string &filename, std::size_t max_frames) {
       TIFFGetField(img, TIFFTAG_IMAGEWIDTH, &w);
       TIFFGetField(img, TIFFTAG_IMAGELENGTH, &h);
       simg decompressed = seedimg::make(w, h);
+      seedimg::pixel *row = new seedimg::pixel[w];
       TIFFReadRGBAImage(img, w, h,
                         reinterpret_cast<uint32 *>(decompressed->data()), 0);
+      for (simg_int y = 0; y < h; ++y) {
+        std::memcpy(row, decompressed->row(y), w * sizeof(seedimg::pixel));
+        std::memcpy(decompressed->row(y), decompressed->row(h - y),
+                    w * sizeof(seedimg::pixel));
+        std::memcpy(decompressed->row(h - y), row, w * sizeof(seedimg::pixel));
+      }
+      delete[] row;
       res.add(decompressed);
     } while (TIFFReadDirectory(img) && ++cnt < max_frames);
   }
