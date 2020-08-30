@@ -22,10 +22,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <optional>
+#include <thread>
 
 #include <seedimg.hpp>
 

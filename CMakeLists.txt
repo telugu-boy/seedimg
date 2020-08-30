@@ -23,6 +23,11 @@ set(VCPKG_TRIPLET x64-linux CACHE PATH "installed img lib triplet")
 
 set(CMAKE_TOOLCHAIN_FILE ${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 
+set(PNG_ENABLED ON CACHE BOOL "Enable PNG")
+set(JPEG_ENABLED ON CACHE BOOL "Enable JPEG")
+set(WEBP_ENABLED ON CACHE BOOL "Enable WebP")
+set(FARBFELD_ENABLED ON CACHE BOOL "Enable Farbfeld")
+set(IRDUMP_ENABLED OFF CACHE BOOL "Enable IR dumping")
 set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")
 
 project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
@@ -33,7 +38,7 @@ include(CheckCXXCompilerFlag)
 
 include_directories(${VCPKG_DIR}/installed/${VCPKG_TRIPLET}/include "${CMAKE_SOURCE_DIR}/include")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 set(BUILD_SHARED_LIBS TRUE)
 set(LIB_TYPE STATIC CACHE STRING "Build and link as STATIC or SHARED")
