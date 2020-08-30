@@ -23,9 +23,12 @@ file(COPY cat.png DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
 
 target_link_libraries(${APP_EXE} 
     seedimg-filters-core
-    seedimg-filters-ocl
     seedimg-autodetect
 )
+
+if(OPENCL_ENABLED)
+  target_link_libraries(${APP_EXE} seedimg-filters-ocl)
+endif()
 
 target_include_directories(${APP_EXE} PRIVATE
     "${CMAKE_SOURCE_DIR}/seedimg"

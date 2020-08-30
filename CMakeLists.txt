@@ -23,6 +23,8 @@ set(VCPKG_TRIPLET x64-linux CACHE PATH "installed img lib triplet")
 
 set(CMAKE_TOOLCHAIN_FILE ${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 
+set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")
+
 project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
 
 option(BUILD_TESTING "" OFF)
