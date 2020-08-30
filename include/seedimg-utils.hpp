@@ -20,6 +20,7 @@
 #ifndef SEEDIMG_UTILS_HPP
 #define SEEDIMG_UTILS_HPP
 
+#include <array>
 #include <seedimg.hpp>
 
 namespace seedimg::utils {
