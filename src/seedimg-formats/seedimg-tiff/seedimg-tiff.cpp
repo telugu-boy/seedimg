@@ -39,7 +39,41 @@ bool check(const std::string &filename) noexcept {
   return res;
 }
 
-bool to(const std::string &filename, const anim &inp_img) {}
+bool to(const std::string &filename, const anim &inp_img) {
+  uint16 out[1];
+  out[0] = EXTRASAMPLE_ASSOCALPHA;
+  TIFF *img = TIFFOpen(filename.c_str(), "w");
+  if (img) {
+    for (auto image : inp_img) {
+      if (image->width() > UINT32_MAX || image->height() > UINT32_MAX)
+        return false;
+      TIFFSetField(img, TIFFTAG_SUBFILETYPE, FILETYPE_PAGE);
+      TIFFSetField(img, TIFFTAG_IMAGEWIDTH, image->width());
+      TIFFSetField(img, TIFFTAG_IMAGELENGTH, image->height());
+      TIFFSetField(img, TIFFTAG_BITSPERSAMPLE, 8);
+      TIFFSetField(img, TIFFTAG_SAMPLESPERPIXEL, 4);
+      TIFFSetField(img, TIFFTAG_EXTRASAMPLES, 1, &out);
+
+      TIFFSetField(img, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+      TIFFSetField(img, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+
+      unsigned char *buf = static_cast<unsigned char *>(_TIFFmalloc(
+          static_cast<tmsize_t>(image->width() * sizeof(seedimg::pixel))));
+
+      for (simg_int y = 0; y < image->height(); ++y) {
+        std::copy(image->row(y), image->row(y + 1),
+                  reinterpret_cast<seedimg::pixel *>(buf));
+        if (TIFFWriteScanline(img, buf, static_cast<uint32>(y), 0) < 0)
+          break;
+      }
+
+      _TIFFfree(buf);
+      TIFFWriteDirectory(img);
+    }
+  }
+  TIFFClose(img);
+  return true;
+}
 
 anim from(const std::string &filename, std::size_t max_frames) {
   anim res{};

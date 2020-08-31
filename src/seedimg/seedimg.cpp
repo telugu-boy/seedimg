@@ -104,27 +104,30 @@ std::vector<std::pair<simg_int, simg_int>> img::start_end_cols() {
   return res;
 }
 
-seedimg::pixel &img::pixel(simg_int x, simg_int y) noexcept {
-  return data_[y * this->width_ + x];
+seedimg::pixel &img::pixel(simg_int x, simg_int y) const {
+  if (y < height() || x < width())
+    return data_[y * this->width_ + x];
+  else
+    throw std::out_of_range("Coordinates out of range");
 }
 
-seedimg::pixel &img::pixel(seedimg::point p) noexcept {
+seedimg::pixel &img::pixel(seedimg::point p) const {
   return pixel(p.first, p.second);
 }
 
-seedimg::pixel &img::pixel(simg_int x) {
+seedimg::pixel &img::pixel(simg_int x) const {
   if (x > this->width() * this->height() - 1)
-    std::terminate();
+    throw std::out_of_range("Coordinate out of range");
   return pixel(x / this->width(), x % this->width());
 }
 
-seedimg::pixel *img::row(simg_int y) noexcept {
+seedimg::pixel *img::row(simg_int y) const noexcept {
   return data_ + y * this->width_;
 }
 
-seedimg::pixel *img::data() noexcept { return data_; }
-simg_int img::width() noexcept { return width_; }
-simg_int img::height() noexcept { return height_; }
+seedimg::pixel *img::data() const noexcept { return data_; }
+simg_int img::width() const noexcept { return width_; }
+simg_int img::height() const noexcept { return height_; }
 
 std::shared_ptr<seedimg::img> make(simg_int width, simg_int height) {
   return std::make_shared<seedimg::img>(width, height);
@@ -193,8 +196,5 @@ bool anim::trim(std::size_t start, std::size_t end) {
   data.erase(data.begin() + static_cast<int>(end - start), data.end());
   return true;
 }
-
-auto anim::begin() { return data.begin(); }
-auto anim::end() { return data.end(); }
 
 } // namespace seedimg

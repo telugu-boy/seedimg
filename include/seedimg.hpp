@@ -60,13 +60,13 @@ public:
 
   std::vector<std::pair<simg_int, simg_int>> start_end_cols();
 
-  seedimg::pixel &pixel(simg_int x, simg_int y) noexcept;
-  seedimg::pixel &pixel(seedimg::point p) noexcept;
-  seedimg::pixel &pixel(simg_int x);
-  seedimg::pixel *row(simg_int y) noexcept;
-  seedimg::pixel *data() noexcept;
-  simg_int width() noexcept;
-  simg_int height() noexcept;
+  seedimg::pixel &pixel(simg_int x, simg_int y) const;
+  seedimg::pixel &pixel(seedimg::point p) const;
+  seedimg::pixel &pixel(simg_int x) const;
+  seedimg::pixel *row(simg_int y) const noexcept;
+  seedimg::pixel *data() const noexcept;
+  simg_int width() const noexcept;
+  simg_int height() const noexcept;
 
 private:
   simg_int width_;
@@ -107,8 +107,8 @@ public:
   bool remove(std::size_t index);
   bool trim(std::size_t start, std::size_t end);
 
-  auto begin();
-  auto end();
+  auto begin() const noexcept { return data.begin(); }
+  auto end() const noexcept { return data.end(); }
 
 private:
   std::vector<simg> data;
