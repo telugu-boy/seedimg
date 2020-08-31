@@ -78,9 +78,20 @@ void h_mirror(simg &inp_img, simg &res_img) {
   }
 }
 void v_mirror_i(simg &inp_img) {
-  simg res_img = seedimg::make(inp_img->width(), inp_img->height());
-  v_mirror(inp_img, res_img);
-  inp_img = res_img;
+  simg_int h = inp_img->height();
+  simg_int w = inp_img->width();
+  seedimg::pixel *row = new seedimg::pixel[w];
+  // swaps last row and first row.
+  // then, swaps second last and second row
+  // continue h/2 times. automatically floors h, because for odd height the
+  // middle row must not be touched.
+  for (simg_int y = 0; y < h / 2; ++y) {
+    std::copy(inp_img->row(y), inp_img->row(y + 1), row);
+    std::copy(inp_img->row(h - y - 1), inp_img->row(h - y), inp_img->row(y));
+    std::copy(row, row + w, inp_img->row(h - y - 1));
+  }
+
+  delete[] row;
 }
 void h_mirror_i(simg &inp_img) {
   for (simg_int y = 0; y < inp_img->height(); ++y) {
