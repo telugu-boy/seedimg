@@ -35,7 +35,7 @@ int main() {
       // crop_i(a, {122, 166}, {244, 332});
       // grayscale_i(a, true);
       // invert_i(a);
-      blur_i(a, 10);
+      // blur_i(a, 10);
       // h_blur_i(a, 10);
       // v_blur_i(a, 100, 1);
       // convolution(a, {{-1, 1, -1}, {-2, 4, -2}, {-1, 1, -1}});

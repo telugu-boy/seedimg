@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
   std::filesystem::create_directories(res_dir + "/jpg/");
   /*
   std::filesystem::create_directories(res_dir + "/webp/");
+  std::filesystem::create_directories(res_dir + "/tiff/");
   std::filesystem::create_directories(res_dir + "/farbfeld/");*/
   auto img = seedimg::load("test_image.png");
   switch (filter_mapping.at(argv[1])) {
@@ -169,6 +170,9 @@ int main(int argc, char *argv[]) {
   seedimg::save(name_buf, img);
   /*
   std::snprintf(name_buf, 256, "tests_output/filters/webp/result-%s.webp",
+                argv[1]);
+  seedimg_autodetect_to(name_buf, img);
+  std::snprintf(name_buf, 256, "tests_output/filters/farbfeld/result-%s.tiff",
                 argv[1]);
   seedimg_autodetect_to(name_buf, img);
   std::snprintf(name_buf, 256, "tests_output/filters/farbfeld/result-%s.ff",
