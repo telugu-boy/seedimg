@@ -19,8 +19,7 @@
 // seedimg-png.cpp : Defines the functions for the static library.
 //
 
-#include <cstring>
-#include <filesystem>
+#include <algorithm>
 #include <fstream>
 #include <vector>
 
@@ -48,18 +47,20 @@ anim from(const std::string &filename, std::size_t max_frames) {
   TIFF *img = TIFFOpen(filename.c_str(), "r");
   if (img) {
     do {
-      uint32_t w, h;
+      uint32 w, h;
       TIFFGetField(img, TIFFTAG_IMAGEWIDTH, &w);
       TIFFGetField(img, TIFFTAG_IMAGELENGTH, &h);
       simg decompressed = seedimg::make(w, h);
-      seedimg::pixel *row = new seedimg::pixel[w];
       TIFFReadRGBAImage(img, w, h,
                         reinterpret_cast<uint32 *>(decompressed->data()), 0);
-      for (simg_int y = 0; y < h; ++y) {
-        std::memcpy(row, decompressed->row(y), w * sizeof(seedimg::pixel));
-        std::memcpy(decompressed->row(y), decompressed->row(h - y),
-                    w * sizeof(seedimg::pixel));
-        std::memcpy(decompressed->row(h - y), row, w * sizeof(seedimg::pixel));
+      seedimg::pixel *row = new seedimg::pixel[w];
+      // TIFFReadRGBAImage reads the image in reverse. need to mirror it
+      // vertically
+      for (simg_int y = 0; y < h / 2; ++y) {
+        std::copy(decompressed->row(y), decompressed->row(y + 1), row);
+        std::copy(decompressed->row(h - y - 1), decompressed->row(h - y),
+                  decompressed->row(y));
+        std::copy(row, row + w, decompressed->row(h - y - 1));
       }
       delete[] row;
       res.add(decompressed);
