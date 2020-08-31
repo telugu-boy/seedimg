@@ -16,10 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+if(JPEG_ENABLED)
+  add_subdirectory(seedimg-jpeg)
+endif()
 
-add_subdirectory(seedimg-jpeg)
-add_subdirectory(seedimg-png)
-add_subdirectory(seedimg-webp)
-add_subdirectory(seedimg-farbfeld)
-add_subdirectory(seedimg-irdump)
-add_subdirectory(seedimg-tiff)
+if(PNG_ENABLED)
+  add_subdirectory(seedimg-png)
+endif()
+
+if(WEBP_ENABLED)
+  add_subdirectory(seedimg-webp)
+endif()
+
+if(TIFF_ENABLED)
+  add_subdirectory(seedimg-tiff)
+endif()
+
+if(FARBFELD_ENABLED)
+  add_subdirectory(seedimg-farbfeld)
+endif()
+
+if(IRDUMP_ENABLED)
+  add_subdirectory(seedimg-irdump)
+endif()
