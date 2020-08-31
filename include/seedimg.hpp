@@ -19,13 +19,9 @@
 #ifndef SEEDIMG_CORE_H
 #define SEEDIMG_CORE_H
 
-#include <algorithm>
 #include <cinttypes>
-#include <cstdlib>
-#include <cstring>
+#include <initializer_list>
 #include <memory>
-#include <string>
-#include <thread>
 #include <vector>
 
 typedef std::size_t simg_int;
@@ -64,13 +60,13 @@ public:
 
   std::vector<std::pair<simg_int, simg_int>> start_end_cols();
 
-  seedimg::pixel &pixel(simg_int x, simg_int y) noexcept;
-  seedimg::pixel &pixel(seedimg::point p) noexcept;
-  seedimg::pixel &pixel(simg_int x);
-  seedimg::pixel *row(simg_int y) noexcept;
-  seedimg::pixel *data() noexcept;
-  simg_int width() noexcept;
-  simg_int height() noexcept;
+  seedimg::pixel &pixel(simg_int x, simg_int y) const;
+  seedimg::pixel &pixel(seedimg::point p) const;
+  seedimg::pixel &pixel(simg_int x) const;
+  seedimg::pixel *row(simg_int y) const noexcept;
+  seedimg::pixel *data() const noexcept;
+  simg_int width() const noexcept;
+  simg_int height() const noexcept;
 
 private:
   simg_int width_;
@@ -97,6 +93,8 @@ public:
 
   anim();
   anim(std::size_t size, std::size_t framerate = 30);
+  anim(simg images...);
+  anim(std::initializer_list<simg> images, std::size_t framerate = 0);
   anim(seedimg::anim const &anim_);
   anim(seedimg::anim &&other);
   anim &operator=(anim other);
@@ -109,8 +107,8 @@ public:
   bool remove(std::size_t index);
   bool trim(std::size_t start, std::size_t end);
 
-  auto begin();
-  auto end();
+  auto begin() const noexcept { return data.begin(); }
+  auto end() const noexcept { return data.end(); }
 
 private:
   std::vector<simg> data;

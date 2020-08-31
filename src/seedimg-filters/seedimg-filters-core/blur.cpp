@@ -16,15 +16,11 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <cmath>
-#include <cstdint>
-#include <seedimg-filters/seedimg-filters-core.hpp>
-// #include <immintrin.h>
+
 #include <algorithm>
-#include <memory>
-#include <seedimg.hpp>
 #include <thread>
-#include <vector>
+
+#include <seedimg-filters/seedimg-filters-core.hpp>
 
 void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
                                      simg_int start, simg_int end,
@@ -203,7 +199,7 @@ void h_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
     }
   }
   if (it % 2 == 0 || it == 1)
-    inp_img.reset(res_img.get());
+    inp_img = res_img;
 }
 void v_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
   if (blur_level == 0)
@@ -219,7 +215,7 @@ void v_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
     }
   }
   if (it % 2 == 0 || it == 1)
-    inp_img.reset(res_img.get());
+    inp_img = res_img;
 }
 void blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
   if (blur_level == 0)

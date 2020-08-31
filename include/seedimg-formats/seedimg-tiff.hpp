@@ -1,4 +1,4 @@
-﻿/**********************************************************************
+/**********************************************************************
     seedimg - module based image manipulation library written in modern
                 C++ Copyright(C) 2020 telugu-boy
 
@@ -16,25 +16,18 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#ifndef SEEDIMG_AUTODETECT_H
-#define SEEDIMG_AUTODETECT_H
-
-#include <memory>
-#include <optional>
-#include <string>
+#ifndef SEEDIMG_TIFF_H
+#define SEEDIMG_TIFF_H
 
 #include <seedimg.hpp>
+#include <vector>
 
-enum class img_type { unknown = 0, png, jpeg, webp, farbfeld, tiff, irdump };
-
-enum img_type match_ext(const std::string &ext) noexcept;
-
-std::optional<enum img_type> imgtype(const std::string &filename) noexcept;
-
-namespace seedimg {
-simg load(const std::string &filename);
-
-bool save(const std::string &filename, const simg &image);
-} // namespace seedimg
+namespace seedimg::modules {
+namespace tiff {
+bool check(const std::string &filename) noexcept;
+bool to(const std::string &filename, const anim &inp_img);
+anim from(const std::string &filename, std::size_t max_frames = 1);
+} // namespace tiff
+} // namespace seedimg::modules
 
 #endif

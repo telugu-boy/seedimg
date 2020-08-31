@@ -1,4 +1,4 @@
-﻿#[[ 
+#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -15,18 +15,14 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-add_library(seedimg-autodetect ${LIB_TYPE} seedimg-autodetect.cpp)
+add_library(seedimg-tiff ${LIB_TYPE} seedimg-tiff.cpp)
 
-target_link_libraries(seedimg-autodetect
-    seedimg
-    seedimg-png 
-    seedimg-jpeg 
-    seedimg-webp
-    seedimg-farbfeld
-    seedimg-tiff
-    seedimg-irdump
-)
+find_package(TIFF REQUIRED)
 
-target_include_directories(seedimg-autodetect PUBLIC
-    "${CMAKE_SOURCE_DIR}/seedimg-formats"
-)
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} seedimg)
+else()
+    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} seedimg stdc++fs)
+endif()
+
+target_include_directories(seedimg-tiff PRIVATE ${TIFF_INCLUDE_DIR} seedimg)

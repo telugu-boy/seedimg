@@ -51,7 +51,7 @@ void rotate_ccw(simg &inp_img, simg &res_img) {
 void rotate_cw_i(simg &inp_img) {
   simg res_img = seedimg::make(inp_img->height(), inp_img->width());
   rotate_cw(inp_img, res_img);
-  inp_img.reset(res_img.get());
+  inp_img = res_img;
 }
 void rotate_180_i(simg &inp_img) {
   // reverse each row
@@ -61,7 +61,7 @@ void rotate_180_i(simg &inp_img) {
 void rotate_ccw_i(simg &inp_img) {
   simg res_img = seedimg::make(inp_img->height(), inp_img->width());
   rotate_ccw(inp_img, res_img);
-  inp_img.reset(res_img.get());
+  inp_img = res_img;
 }
 
 void v_mirror(simg &inp_img, simg &res_img) {
@@ -80,7 +80,7 @@ void h_mirror(simg &inp_img, simg &res_img) {
 void v_mirror_i(simg &inp_img) {
   simg res_img = seedimg::make(inp_img->width(), inp_img->height());
   v_mirror(inp_img, res_img);
-  inp_img.reset(res_img.get());
+  inp_img = res_img;
 }
 void h_mirror_i(simg &inp_img) {
   for (simg_int y = 0; y < inp_img->height(); ++y) {

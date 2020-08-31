@@ -28,6 +28,10 @@ if(WEBP_ENABLED)
   add_subdirectory(seedimg-webp)
 endif()
 
+if(TIFF_ENABLED)
+  add_subdirectory(seedimg-tiff)
+endif()
+
 if(FARBFELD_ENABLED)
   add_subdirectory(seedimg-farbfeld)
 endif()
