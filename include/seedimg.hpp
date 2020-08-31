@@ -30,6 +30,11 @@ namespace seedimg {
 
 typedef std::pair<simg_int, simg_int> point;
 
+bool is_on_rect(seedimg::point xy1, seedimg::point xy2, seedimg::point point);
+
+std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
+                                                  seedimg::point p2);
+
 struct pixel {
   std::uint8_t r;
   std::uint8_t g;
@@ -67,6 +72,8 @@ public:
   seedimg::pixel *data() const noexcept;
   simg_int width() const noexcept;
   simg_int height() const noexcept;
+
+  bool crop(seedimg::point p1, seedimg::point p2);
 
 private:
   simg_int width_;

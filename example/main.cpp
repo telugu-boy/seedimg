@@ -32,7 +32,7 @@ int main() {
     auto a = seedimg::load("cat.png");
     // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
-      // crop_i(a, {122, 166}, {244, 332});
+      a->crop({2, 2}, {500, 366});
       // grayscale_i(a, true);
       // invert_i(a);
       // blur_i(a, 10);

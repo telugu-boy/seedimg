@@ -19,6 +19,7 @@
 // seedimg.cpp : Defines the functions for the static library.
 //
 
+#include <algorithm>
 #include <cstring>
 #include <thread>
 
@@ -26,10 +27,25 @@
 
 namespace seedimg {
 
+inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
+                       seedimg::point point) {
+  return xy1.first <= point.first && point.first <= xy2.first &&
+         xy1.second <= point.second && point.second <= xy2.second;
+}
+
+std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
+                                                  seedimg::point p2) {
+  auto ordered_x = std::minmax(p1.first, p2.first);
+  auto ordered_y = std::minmax(p1.second, p2.second);
+  // width, height
+  return {ordered_x.second - ordered_x.first,
+          ordered_y.second - ordered_y.first};
+}
+
 img::img() : width_(0), height_(0), data_(nullptr) {}
 
 img::img(simg_int w, simg_int h) : width_{w}, height_{h} {
-  data_ = reinterpret_cast<seedimg::pixel *>(std::malloc(
+  data_ = static_cast<seedimg::pixel *>(std::malloc(
       static_cast<std::size_t>(height_ * width_) * sizeof(seedimg::pixel *)));
   if (data_ == nullptr)
     throw std::bad_alloc();
@@ -128,6 +144,36 @@ seedimg::pixel *img::row(simg_int y) const noexcept {
 seedimg::pixel *img::data() const noexcept { return data_; }
 simg_int img::width() const noexcept { return width_; }
 simg_int img::height() const noexcept { return height_; }
+
+bool img::crop(seedimg::point p1, seedimg::point p2) {
+  if (p1 == seedimg::point{0, 0} &&
+      p2 == seedimg::point{this->width(), this->height()}) {
+    return true;
+  }
+  if (!(seedimg::is_on_rect({0, 0}, {this->width(), this->height()}, p1) &&
+        seedimg::is_on_rect({0, 0}, {this->width(), this->height()}, p2)))
+    return false;
+
+  auto ordered_crop_x = std::minmax(p1.first, p2.first);
+  auto ordered_crop_y = std::minmax(p1.second, p2.second);
+
+  auto dims = get_rect_dimensions(p1, p2);
+
+  this->width_ = dims.first;
+  this->height_ = dims.second;
+
+  for (simg_int y = 0; y < this->height(); ++y) {
+    std::memmove(this->row(y),
+                 this->row(y + ordered_crop_y.first) + ordered_crop_x.first,
+                 this->width() * sizeof(seedimg::pixel));
+  }
+  auto *tmp = static_cast<seedimg::pixel *>(std::realloc(
+      this->data_, this->width() * this->height() * sizeof(seedimg::pixel)));
+  if (tmp == nullptr)
+    return false;
+  this->data_ = tmp;
+  return true;
+}
 
 std::shared_ptr<seedimg::img> make(simg_int width, simg_int height) {
   return std::make_shared<seedimg::img>(width, height);
