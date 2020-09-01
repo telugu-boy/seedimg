@@ -61,9 +61,9 @@ public:
 
   ~img();
 
-  std::vector<std::pair<simg_int, simg_int>> start_end_rows();
+  std::vector<std::pair<simg_int, simg_int>> start_end_rows() const noexcept;
 
-  std::vector<std::pair<simg_int, simg_int>> start_end_cols();
+  std::vector<std::pair<simg_int, simg_int>> start_end_cols() const noexcept;
 
   // Functions suffixed in `s` have a branch in them and will throw exceptions
   // if something is out of range.
@@ -81,12 +81,8 @@ public:
   simg_int height() const noexcept;
 
 protected:
-  simg_int width_;
-  simg_int height_;
-  // stored in row major order
-  // width amount of pixels in a row
-  // height amount of rows.
-  seedimg::pixel *data_;
+  class img_impl;
+  std::unique_ptr<img_impl> impl;
 };
 
 class uimg : public img {
@@ -96,6 +92,7 @@ public:
   void set_height(simg_int h) noexcept;
   void set_data(seedimg::pixel *data) noexcept;
 };
+
 } // namespace seedimg
 
 typedef std::shared_ptr<seedimg::img> simg;

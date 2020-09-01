@@ -23,12 +23,17 @@ set(VCPKG_TRIPLET x64-linux CACHE PATH "installed img lib triplet")
 
 set(CMAKE_TOOLCHAIN_FILE ${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 
-set(PNG_ENABLED ON CACHE BOOL "Enable PNG")
-set(JPEG_ENABLED ON CACHE BOOL "Enable JPEG")
-set(WEBP_ENABLED ON CACHE BOOL "Enable WebP")
-set(TIFF_ENABLED ON CACHE BOOL "Enable TIFF")
-set(FARBFELD_ENABLED ON CACHE BOOL "Enable Farbfeld")
-set(IRDUMP_ENABLED OFF CACHE BOOL "Enable IR dumping")
+set(AUTODETECT_ENABLED ON CACHE BOOL "Enable automatic detection of images. Requires ALL format modules.")
+
+if(NOT AUTODETECT_ENABLED)
+    set(PNG_ENABLED ON CACHE BOOL "Enable PNG")
+    set(JPEG_ENABLED ON CACHE BOOL "Enable JPEG")
+    set(WEBP_ENABLED ON CACHE BOOL "Enable WebP")
+    set(TIFF_ENABLED ON CACHE BOOL "Enable TIFF")
+    set(FARBFELD_ENABLED ON CACHE BOOL "Enable Farbfeld")
+    set(IRDUMP_ENABLED OFF CACHE BOOL "Enable IR dumping")
+endif()
+
 set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")
 
 project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
