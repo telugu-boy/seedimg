@@ -30,6 +30,11 @@ namespace seedimg {
 
 typedef std::pair<simg_int, simg_int> point;
 
+bool is_on_rect(seedimg::point xy1, seedimg::point xy2, seedimg::point point);
+
+std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
+                                                  seedimg::point p2);
+
 struct pixel {
   std::uint8_t r;
   std::uint8_t g;
@@ -60,15 +65,22 @@ public:
 
   std::vector<std::pair<simg_int, simg_int>> start_end_cols();
 
-  seedimg::pixel &pixel(simg_int x, simg_int y) const;
-  seedimg::pixel &pixel(seedimg::point p) const;
-  seedimg::pixel &pixel(simg_int x) const;
+  // Functions suffixed in `s` have a branch in them and will throw exceptions
+  // if something is out of range.
+
+  seedimg::pixel &pixel(simg_int x, simg_int y) const noexcept;
+  seedimg::pixel &pixel(seedimg::point p) const noexcept;
+  seedimg::pixel &pixel(simg_int x) const noexcept;
+  seedimg::pixel &pixel_s(simg_int x, simg_int y) const;
+  seedimg::pixel &pixel_s(seedimg::point p) const;
+  seedimg::pixel &pixel_s(simg_int x) const;
   seedimg::pixel *row(simg_int y) const noexcept;
+  seedimg::pixel *row_s(simg_int y) const;
   seedimg::pixel *data() const noexcept;
   simg_int width() const noexcept;
   simg_int height() const noexcept;
 
-private:
+protected:
   simg_int width_;
   simg_int height_;
   // stored in row major order
@@ -76,9 +88,18 @@ private:
   // height amount of rows.
   seedimg::pixel *data_;
 };
+
+class uimg : public img {
+public:
+  using img::img;
+  void set_width(simg_int w) noexcept;
+  void set_height(simg_int h) noexcept;
+  void set_data(seedimg::pixel *data) noexcept;
+};
 } // namespace seedimg
 
 typedef std::shared_ptr<seedimg::img> simg;
+typedef std::shared_ptr<seedimg::uimg> suimg;
 
 namespace seedimg {
 std::shared_ptr<seedimg::img> make(simg_int width, simg_int height);

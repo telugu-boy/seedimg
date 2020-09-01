@@ -21,29 +21,17 @@
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg.hpp>
 
-inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
-                       seedimg::point point) {
-  return xy1.first <= point.first && point.first <= xy2.first &&
-         xy1.second <= point.second && point.second <= xy2.second;
-}
-
-std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
-                                                  seedimg::point p2) {
-  auto ordered_x = std::minmax(p1.first, p2.first);
-  auto ordered_y = std::minmax(p1.second, p2.second);
-  // width, height
-  return {ordered_x.second - ordered_x.first,
-          ordered_y.second - ordered_y.first};
-}
-
 namespace seedimg::filters {
 bool crop(simg &inp_img, simg &res_img, seedimg::point p1, seedimg::point p2) {
+  if (inp_img == res_img)
+    crop_i(inp_img, p1, p2);
   if (p1 == seedimg::point{0, 0} &&
       p2 == seedimg::point{inp_img->width(), inp_img->height()}) {
     return true;
   }
-  if (!(is_on_rect({0, 0}, {inp_img->width(), inp_img->height()}, p1) &&
-        is_on_rect({0, 0}, {inp_img->width(), inp_img->height()}, p2)))
+  if (!(seedimg::is_on_rect({0, 0}, {inp_img->width(), inp_img->height()},
+                            p1) &&
+        seedimg::is_on_rect({0, 0}, {inp_img->width(), inp_img->height()}, p2)))
     return false;
   auto ordered_crop_x = std::minmax(p1.first, p2.first);
   auto ordered_crop_y = std::minmax(p1.second, p2.second);
@@ -57,11 +45,39 @@ bool crop(simg &inp_img, simg &res_img, seedimg::point p1, seedimg::point p2) {
 }
 
 bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
+  suimg unmanaged = std::static_pointer_cast<seedimg::uimg>(inp_img);
+  if (p1 == seedimg::point{0, 0} &&
+      p2 == seedimg::point{unmanaged->width(), unmanaged->height()}) {
+    return true;
+  }
+  if (!(seedimg::is_on_rect({0, 0}, {unmanaged->width(), unmanaged->height()},
+                            p1) &&
+        seedimg::is_on_rect({0, 0}, {unmanaged->width(), unmanaged->height()},
+                            p2)))
+    return false;
+
+  auto ordered_crop_x = std::minmax(p1.first, p2.first);
+  auto ordered_crop_y = std::minmax(p1.second, p2.second);
+
   auto dims = get_rect_dimensions(p1, p2);
-  auto res_img = seedimg::make(dims.first, dims.second);
-  bool result = crop(inp_img, res_img, p1, p2);
-  if (result)
-    inp_img = res_img;
-  return result;
+
+  // width is dims.first, height is dims.second.
+  for (simg_int y = 0; y < dims.second; ++y) {
+    std::memmove(unmanaged->data() + y * dims.first,
+                 unmanaged->row(y + ordered_crop_y.first) +
+                     ordered_crop_x.first,
+                 dims.first * sizeof(seedimg::pixel));
+  }
+
+  unmanaged->set_width(dims.first);
+  unmanaged->set_height(dims.second);
+
+  auto *tmp = static_cast<seedimg::pixel *>(
+      std::realloc(unmanaged->data(), unmanaged->width() * unmanaged->height() *
+                                          sizeof(seedimg::pixel)));
+  if (tmp == nullptr)
+    return false;
+  unmanaged->set_data(tmp);
+  return true;
 }
 } // namespace seedimg::filters

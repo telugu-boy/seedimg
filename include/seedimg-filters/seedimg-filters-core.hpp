@@ -19,6 +19,8 @@
 #ifndef SEEDIMG_FILTERS_CORE_H
 #define SEEDIMG_FILTERS_CORE_H
 
+#define SEEDIMG_CROP_I_FRIEND
+
 #include <seedimg.hpp>
 
 namespace seedimg::filters {

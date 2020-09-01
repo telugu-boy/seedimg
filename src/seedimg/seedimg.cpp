@@ -19,6 +19,7 @@
 // seedimg.cpp : Defines the functions for the static library.
 //
 
+#include <algorithm>
 #include <cstring>
 #include <thread>
 
@@ -26,10 +27,24 @@
 
 namespace seedimg {
 
+bool is_on_rect(seedimg::point xy1, seedimg::point xy2, seedimg::point point) {
+  return xy1.first <= point.first && point.first <= xy2.first &&
+         xy1.second <= point.second && point.second <= xy2.second;
+}
+
+std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
+                                                  seedimg::point p2) {
+  auto ordered_x = std::minmax(p1.first, p2.first);
+  auto ordered_y = std::minmax(p1.second, p2.second);
+  // width, height
+  return {ordered_x.second - ordered_x.first,
+          ordered_y.second - ordered_y.first};
+}
+
 img::img() : width_(0), height_(0), data_(nullptr) {}
 
 img::img(simg_int w, simg_int h) : width_{w}, height_{h} {
-  data_ = reinterpret_cast<seedimg::pixel *>(std::malloc(
+  data_ = static_cast<seedimg::pixel *>(std::malloc(
       static_cast<std::size_t>(height_ * width_) * sizeof(seedimg::pixel *)));
   if (data_ == nullptr)
     throw std::bad_alloc();
@@ -104,19 +119,28 @@ std::vector<std::pair<simg_int, simg_int>> img::start_end_cols() {
   return res;
 }
 
-seedimg::pixel &img::pixel(simg_int x, simg_int y) const {
-  if (y < height() || x < width())
-    return data_[y * this->width_ + x];
-  else
-    throw std::out_of_range("Coordinates out of range");
+seedimg::pixel &img::pixel(simg_int x, simg_int y) const noexcept {
+  return data_[y * this->width_ + x];
 }
 
-seedimg::pixel &img::pixel(seedimg::point p) const {
+seedimg::pixel &img::pixel(seedimg::point p) const noexcept {
   return pixel(p.first, p.second);
 }
 
-seedimg::pixel &img::pixel(simg_int x) const {
-  if (x > this->width() * this->height() - 1)
+seedimg::pixel &img::pixel(simg_int x) const noexcept {
+  return pixel(x / this->width(), x % this->width());
+}
+
+seedimg::pixel &img::pixel_s(simg_int x, simg_int y) const {
+  if (x >= width() || y >= height())
+    throw std::out_of_range("Coordinates out of range");
+  return data_[y * this->width_ + x];
+}
+seedimg::pixel &img::pixel_s(seedimg::point p) const {
+  return pixel(p.first, p.second);
+}
+seedimg::pixel &img::pixel_s(simg_int x) const {
+  if (x >= width() * height())
     throw std::out_of_range("Coordinate out of range");
   return pixel(x / this->width(), x % this->width());
 }
@@ -125,10 +149,22 @@ seedimg::pixel *img::row(simg_int y) const noexcept {
   return data_ + y * this->width_;
 }
 
+seedimg::pixel *img::row_s(simg_int y) const {
+  if (y >= height())
+    throw std::out_of_range("Row out of range");
+  return data_ + y * this->width_;
+}
+
 seedimg::pixel *img::data() const noexcept { return data_; }
 simg_int img::width() const noexcept { return width_; }
 simg_int img::height() const noexcept { return height_; }
 
+// for unmanaged images, a derived class of img.
+void uimg::set_width(simg_int w) noexcept { this->width_ = w; }
+void uimg::set_height(simg_int h) noexcept { this->height_ = h; }
+void uimg::set_data(seedimg::pixel *data) noexcept { this->data_ = data; }
+
+// create shared ptrs from certain suitable params
 std::shared_ptr<seedimg::img> make(simg_int width, simg_int height) {
   return std::make_shared<seedimg::img>(width, height);
 }
