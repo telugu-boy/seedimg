@@ -106,8 +106,8 @@ int main(int argc, char *argv[]) {
     seedimg::filters::invert_a_i(img, true);
     break;
   case filter_functions::CROP:
-    img->crop({img->width() / 3, img->height() / 3},
-                {2 * img->width() / 3, 2 * img->height() / 3});
+    seedimg::filters::crop_i(img, {img->width() / 3, img->height() / 3},
+                             {2 * img->width() / 3, 2 * img->height() / 3});
     break;
   case filter_functions::BLUR:
     seedimg::filters::blur_i(img, 10);

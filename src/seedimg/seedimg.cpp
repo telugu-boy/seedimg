@@ -27,8 +27,7 @@
 
 namespace seedimg {
 
-inline bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
-                       seedimg::point point) {
+bool is_on_rect(seedimg::point xy1, seedimg::point xy2, seedimg::point point) {
   return xy1.first <= point.first && point.first <= xy2.first &&
          xy1.second <= point.second && point.second <= xy2.second;
 }
@@ -145,36 +144,12 @@ seedimg::pixel *img::data() const noexcept { return data_; }
 simg_int img::width() const noexcept { return width_; }
 simg_int img::height() const noexcept { return height_; }
 
-bool img::crop(seedimg::point p1, seedimg::point p2) {
-  if (p1 == seedimg::point{0, 0} &&
-      p2 == seedimg::point{this->width(), this->height()}) {
-    return true;
-  }
-  if (!(seedimg::is_on_rect({0, 0}, {this->width(), this->height()}, p1) &&
-        seedimg::is_on_rect({0, 0}, {this->width(), this->height()}, p2)))
-    return false;
+// for unmanaged images, a derived class of img.
+void uimg::set_width(simg_int w) noexcept { this->width_ = w; }
+void uimg::set_height(simg_int h) noexcept { this->height_ = h; }
+void uimg::set_data(seedimg::pixel *data) noexcept { this->data_ = data; }
 
-  auto ordered_crop_x = std::minmax(p1.first, p2.first);
-  auto ordered_crop_y = std::minmax(p1.second, p2.second);
-
-  auto dims = get_rect_dimensions(p1, p2);
-
-  this->width_ = dims.first;
-  this->height_ = dims.second;
-
-  for (simg_int y = 0; y < this->height(); ++y) {
-    std::memmove(this->row(y),
-                 this->row(y + ordered_crop_y.first) + ordered_crop_x.first,
-                 this->width() * sizeof(seedimg::pixel));
-  }
-  auto *tmp = static_cast<seedimg::pixel *>(std::realloc(
-      this->data_, this->width() * this->height() * sizeof(seedimg::pixel)));
-  if (tmp == nullptr)
-    return false;
-  this->data_ = tmp;
-  return true;
-}
-
+// create shared ptrs from certain suitable params
 std::shared_ptr<seedimg::img> make(simg_int width, simg_int height) {
   return std::make_shared<seedimg::img>(width, height);
 }

@@ -41,4 +41,40 @@ bool crop(simg &inp_img, simg &res_img, seedimg::point p1, seedimg::point p2) {
   }
   return true;
 }
+
+bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
+  suimg unmanaged = std::static_pointer_cast<seedimg::uimg>(inp_img);
+  if (p1 == seedimg::point{0, 0} &&
+      p2 == seedimg::point{unmanaged->width(), unmanaged->height()}) {
+    return true;
+  }
+  if (!(seedimg::is_on_rect({0, 0}, {unmanaged->width(), unmanaged->height()},
+                            p1) &&
+        seedimg::is_on_rect({0, 0}, {unmanaged->width(), unmanaged->height()},
+                            p2)))
+    return false;
+
+  auto ordered_crop_x = std::minmax(p1.first, p2.first);
+  auto ordered_crop_y = std::minmax(p1.second, p2.second);
+
+  auto dims = get_rect_dimensions(p1, p2);
+
+  unmanaged->set_width(dims.first);
+  unmanaged->set_height(dims.second);
+
+  for (simg_int y = 0; y < unmanaged->height(); ++y) {
+    std::memmove(unmanaged->row(y),
+                 unmanaged->row(y + ordered_crop_y.first) +
+                     ordered_crop_x.first,
+                 unmanaged->width() * sizeof(seedimg::pixel));
+  }
+  auto *tmp = static_cast<seedimg::pixel *>(
+      std::realloc(unmanaged->data(), unmanaged->width() * unmanaged->height() *
+                                          sizeof(seedimg::pixel)));
+  if (tmp == nullptr)
+    return false;
+  unmanaged->set_data(tmp);
+  return true;
+}
+
 } // namespace seedimg::filters

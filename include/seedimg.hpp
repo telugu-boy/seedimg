@@ -73,9 +73,7 @@ public:
   simg_int width() const noexcept;
   simg_int height() const noexcept;
 
-  bool crop(seedimg::point p1, seedimg::point p2);
-
-private:
+protected:
   simg_int width_;
   simg_int height_;
   // stored in row major order
@@ -83,9 +81,18 @@ private:
   // height amount of rows.
   seedimg::pixel *data_;
 };
+
+class uimg : public img {
+public:
+  using img::img;
+  void set_width(simg_int w) noexcept;
+  void set_height(simg_int h) noexcept;
+  void set_data(seedimg::pixel *data) noexcept;
+};
 } // namespace seedimg
 
 typedef std::shared_ptr<seedimg::img> simg;
+typedef std::shared_ptr<seedimg::uimg> suimg;
 
 namespace seedimg {
 std::shared_ptr<seedimg::img> make(simg_int width, simg_int height);

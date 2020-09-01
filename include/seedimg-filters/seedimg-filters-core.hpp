@@ -48,6 +48,7 @@ void v_mirror_i(simg &inp_img);
 void h_mirror_i(simg &inp_img);
 
 bool crop(simg &inp_img, simg &res_img, seedimg::point p1, seedimg::point p2);
+bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2);
 
 void blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it = 3);
 void h_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it = 3);
