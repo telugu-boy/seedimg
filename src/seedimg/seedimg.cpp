@@ -41,128 +41,201 @@ std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
           ordered_y.second - ordered_y.first};
 }
 
-img::img() : width_(0), height_(0), data_(nullptr) {}
+class img::img_impl {
+public:
+  img_impl() : width_(0), height_(0), data_(nullptr) {}
 
-img::img(simg_int w, simg_int h) : width_{w}, height_{h} {
-  data_ = static_cast<seedimg::pixel *>(std::malloc(
-      static_cast<std::size_t>(height_ * width_) * sizeof(seedimg::pixel *)));
-  if (data_ == nullptr)
-    throw std::bad_alloc();
-}
+  img_impl(simg_int w, simg_int h) : width_{w}, height_{h} {
+    data_ = static_cast<seedimg::pixel *>(std::malloc(
+        static_cast<std::size_t>(height_ * width_) * sizeof(seedimg::pixel *)));
+    if (data_ == nullptr)
+      throw std::bad_alloc();
+  }
+
+  img_impl(simg_int w, simg_int h, seedimg::pixel *u_data)
+      : width_{w}, height_{h}, data_{u_data} {}
+
+  img_impl(img_impl const &img_) : img_impl(img_.width_, img_.height_) {
+    std::memcpy(this->data(), img_.data(),
+                static_cast<std::size_t>(img_.width_ * img_.height_) *
+                    sizeof(seedimg::pixel));
+  }
+
+  img_impl(img_impl &&other) : width_{0}, height_{0}, data_{nullptr} {
+    this->width_ = other.width_;
+    this->height_ = other.height_;
+    this->data_ = other.data_;
+    other.width_ = 0;
+    other.height_ = 0;
+    other.data_ = nullptr;
+  }
+
+  img_impl &operator=(img_impl other) {
+    std::swap(this->data_, other.data_);
+    std::swap(this->width_, other.width_);
+    std::swap(this->height_, other.height_);
+    return *this;
+  }
+  img_impl &operator=(img_impl &&other) {
+    if (&other != this) {
+      std::free(this->data_);
+      this->data_ = other.data_;
+      other.data_ = nullptr;
+      width_ = other.width_;
+      height_ = other.height_;
+    }
+    return *this;
+  }
+
+  seedimg::pixel &pixel(simg_int x, simg_int y) const noexcept {
+    return data()[y * width() + x];
+  }
+
+  seedimg::pixel &pixel(seedimg::point p) const noexcept {
+    return pixel(p.first, p.second);
+  }
+
+  seedimg::pixel &pixel(simg_int x) const noexcept {
+    return pixel(x / width(), x % width());
+  }
+
+  seedimg::pixel &pixel_s(simg_int x, simg_int y) const {
+    if (x >= width() || y >= height())
+      throw std::out_of_range("Coordinates out of range");
+    return data()[y * width() + x];
+  }
+  seedimg::pixel &pixel_s(seedimg::point p) const {
+    return pixel(p.first, p.second);
+  }
+  seedimg::pixel &pixel_s(simg_int x) const {
+    return pixel(x / width(), x % width());
+  }
+
+  seedimg::pixel *row(simg_int y) const noexcept {
+    return data() + y * width();
+  }
+
+  seedimg::pixel *row_s(simg_int y) const {
+    if (y >= height())
+      throw std::out_of_range("Row out of range");
+    return data() + y * width();
+  }
+
+  seedimg::pixel *data() const noexcept { return data_; }
+  simg_int width() const noexcept { return width_; }
+  simg_int height() const noexcept { return height_; }
+
+  void set_data(seedimg::pixel *data) noexcept { data_ = data; }
+  void set_width(simg_int w) noexcept { width_ = w; }
+  void set_height(simg_int h) noexcept { height_ = h; }
+
+  std::vector<std::pair<simg_int, simg_int>> start_end_rows() const noexcept {
+    std::vector<std::pair<simg_int, simg_int>> res;
+    auto processor_count =
+        std::min(this->height(),
+                 static_cast<simg_int>(std::thread::hardware_concurrency()));
+    if (processor_count == 0)
+      processor_count = 1;
+    res.reserve(static_cast<std::size_t>(processor_count));
+    simg_int rows_per_thread = this->height() / processor_count;
+    for (simg_int i = 0; i < processor_count * rows_per_thread;
+         i += rows_per_thread)
+      res.emplace_back(i, i + rows_per_thread);
+    res[res.size() - 1].second += this->height() % processor_count;
+    return res;
+  }
+
+  std::vector<std::pair<simg_int, simg_int>> start_end_cols() const noexcept {
+    std::vector<std::pair<simg_int, simg_int>> res;
+    auto processor_count =
+        std::min(this->width(),
+                 static_cast<simg_int>(std::thread::hardware_concurrency()));
+    if (processor_count == 0)
+      processor_count = 1;
+    res.reserve(static_cast<std::size_t>(processor_count));
+    simg_int cols_per_thread = this->width() / processor_count;
+    for (simg_int i = 0; i < processor_count * cols_per_thread;
+         i += cols_per_thread)
+      res.emplace_back(i, i + cols_per_thread);
+    res[res.size() - 1].second += this->width() % processor_count;
+    return res;
+  }
+
+  ~img_impl() { std::free(data_); }
+
+  simg_int width_;
+  simg_int height_;
+  // stored in row major order
+  // width amount of pixels in a row
+  // height amount of rows.
+  seedimg::pixel *data_;
+};
+
+// PIMPL stubs
+img::img() : impl{} {}
+
+img::img(simg_int w, simg_int h) : impl{new img_impl{w, h}} {}
 
 img::img(simg_int w, simg_int h, seedimg::pixel *u_data)
-    : width_{w}, height_{h}, data_{u_data} {}
+    : impl{new img_impl{w, h, u_data}} {}
 
-img::img(seedimg::img const &img_) : img(img_.width_, img_.height_) {
-  std::memcpy(this->data_, img_.data_,
-              static_cast<std::size_t>(img_.width_ * img_.height_) *
-                  sizeof(seedimg::pixel));
-}
+img::img(seedimg::img const &img_) : impl{new img_impl{*img_.impl}} {}
 
-img::img(seedimg::img &&other) : width_{0}, height_{0}, data_{nullptr} {
-  this->width_ = other.width_;
-  this->height_ = other.height_;
-  this->data_ = other.data_;
-  other.width_ = 0;
-  other.height_ = 0;
-  other.data_ = nullptr;
-}
+img::img(seedimg::img &&other) : impl{new img_impl{*other.impl}} {}
 
 img &img::operator=(img other) {
-  std::swap(this->data_, other.data_);
-  std::swap(this->width_, other.width_);
-  std::swap(this->height_, other.height_);
+  *this->impl = *other.impl;
   return *this;
 }
 img &img::operator=(img &&other) {
-  if (&other != this) {
-    delete data_;
-    data_ = other.data_;
-    other.data_ = nullptr;
-    width_ = other.width_;
-    height_ = other.height_;
-  }
+  *this->impl = *other.impl;
   return *this;
 }
 
-img::~img() { std::free(data_); }
+img::~img() = default;
 
-std::vector<std::pair<simg_int, simg_int>> img::start_end_rows() {
-  std::vector<std::pair<simg_int, simg_int>> res;
-  auto processor_count =
-      std::min(this->height(),
-               static_cast<simg_int>(std::thread::hardware_concurrency()));
-  if (processor_count == 0)
-    processor_count = 1;
-  res.reserve(static_cast<std::size_t>(processor_count));
-  simg_int rows_per_thread = this->height() / processor_count;
-  for (simg_int i = 0; i < processor_count * rows_per_thread;
-       i += rows_per_thread)
-    res.emplace_back(i, i + rows_per_thread);
-  res[res.size() - 1].second += this->height() % processor_count;
-  return res;
+std::vector<std::pair<simg_int, simg_int>> img::start_end_rows() const
+    noexcept {
+  return impl->start_end_rows();
 }
 
-std::vector<std::pair<simg_int, simg_int>> img::start_end_cols() {
-  std::vector<std::pair<simg_int, simg_int>> res;
-  auto processor_count =
-      std::min(this->width(),
-               static_cast<simg_int>(std::thread::hardware_concurrency()));
-  if (processor_count == 0)
-    processor_count = 1;
-  res.reserve(static_cast<std::size_t>(processor_count));
-  simg_int cols_per_thread = this->width() / processor_count;
-  for (simg_int i = 0; i < processor_count * cols_per_thread;
-       i += cols_per_thread)
-    res.emplace_back(i, i + cols_per_thread);
-  res[res.size() - 1].second += this->width() % processor_count;
-  return res;
+std::vector<std::pair<simg_int, simg_int>> img::start_end_cols() const
+    noexcept {
+  return impl->start_end_cols();
 }
 
 seedimg::pixel &img::pixel(simg_int x, simg_int y) const noexcept {
-  return data_[y * this->width_ + x];
+  return impl->pixel(x, y);
 }
 
 seedimg::pixel &img::pixel(seedimg::point p) const noexcept {
-  return pixel(p.first, p.second);
+  return impl->pixel(p);
 }
 
-seedimg::pixel &img::pixel(simg_int x) const noexcept {
-  return pixel(x / this->width(), x % this->width());
-}
+seedimg::pixel &img::pixel(simg_int x) const noexcept { return impl->pixel(x); }
 
 seedimg::pixel &img::pixel_s(simg_int x, simg_int y) const {
-  if (x >= width() || y >= height())
-    throw std::out_of_range("Coordinates out of range");
-  return data_[y * this->width_ + x];
+  return impl->pixel_s(x, y);
 }
+
 seedimg::pixel &img::pixel_s(seedimg::point p) const {
-  return pixel(p.first, p.second);
-}
-seedimg::pixel &img::pixel_s(simg_int x) const {
-  if (x >= width() * height())
-    throw std::out_of_range("Coordinate out of range");
-  return pixel(x / this->width(), x % this->width());
+  return impl->pixel(p.first, p.second);
 }
 
-seedimg::pixel *img::row(simg_int y) const noexcept {
-  return data_ + y * this->width_;
-}
+seedimg::pixel &img::pixel_s(simg_int x) const { return impl->pixel(x); }
 
-seedimg::pixel *img::row_s(simg_int y) const {
-  if (y >= height())
-    throw std::out_of_range("Row out of range");
-  return data_ + y * this->width_;
-}
+seedimg::pixel *img::row(simg_int y) const noexcept { return impl->row(y); }
 
-seedimg::pixel *img::data() const noexcept { return data_; }
-simg_int img::width() const noexcept { return width_; }
-simg_int img::height() const noexcept { return height_; }
+seedimg::pixel *img::row_s(simg_int y) const { return impl->row(y); }
+
+seedimg::pixel *img::data() const noexcept { return impl->data(); }
+simg_int img::width() const noexcept { return impl->width(); }
+simg_int img::height() const noexcept { return impl->height(); }
 
 // for unmanaged images, a derived class of img.
-void uimg::set_width(simg_int w) noexcept { this->width_ = w; }
-void uimg::set_height(simg_int h) noexcept { this->height_ = h; }
-void uimg::set_data(seedimg::pixel *data) noexcept { this->data_ = data; }
+void uimg::set_width(simg_int w) noexcept { impl->set_width(w); }
+void uimg::set_height(simg_int h) noexcept { impl->set_height(h); }
+void uimg::set_data(seedimg::pixel *data) noexcept { impl->set_data(data); }
 
 // create shared ptrs from certain suitable params
 std::shared_ptr<seedimg::img> make(simg_int width, simg_int height) {
@@ -174,63 +247,111 @@ make(const std::shared_ptr<seedimg::img> &inp_img) {
   return std::make_shared<seedimg::img>(*inp_img);
 }
 
-anim::anim() { framerate = 0; }
+// ANIM IMPL
+class anim::anim_impl {
+public:
+  std::size_t framerate;
 
-anim::anim(std::size_t size, std::size_t framerate) {
-  this->framerate = framerate;
-  data = std::vector<simg>(size);
-}
+  anim_impl() { framerate = 0; }
 
-anim::anim(simg images...) : anim() { data = std::vector<simg>{images}; }
+  anim_impl(std::size_t size, std::size_t framerate) {
+    this->framerate = framerate;
+    data = std::vector<simg>(size);
+  }
 
-anim::anim(std::initializer_list<simg> images, std::size_t framerate) {
-  this->framerate = framerate;
-  data = images;
-}
+  anim_impl(simg images...) : anim_impl() { data = std::vector<simg>{images}; }
 
-anim::anim(seedimg::anim const &anim_) {
-  data = std::vector<simg>();
-  data.reserve(anim_.data.size());
-}
+  anim_impl(std::initializer_list<simg> images, std::size_t framerate) {
+    this->framerate = framerate;
+    data = images;
+  }
 
-anim::anim(seedimg::anim &&other) {
-  framerate = other.framerate;
-  other.framerate = 0;
-  data = std::move(other.data);
-}
+  anim_impl(anim_impl const &anim_) {
+    data = std::vector<simg>();
+    data.reserve(anim_.data.size());
+  }
+  anim_impl(anim_impl &&other) {
+    framerate = other.framerate;
+    other.framerate = 0;
+    data = std::move(other.data);
+  }
+
+  anim_impl &operator=(anim_impl other) {
+    this->data.swap(other.data);
+    return *this;
+  }
+  anim_impl &operator=(anim_impl &&other) {
+    if (&other != this) {
+      this->data = std::move(other.data);
+    }
+    return *this;
+  }
+
+  simg &operator[](std::size_t i) { return data[i]; }
+
+  void add(simg img) { data.push_back(img); }
+  bool insert(simg img, std::size_t index) {
+    if (index >= data.size())
+      return false;
+    data.insert(data.begin() + static_cast<int>(index), img);
+    return true;
+  }
+  bool remove(std::size_t index) {
+    if (index >= data.size())
+      return false;
+    data.erase(data.begin() + static_cast<int>(index));
+    return true;
+  }
+  bool trim(std::size_t start, std::size_t end) {
+    if (start > end || end >= data.size())
+      return false;
+    data.erase(data.begin(), data.begin() + static_cast<int>(start));
+    data.erase(data.begin() + static_cast<int>(end - start), data.end());
+    return true;
+  }
+
+  std::size_t size() const noexcept { return data.size(); }
+
+private:
+  std::vector<simg> data;
+};
+
+anim::anim() : impl{} {};
+
+anim::anim(std::size_t size, std::size_t framerate)
+    : impl{new anim_impl{size, framerate}} {}
+
+anim::anim(simg images...) : impl{new anim_impl{images}} {};
+
+anim::anim(std::initializer_list<simg> images, std::size_t framerate)
+    : impl{new anim_impl{images, framerate}} {}
+
+anim::anim(seedimg::anim const &anim_) : impl{new anim_impl{*anim_.impl}} {}
+
+anim::anim(seedimg::anim &&other) : impl{new anim_impl{*other.impl}} {}
 
 anim &anim::operator=(anim other) {
-  this->data.swap(other.data);
+  *impl = *other.impl;
   return *this;
 }
 anim &anim::operator=(anim &&other) {
-  if (&other != this) {
-    this->data = std::move(other.data);
-  }
+  *impl = *other.impl;
   return *this;
 }
 
-simg &anim::operator[](std::size_t i) { return data[i]; }
+simg &anim::operator[](std::size_t i) const { return (*impl)[i]; }
 
-void anim::add(simg img) { data.push_back(img); }
+void anim::add(simg img) { impl->add(img); }
 bool anim::insert(simg img, std::size_t index) {
-  if (index >= data.size())
-    return false;
-  data.insert(data.begin() + static_cast<int>(index), img);
-  return true;
+  return impl->insert(img, index);
 }
-bool anim::remove(std::size_t index) {
-  if (index >= data.size())
-    return false;
-  data.erase(data.begin() + static_cast<int>(index));
-  return true;
-}
+bool anim::remove(std::size_t index) { return impl->remove(index); }
 bool anim::trim(std::size_t start, std::size_t end) {
-  if (start > end || end >= data.size())
-    return false;
-  data.erase(data.begin(), data.begin() + static_cast<int>(start));
-  data.erase(data.begin() + static_cast<int>(end - start), data.end());
-  return true;
+  return impl->trim(start, end);
 }
+
+std::size_t anim::size() const noexcept { return impl->size(); }
+
+anim::~anim() = default;
 
 } // namespace seedimg
