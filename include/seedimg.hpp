@@ -65,10 +65,17 @@ public:
 
   std::vector<std::pair<simg_int, simg_int>> start_end_cols();
 
-  seedimg::pixel &pixel(simg_int x, simg_int y) const;
-  seedimg::pixel &pixel(seedimg::point p) const;
-  seedimg::pixel &pixel(simg_int x) const;
+  // Functions suffixed in `s` have a branch in them and will throw exceptions
+  // if something is out of range.
+
+  seedimg::pixel &pixel(simg_int x, simg_int y) const noexcept;
+  seedimg::pixel &pixel(seedimg::point p) const noexcept;
+  seedimg::pixel &pixel(simg_int x) const noexcept;
+  seedimg::pixel &pixel_s(simg_int x, simg_int y) const;
+  seedimg::pixel &pixel_s(seedimg::point p) const;
+  seedimg::pixel &pixel_s(simg_int x) const;
   seedimg::pixel *row(simg_int y) const noexcept;
+  seedimg::pixel *row_s(simg_int y) const;
   seedimg::pixel *data() const noexcept;
   simg_int width() const noexcept;
   simg_int height() const noexcept;

@@ -119,24 +119,39 @@ std::vector<std::pair<simg_int, simg_int>> img::start_end_cols() {
   return res;
 }
 
-seedimg::pixel &img::pixel(simg_int x, simg_int y) const {
-  if (y < height() || x < width())
-    return data_[y * this->width_ + x];
-  else
-    throw std::out_of_range("Coordinates out of range");
+seedimg::pixel &img::pixel(simg_int x, simg_int y) const noexcept {
+  return data_[y * this->width_ + x];
 }
 
-seedimg::pixel &img::pixel(seedimg::point p) const {
+seedimg::pixel &img::pixel(seedimg::point p) const noexcept {
   return pixel(p.first, p.second);
 }
 
-seedimg::pixel &img::pixel(simg_int x) const {
-  if (x > this->width() * this->height() - 1)
+seedimg::pixel &img::pixel(simg_int x) const noexcept {
+  return pixel(x / this->width(), x % this->width());
+}
+
+seedimg::pixel &img::pixel_s(simg_int x, simg_int y) const {
+  if (x >= width() || y >= height())
+    throw std::out_of_range("Coordinates out of range");
+  return data_[y * this->width_ + x];
+}
+seedimg::pixel &img::pixel_s(seedimg::point p) const {
+  return pixel(p.first, p.second);
+}
+seedimg::pixel &img::pixel_s(simg_int x) const {
+  if (x >= width() * height())
     throw std::out_of_range("Coordinate out of range");
   return pixel(x / this->width(), x % this->width());
 }
 
 seedimg::pixel *img::row(simg_int y) const noexcept {
+  return data_ + y * this->width_;
+}
+
+seedimg::pixel *img::row_s(simg_int y) const {
+  if (y >= height())
+    throw std::out_of_range("Row out of range");
   return data_ + y * this->width_;
 }
 
