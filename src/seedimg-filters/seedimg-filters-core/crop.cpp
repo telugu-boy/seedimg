@@ -63,22 +63,21 @@ bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
 
   // width is dims.first, height is dims.second.
   for (simg_int y = 0; y < dims.second; ++y) {
-    for (simg_int x = 0; x < dims.first; ++x) {
-      seedimg::pixel p =
-          unmanaged->pixel(x + ordered_crop_x.first, y + ordered_crop_y.first);
-      unmanaged->pixel(y * dims.first + x, 0) = p;
-    }
+    std::memmove(unmanaged->data() + y * dims.first,
+                 unmanaged->row(y + ordered_crop_y.first) +
+                     ordered_crop_x.first,
+                 dims.first * sizeof(seedimg::pixel));
   }
 
   unmanaged->set_width(dims.first);
   unmanaged->set_height(dims.second);
-  /*
+
   auto *tmp = static_cast<seedimg::pixel *>(
       std::realloc(unmanaged->data(), unmanaged->width() * unmanaged->height() *
                                           sizeof(seedimg::pixel)));
   if (tmp == nullptr)
     return false;
-  unmanaged->set_data(tmp);*/
+  unmanaged->set_data(tmp);
   return true;
 }
 } // namespace seedimg::filters
