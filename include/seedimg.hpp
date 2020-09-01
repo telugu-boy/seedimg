@@ -118,18 +118,20 @@ public:
   anim &operator=(anim other);
   anim &operator=(anim &&other);
 
-  simg &operator[](std::size_t i);
+  simg &operator[](std::size_t i) const;
 
   void add(simg img);
   bool insert(simg img, std::size_t index);
   bool remove(std::size_t index);
   bool trim(std::size_t start, std::size_t end);
 
-  auto begin() const noexcept { return data.begin(); }
-  auto end() const noexcept { return data.end(); }
+  std::size_t size() const noexcept;
 
-private:
-  std::vector<simg> data;
+  ~anim();
+
+protected:
+  class anim_impl;
+  std::unique_ptr<anim_impl> impl;
 };
 
 namespace modules {};

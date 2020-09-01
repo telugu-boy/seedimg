@@ -247,63 +247,111 @@ make(const std::shared_ptr<seedimg::img> &inp_img) {
   return std::make_shared<seedimg::img>(*inp_img);
 }
 
-anim::anim() { framerate = 0; }
+// ANIM IMPL
+class anim::anim_impl {
+public:
+  std::size_t framerate;
 
-anim::anim(std::size_t size, std::size_t framerate) {
-  this->framerate = framerate;
-  data = std::vector<simg>(size);
-}
+  anim_impl() { framerate = 0; }
 
-anim::anim(simg images...) : anim() { data = std::vector<simg>{images}; }
+  anim_impl(std::size_t size, std::size_t framerate) {
+    this->framerate = framerate;
+    data = std::vector<simg>(size);
+  }
 
-anim::anim(std::initializer_list<simg> images, std::size_t framerate) {
-  this->framerate = framerate;
-  data = images;
-}
+  anim_impl(simg images...) : anim_impl() { data = std::vector<simg>{images}; }
 
-anim::anim(seedimg::anim const &anim_) {
-  data = std::vector<simg>();
-  data.reserve(anim_.data.size());
-}
+  anim_impl(std::initializer_list<simg> images, std::size_t framerate) {
+    this->framerate = framerate;
+    data = images;
+  }
 
-anim::anim(seedimg::anim &&other) {
-  framerate = other.framerate;
-  other.framerate = 0;
-  data = std::move(other.data);
-}
+  anim_impl(anim_impl const &anim_) {
+    data = std::vector<simg>();
+    data.reserve(anim_.data.size());
+  }
+  anim_impl(anim_impl &&other) {
+    framerate = other.framerate;
+    other.framerate = 0;
+    data = std::move(other.data);
+  }
+
+  anim_impl &operator=(anim_impl other) {
+    this->data.swap(other.data);
+    return *this;
+  }
+  anim_impl &operator=(anim_impl &&other) {
+    if (&other != this) {
+      this->data = std::move(other.data);
+    }
+    return *this;
+  }
+
+  simg &operator[](std::size_t i) { return data[i]; }
+
+  void add(simg img) { data.push_back(img); }
+  bool insert(simg img, std::size_t index) {
+    if (index >= data.size())
+      return false;
+    data.insert(data.begin() + static_cast<int>(index), img);
+    return true;
+  }
+  bool remove(std::size_t index) {
+    if (index >= data.size())
+      return false;
+    data.erase(data.begin() + static_cast<int>(index));
+    return true;
+  }
+  bool trim(std::size_t start, std::size_t end) {
+    if (start > end || end >= data.size())
+      return false;
+    data.erase(data.begin(), data.begin() + static_cast<int>(start));
+    data.erase(data.begin() + static_cast<int>(end - start), data.end());
+    return true;
+  }
+
+  std::size_t size() const noexcept { return data.size(); }
+
+private:
+  std::vector<simg> data;
+};
+
+anim::anim() : impl{} {};
+
+anim::anim(std::size_t size, std::size_t framerate)
+    : impl{new anim_impl{size, framerate}} {}
+
+anim::anim(simg images...) : impl{new anim_impl{images}} {};
+
+anim::anim(std::initializer_list<simg> images, std::size_t framerate)
+    : impl{new anim_impl{images, framerate}} {}
+
+anim::anim(seedimg::anim const &anim_) : impl{new anim_impl{*anim_.impl}} {}
+
+anim::anim(seedimg::anim &&other) : impl{new anim_impl{*other.impl}} {}
 
 anim &anim::operator=(anim other) {
-  this->data.swap(other.data);
+  *impl = *other.impl;
   return *this;
 }
 anim &anim::operator=(anim &&other) {
-  if (&other != this) {
-    this->data = std::move(other.data);
-  }
+  *impl = *other.impl;
   return *this;
 }
 
-simg &anim::operator[](std::size_t i) { return data[i]; }
+simg &anim::operator[](std::size_t i) const { return (*impl)[i]; }
 
-void anim::add(simg img) { data.push_back(img); }
+void anim::add(simg img) { impl->add(img); }
 bool anim::insert(simg img, std::size_t index) {
-  if (index >= data.size())
-    return false;
-  data.insert(data.begin() + static_cast<int>(index), img);
-  return true;
+  return impl->insert(img, index);
 }
-bool anim::remove(std::size_t index) {
-  if (index >= data.size())
-    return false;
-  data.erase(data.begin() + static_cast<int>(index));
-  return true;
-}
+bool anim::remove(std::size_t index) { return impl->remove(index); }
 bool anim::trim(std::size_t start, std::size_t end) {
-  if (start > end || end >= data.size())
-    return false;
-  data.erase(data.begin(), data.begin() + static_cast<int>(start));
-  data.erase(data.begin() + static_cast<int>(end - start), data.end());
-  return true;
+  return impl->trim(start, end);
 }
+
+std::size_t anim::size() const noexcept { return impl->size(); }
+
+anim::~anim() = default;
 
 } // namespace seedimg
