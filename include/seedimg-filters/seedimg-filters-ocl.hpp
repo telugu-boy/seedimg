@@ -25,8 +25,13 @@
 namespace seedimg::filters {
 namespace ocl {
 void init_ocl_singleton(std::size_t plat, std::size_t dev);
+
 void rotate_hue(simg &inp_img, simg &res_img, int angle);
 void rotate_hue_i(simg &inp_img, int angle);
+
+void grayscale(simg &inp_img, simg &res_img, int angle);
+void grayscale_i(simg &inp_img, int angle);
+
 } // namespace ocl
 } // namespace seedimg::filters
 
