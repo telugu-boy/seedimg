@@ -7,8 +7,11 @@ uchar clamp(float i){
         return (uchar)i;
 }
 
-__kernel void rotate_hue(__constant float* hue_kernel, __global uchar4* inp_pix, __global uchar4* res_pix) {
+__kernel void rotate_hue(__constant float* hue_kernel, __global uchar4* inp_pix, __global uchar4* res_pix, ulong amt_pixels) {
       int num = get_global_id(0);
+      if(num >= amt_pixels)
+          return;
+      
 	  res_pix[num].x = clamp(
                     hue_kernel[0] * inp_pix[num].x +
                     hue_kernel[1] * inp_pix[num].y +

@@ -120,7 +120,7 @@ public:
     simg_int rows_per_thread = this->height() / processor_count;
     for (simg_int i = 0; i < processor_count * rows_per_thread;
          i += rows_per_thread)
-      res.emplace_back(i, i + rows_per_thread);
+      res.push_back({i, i + rows_per_thread});
     res[res.size() - 1].second += this->height() % processor_count;
     return res;
   }
@@ -136,7 +136,7 @@ public:
     simg_int cols_per_thread = this->width() / processor_count;
     for (simg_int i = 0; i < processor_count * cols_per_thread;
          i += cols_per_thread)
-      res.emplace_back(i, i + cols_per_thread);
+      res.push_back({i, i + cols_per_thread});
     res[res.size() - 1].second += this->width() % processor_count;
     return res;
   }

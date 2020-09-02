@@ -16,9 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#define CL_TARGET_OPENCL_VERSION 110
-
-// Standard library to make some things easier.
 #include <cmath>
 
 #include <CL/cl.hpp>
@@ -73,21 +70,31 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   queue.enqueueWriteBuffer(hue_kernel_buf, CL_TRUE, 0, sizeof(float) * 9,
                            hue_kernel);
 
+  cl_uchar4 *inp = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
+      inp_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
+      sizeof(seedimg::pixel) * inp_img->width() * inp_img->height()));
+  std::memcpy(inp, inp_img->data(),
+              sizeof(seedimg::pixel) * inp_img->width() * inp_img->height());
+  queue.enqueueUnmapMemObject(inp_img_buf, inp);
+
   cl::Kernel rotate_hue_ocl(program, "rotate_hue");
 
   rotate_hue_ocl.setArg(0, hue_kernel_buf);
   rotate_hue_ocl.setArg(1, inp_img_buf);
   rotate_hue_ocl.setArg(2, res_img_buf);
+  rotate_hue_ocl.setArg(3, inp_img->width() * inp_img->height());
   queue.enqueueNDRangeKernel(
       rotate_hue_ocl, cl::NullRange,
       cl::NDRange(round_up(inp_img->width() * inp_img->height(), 128)),
       cl::NDRange(128));
   queue.finish();
 
-  queue.enqueueReadBuffer(res_img_buf, CL_TRUE, 0,
-                          sizeof(seedimg::pixel) * res_img->width() *
-                              res_img->height(),
-                          res_img->data());
+  cl_uchar4 *res = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
+      res_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
+      sizeof(seedimg::pixel) * res_img->width() * res_img->height()));
+  std::memcpy(res_img->data(), res,
+              sizeof(seedimg::pixel) * inp_img->width() * inp_img->height());
+  queue.enqueueUnmapMemObject(res_img_buf, res);
 }
 
 void rotate_hue_i(simg &inp_img, int angle) {

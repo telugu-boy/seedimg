@@ -28,8 +28,9 @@ int main() {
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    // ocl::init_ocl_singleton(1, 0);
+    // ocl::init_ocl_singleton(0, 0);
     auto a = seedimg::load("cat.png");
+    auto b = seedimg::make(a->width(), a->height());
     // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
@@ -43,7 +44,7 @@ int main() {
       // v_mirror_i(a);
       // h_mirror_i(a);
       // ocl::rotate_hue_i(a, -90);
-      ocl::grayscale_i(a, false);
+      // ocl::grayscale_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

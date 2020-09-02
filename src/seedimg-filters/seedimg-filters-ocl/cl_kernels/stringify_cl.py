@@ -1,4 +1,5 @@
 import sys
+import pathlib
 
 def stringify(iname, oname):
   res_str = "";
@@ -16,4 +17,4 @@ if __name__ == "__main__":
         "grayscale_avg",
     ]
     for name in names:
-        stringify("kernel_sources/"+name+"_ocl.cl", name+"_kernel.clh")
+        stringify(str(pathlib.Path(__file__).parent.absolute()) + "/kernel_sources/"+name+"_ocl.cl", name+"_kernel.clh")
