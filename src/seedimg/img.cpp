@@ -18,24 +18,9 @@
 
 #include <seedimg.hpp>
 
-#include <algorithm>
 #include <thread>
 
 namespace seedimg {
-bool is_on_rect(seedimg::point xy1, seedimg::point xy2, seedimg::point point) {
-  return xy1.first <= point.first && point.first <= xy2.first &&
-         xy1.second <= point.second && point.second <= xy2.second;
-}
-
-std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
-                                                  seedimg::point p2) {
-  auto ordered_x = std::minmax(p1.first, p2.first);
-  auto ordered_y = std::minmax(p1.second, p2.second);
-  // width, height
-  return {ordered_x.second - ordered_x.first,
-          ordered_y.second - ordered_y.first};
-}
-
 class img::img_impl {
 public:
   img_impl() : width_(0), height_(0), data_(nullptr) {}
