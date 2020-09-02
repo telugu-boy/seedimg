@@ -48,7 +48,7 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
   device = all_devices[dev];
   context = {device};
 
-  constexpr char *const kernels[] = {
+  constexpr const char *const kernels[] = {
 #include "cl_kernels/rotate_hue_kernel.clh"
       ,
 #include "cl_kernels/grayscale_lum_kernel.clh"
