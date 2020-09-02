@@ -29,8 +29,8 @@ void init_ocl_singleton(std::size_t plat, std::size_t dev);
 void rotate_hue(simg &inp_img, simg &res_img, int angle);
 void rotate_hue_i(simg &inp_img, int angle);
 
-void grayscale(simg &inp_img, simg &res_img, int angle);
-void grayscale_i(simg &inp_img, int angle);
+void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
+void grayscale_i(simg &inp_img, bool luminosity = true);
 
 } // namespace ocl
 } // namespace seedimg::filters

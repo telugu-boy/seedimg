@@ -50,6 +50,11 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
 
   const std::string kernels[] = {
 #include "cl_kernels/rotate_hue_kernel.clh"
+      ,
+#include "cl_kernels/grayscale_lum_kernel.clh"
+      ,
+#include "cl_kernels/grayscale_avg_kernel.clh"
+      ,
   };
 
   // didn't use emplace back because it's 2 values and slower as they're not

@@ -30,10 +30,12 @@ namespace seedimg {
 
 typedef std::pair<simg_int, simg_int> point;
 
-bool is_on_rect(seedimg::point xy1, seedimg::point xy2, seedimg::point point);
+simg_int round_up(simg_int inp, simg_int mul) noexcept;
 
+bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
+                seedimg::point point) noexcept;
 std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
-                                                  seedimg::point p2);
+                                                  seedimg::point p2) noexcept;
 
 struct pixel {
   std::uint8_t r;

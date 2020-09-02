@@ -16,47 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#define CL_TARGET_OPENCL_VERSION 110
-
-// Standard library to make some things easier.
-#include <cmath>
-
 #include <CL/cl.hpp>
 
 #include "ocl-singleton.hpp"
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 
-using namespace std;
-
-const double PI = 4 * std::atan(1);
-
-void get_hue_kernel(int angle, float hue_kernel[9]) {
-  const float sinr = static_cast<float>(std::sin(angle * PI / 180));
-  const float cosr = static_cast<float>(std::cos(angle * PI / 180));
-  hue_kernel[0] = 0.213f + cosr * 0.787f - sinr * 0.213f;
-  hue_kernel[1] = 0.715f - cosr * 0.715f - sinr * 0.715f;
-  hue_kernel[2] = 0.072f - cosr * 0.072f + sinr * 0.928f;
-  hue_kernel[3] = 0.213f - cosr * 0.213f + sinr * 0.143f;
-  hue_kernel[4] = 0.715f + cosr * 0.285f + sinr * 0.140f;
-  hue_kernel[5] = 0.072f - cosr * 0.072f - sinr * 0.283f;
-  hue_kernel[6] = 0.213f - cosr * 0.213f - sinr * 0.787f;
-  hue_kernel[7] = 0.715f - cosr * 0.715f + sinr * 0.715f;
-  hue_kernel[8] = 0.072f + cosr * 0.928f + sinr * 0.072f;
-}
-
-namespace seedimg::filters::ocl {
-void rotate_hue(simg &inp_img, simg &res_img, int angle) {
+namespace seedimg::filters {
+namespace ocl {
+void grayscale(simg &inp_img, simg &res_img, bool luminosity) {
   auto context = ocl_singleton::instance().context;
   auto device = ocl_singleton::instance().device;
   auto sources = ocl_singleton::instance().sources;
   auto program = ocl_singleton::instance().program;
 
   // create buffers on device (allocate space on GPU)
-  float hue_kernel[9];
-  get_hue_kernel(angle, hue_kernel);
-
-  // create buffers on device (allocate space on GPU)
-  cl::Buffer hue_kernel_buf{context, CL_MEM_READ_ONLY, sizeof(float) * 9};
   cl::Buffer inp_img_buf{context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
                          sizeof(seedimg::pixel) * inp_img->width() *
                              inp_img->height(),
@@ -69,17 +42,16 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   // create a queue (a queue of commands that the GPU will execute)
   cl::CommandQueue queue(context, device);
 
-  // push write commands to queue
-  queue.enqueueWriteBuffer(hue_kernel_buf, CL_TRUE, 0, sizeof(float) * 9,
-                           hue_kernel);
+  cl::Kernel grayscale;
+  if (luminosity)
+    grayscale = {program, "grayscale_lum"};
+  else
+    grayscale = {program, "grayscale_avg"};
 
-  cl::Kernel rotate_hue_ocl(program, "rotate_hue");
-
-  rotate_hue_ocl.setArg(0, hue_kernel_buf);
-  rotate_hue_ocl.setArg(1, inp_img_buf);
-  rotate_hue_ocl.setArg(2, res_img_buf);
+  grayscale.setArg(0, inp_img_buf);
+  grayscale.setArg(1, res_img_buf);
   queue.enqueueNDRangeKernel(
-      rotate_hue_ocl, cl::NullRange,
+      grayscale, cl::NullRange,
       cl::NDRange(round_up(inp_img->width() * inp_img->height(), 128)),
       cl::NDRange(128));
   queue.finish();
@@ -90,7 +62,8 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
                           res_img->data());
 }
 
-void rotate_hue_i(simg &inp_img, int angle) {
-  rotate_hue(inp_img, inp_img, angle);
+void grayscale_i(simg &inp_img, bool luminosity) {
+  grayscale(inp_img, inp_img, luminosity);
 }
-} // namespace seedimg::filters::ocl
+} // namespace ocl
+} // namespace seedimg::filters
