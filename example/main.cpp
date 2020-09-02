@@ -21,7 +21,7 @@ seedimg - module based image manipulation library written in modern
 
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
-// #include <seedimg-filters/seedimg-filters-ocl.hpp>
+#include <seedimg-filters/seedimg-filters-ocl.hpp>
 
 int main() {
   using namespace seedimg::filters;
@@ -32,7 +32,7 @@ int main() {
     auto a = seedimg::load("cat.png");
     // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
-      crop_i(a, {0, 0}, {100, 100});
+      // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);
       // invert_i(a);
       // blur_i(a, 10);
@@ -43,7 +43,8 @@ int main() {
       // v_mirror_i(a);
       // h_mirror_i(a);
       // ocl::rotate_hue_i(a, -90);
-      seedimg::save("biol.png", a);
+      ocl::grayscale_i(a, false);
+      seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;

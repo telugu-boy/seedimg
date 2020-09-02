@@ -10,6 +10,10 @@ def stringify(iname, oname):
 if __name__ == "__main__":
     # .cl files are suffixed with _ocl.cl
     # resulting files are suffixed with _kernel.clh
-    names = ["rotate_hue"]
+    names = [
+        "rotate_hue",
+        "grayscale_lum",
+        "grayscale_avg",
+    ]
     for name in names:
-        stringify(name+"_ocl.cl", name+"_kernel.clh")
+        stringify("kernel_sources/"+name+"_ocl.cl", name+"_kernel.clh")

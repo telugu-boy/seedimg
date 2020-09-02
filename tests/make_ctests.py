@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
-target_link_libraries(tests seedimg-filters-core seedimg-autodetect stdc++fs)
+target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect stdc++fs)
 target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
 file(COPY test_image.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
 
@@ -29,9 +29,9 @@ include_directories(../)
 template = """add_test({}_test ${{TESTS_EXE}} {})
 set_tests_properties({}_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")\n\n"""
 
-tests = ["grayscale_lum", "grayscale_avg", "invert", "invert_alpha","invert_alpha_only", "crop", "blur", "h_blur", "v_blur", "kernel_convolution", "rotate_hue", "brightness", "brightness_alpha", "blend", "blend_alpha","rotate_cw", "rotate_180", "rotate_ccw", "v_mirror", "h_mirror", "rotate_hue_ocl"]
+tests = ["grayscale_lum", "grayscale_avg", "invert", "invert_alpha","invert_alpha_only", "crop", "blur", "h_blur", "v_blur", "kernel_convolution", "rotate_hue", "brightness", "brightness_alpha", "blend", "blend_alpha","rotate_cw", "rotate_180", "rotate_ccw", "v_mirror", "h_mirror", "rotate_hue_ocl", "grayscale_lum_ocl", "grayscale_avg_ocl"]
 
-enum_mapping = ["GRAYSCALE_LUM", "GRAYSCALE_AVG", "INVERT", "INVERT_A", "INVERT_AO", "CROP", "BLUR", "H_BLUR", "V_BLUR", "KERNEL_CONVOLUTION", "ROTATE_HUE", "BRIGHTNESS", "BRIGHTNESS_A", "BLEND", "BLEND_A", "ROTATE_CW", "ROTATE_180", "ROTATE_CCW", "V_MIRROR", "H_MIRROR", "ROTATE_HUE_OCL"]
+enum_mapping = ["GRAYSCALE_LUM", "GRAYSCALE_AVG", "INVERT", "INVERT_A", "INVERT_AO", "CROP", "BLUR", "H_BLUR", "V_BLUR", "KERNEL_CONVOLUTION", "ROTATE_HUE", "BRIGHTNESS", "BRIGHTNESS_A", "BLEND", "BLEND_A", "ROTATE_CW", "ROTATE_180", "ROTATE_CCW", "V_MIRROR", "H_MIRROR", "ROTATE_HUE_OCL", "GRAYSCALE_LUM_OCL", "GRAYSCALE_AVG_OCL"]
 
 if __name__ == "__main__":
     with open("CMakeLists.txt", "w") as f:
