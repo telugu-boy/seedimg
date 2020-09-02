@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
-target_link_libraries(tests seedimg-filters-core seedimg-autodetect seedimg-filters-ocl stdc++fs)
+target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect stdc++fs)
 target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
 file(COPY test_image.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
 
@@ -86,4 +86,10 @@ set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(rotate_hue_ocl_test ${TESTS_EXE} rotate_hue_ocl)
 set_tests_properties(rotate_hue_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(grayscale_lum_ocl_test ${TESTS_EXE} grayscale_lum_ocl)
+set_tests_properties(grayscale_lum_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(grayscale_avg_ocl_test ${TESTS_EXE} grayscale_avg_ocl)
+set_tests_properties(grayscale_avg_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 

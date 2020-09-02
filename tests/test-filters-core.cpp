@@ -48,6 +48,8 @@ enum class filter_functions {
   V_MIRROR,
   H_MIRROR,
   ROTATE_HUE_OCL,
+  GRAYSCALE_LUM_OCL,
+  GRAYSCALE_AVG_OCL,
 };
 
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
@@ -73,6 +75,8 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"v_mirror", filter_functions::V_MIRROR},
         {"h_mirror", filter_functions::H_MIRROR},
         {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
+        {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
+        {"grayscale_avg_ocl", filter_functions::GRAYSCALE_AVG_OCL},
 };
 
 int main(int argc, char *argv[]) {
@@ -159,6 +163,13 @@ int main(int argc, char *argv[]) {
     break;
   case filter_functions::ROTATE_HUE_OCL:
     seedimg::filters::ocl::rotate_hue_i(img, 180);
+    break;
+  case filter_functions::GRAYSCALE_LUM_OCL:
+    seedimg::filters::ocl::grayscale_i(img, true);
+    break;
+  case filter_functions::GRAYSCALE_AVG_OCL:
+    seedimg::filters::ocl::grayscale_i(img, false);
+    break;
   }
   char name_buf[256];
   /*

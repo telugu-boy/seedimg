@@ -48,7 +48,7 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
   device = all_devices[dev];
   context = {device};
 
-  const std::string kernels[] = {
+  constexpr char *kernels[] = {
 #include "cl_kernels/rotate_hue_kernel.clh"
       ,
 #include "cl_kernels/grayscale_lum_kernel.clh"
@@ -61,7 +61,7 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
   // large at all. std::pair<const char*, ::size_t> is the definition of
   // cl::Program::Sources.
   for (auto &kernel : kernels)
-    sources.push_back({kernel.c_str(), kernel.length()});
+    sources.push_back({kernel, std::strlen(kernel)});
 
   program = {context, sources};
   if (program.build({device}) != CL_SUCCESS) {
