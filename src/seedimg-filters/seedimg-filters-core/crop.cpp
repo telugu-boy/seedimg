@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <exception>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg.hpp>
 
@@ -76,7 +77,7 @@ bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
       std::realloc(unmanaged->data(), unmanaged->width() * unmanaged->height() *
                                           sizeof(seedimg::pixel)));
   if (tmp == nullptr)
-    return false;
+    throw std::bad_alloc{};
   unmanaged->set_data(tmp);
   return true;
 }
