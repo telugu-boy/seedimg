@@ -139,11 +139,11 @@ int main(int argc, char *argv[]) {
     seedimg::filters::brightness_a_i(img, 40);
     break;
   case filter_functions::BLEND: {
-    auto another_img = std::make_shared<seedimg::img>(*img);
+    auto another_img = seedimg::make(img);
     seedimg::filters::blend_i({img, 50}, {another_img, 50});
   } break;
   case filter_functions::BLEND_A: {
-    auto another_img = std::make_shared<seedimg::img>(*img);
+    auto another_img = seedimg::make(img);
     seedimg::filters::blend_i({img, 50}, {another_img, 50});
   } break;
   case filter_functions::ROTATE_CW:

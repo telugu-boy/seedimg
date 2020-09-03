@@ -5,8 +5,6 @@ __kernel void grayscale_avg(__global uchar4* inp_pix, __global uchar4* res_pix, 
       
       uchar avg = (inp_pix[num].x + inp_pix[num].y + inp_pix[num].z) / 3;
           
-	  res_pix[num].x = avg;
-      res_pix[num].y = avg;
-      res_pix[num].z = avg;
-} 
+	  res_pix[num] = (uchar4)(avg, avg, avg, inp_pix[num].w);
+}
  

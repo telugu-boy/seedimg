@@ -44,7 +44,8 @@ int main() {
       // v_mirror_i(a);
       // h_mirror_i(a);
       // ocl::rotate_hue_i(a, -90);
-      // ocl::grayscale_i(a);
+      // ocl::grayscale_i(a, true);
+      blend_i({a, 200}, {b, 10});
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

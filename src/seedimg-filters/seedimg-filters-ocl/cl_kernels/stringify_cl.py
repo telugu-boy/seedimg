@@ -16,5 +16,8 @@ if __name__ == "__main__":
         "grayscale_lum",
         "grayscale_avg",
     ]
+    dirname = str(pathlib.Path(__file__).parent.absolute()) + '/'
     for name in names:
-        stringify(str(pathlib.Path(__file__).parent.absolute()) + "/kernel_sources/"+name+"_ocl.cl", name+"_kernel.clh")
+        stringify(dirname + "kernel_sources/"+name+"_ocl.cl", dirname+name+"_kernel.clh")
+    
+    print("Done stringifying kernels")
