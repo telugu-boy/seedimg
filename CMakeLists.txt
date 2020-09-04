@@ -17,11 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 cmake_minimum_required(VERSION 3.2)
 
-# edit this to wherever your vcpkg is
-set(VCPKG_DIR ../vcpkg CACHE PATH "path to vcpkg root")
-set(VCPKG_TRIPLET x64-linux CACHE PATH "installed img lib triplet")
+project(seedimg VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
 
-set(CMAKE_TOOLCHAIN_FILE ${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
+include(CTest)
+include(ExternalProject)
+include(CheckCXXCompilerFlag)
 
 set(AUTODETECT_ENABLED ON CACHE BOOL "Enable automatic detection of images. Requires ALL format modules.")
 
@@ -43,13 +43,11 @@ endif()
 
 set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")
 
-project(seedimg_full VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
+
 
 option(BUILD_TESTING "" OFF)
-include(CTest)
-include(CheckCXXCompilerFlag)
 
-include_directories(${VCPKG_DIR}/installed/${VCPKG_TRIPLET}/include "${CMAKE_SOURCE_DIR}/include")
+include_directories(${CMAKE_SOURCE_DIR}/include/)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
@@ -62,9 +60,9 @@ endif()
 
 CHECK_CXX_COMPILER_FLAG(-Wextra COMPILER_SUPPORTS_WEXTRA)
 if(COMPILER_SUPPORTS_WEXTRA)
-    set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -pthread")
 else()
-    set(CMAKE_CXX_FLAGS "-Wall")
+    set(CMAKE_CXX_FLAGS "-Wall -pthread")
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g")

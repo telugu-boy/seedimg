@@ -17,10 +17,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 add_library(seedimg-webp ${LIB_TYPE} seedimg-webp.cpp)
 
-find_package(WebP CONFIG REQUIRED)
+ExternalProject_Add(libwebp-1.1.0
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libwebp-1.1.0/
+    BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libwebp
+    INSTALL_COMMAND ""
+    PREFIX ${CMAKE_BINARY_DIR}/extern/libwebp
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release -DWEBP_BUILD_VWEBP=OFF"
+)
+
+ExternalProject_Get_Property(libwebp-1.1.0 install_dir)
+
+add_library(libwebp STATIC IMPORTED)
+add_library(libwebpdemux STATIC IMPORTED)
+add_library(libwebpdecoder STATIC IMPORTED)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-webp PRIVATE WebP::webp WebP::webpdemux WebP::libwebpmux WebP::webpdecoder seedimg)
+    set_property(TARGET libwebp PROPERTY IMPORTED_LOCATION ${install_dir}/libwebp.a)
+    set_property(TARGET libwebpdemux PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdemux.a)
+    set_property(TARGET libwebpdecoder PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdecoder.a)
+    target_link_libraries(seedimg-webp PRIVATE libwebp libwebpdemux libwebpdecoder seedimg)
 else()
-    target_link_libraries(seedimg-webp PRIVATE WebP::webp WebP::webpdemux WebP::libwebpmux WebP::webpdecoder seedimg stdc++fs)
+    set_property(TARGET libwebp PROPERTY IMPORTED_LOCATION ${install_dir}/libwebp.a)
+    set_property(TARGET libwebpdemux PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdemux.a)
+    set_property(TARGET libwebpdecoder PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdecoder.a)
+    target_link_libraries(seedimg-webp PRIVATE libwebp libwebpdemux libwebpdecoder seedimg stdc++fs)
 endif()
+
+target_include_directories(seedimg-webp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libwebp-1.1.0/src/ seedimg)
