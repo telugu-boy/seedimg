@@ -9,7 +9,7 @@ the Free Software Foundation, either version 3 of the License, or
  
 This program is distributed in the hope that it will be useful, 
 but WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details. 
  
 You should have received a copy of the GNU Lesser General Public License 
@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 add_library(seedimg-jpeg ${LIB_TYPE} seedimg-jpeg.cpp)
 
 ExternalProject_Add(libjpeg-turbo-2.0.5
+    URL https://sourceforge.net/projects/libjpeg-turbo/files/2.0.5/libjpeg-turbo-2.0.5.tar.gz/download
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo-2.0.5/
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
     INSTALL_COMMAND ""

@@ -18,11 +18,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 add_library(seedimg-webp ${LIB_TYPE} seedimg-webp.cpp)
 
 ExternalProject_Add(libwebp-1.1.0
+    URL https://github.com/webmproject/libwebp/archive/v1.1.0.zip
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libwebp-1.1.0/
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libwebp
     INSTALL_COMMAND ""
     PREFIX ${CMAKE_BINARY_DIR}/extern/libwebp
-    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release -DWEBP_BUILD_VWEBP=OFF"
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release
+    -DWEBP_BUILD_GIF2WEBP=OFF
+    -DWEBP_BUILD_IMG2WEBP=OFF
+    -DWEBP_BUILD_VWEBP=OFF
+    -DWEBP_BUILD_WEBPINFO=OFF
+    -DWEBP_BUILD_WEBPMUX=OFF
+    -DWEBP_BUILD_EXTRAS=OFF
+    -DWEBP_BUILD_WEBP_JS=OFF"
 )
 
 ExternalProject_Get_Property(libwebp-1.1.0 install_dir)
