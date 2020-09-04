@@ -29,7 +29,7 @@ int main() {
             << std::endl;
   {
     // ocl::init_ocl_singleton(0, 0);
-    auto a = seedimg::load("biol.webp");
+    auto a = seedimg::load("cat.png");
     auto b = seedimg::make(a->width(), a->height());
     // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
