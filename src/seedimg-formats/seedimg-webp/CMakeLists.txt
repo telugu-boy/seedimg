@@ -21,7 +21,6 @@ ExternalProject_Add(libwebp-1.1.0
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libwebp-src
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libwebp
     INSTALL_COMMAND ""
-    PREFIX ${CMAKE_BINARY_DIR}/extern/libwebp
     CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release \
     -DWEBP_BUILD_GIF2WEBP=OFF \
     -DWEBP_BUILD_IMG2WEBP=OFF \

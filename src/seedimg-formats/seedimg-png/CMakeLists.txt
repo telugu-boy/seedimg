@@ -19,9 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ExternalProject_Add(libpng-1.6.37
     URL https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/libpng-1.6.37.tar.xz/download
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libpng-src
-    BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libpng
+    BUILD_ALWAYS FALSE
+    BUILD_IN_SOURCE TRUE
     INSTALL_COMMAND ""
-    PREFIX ${CMAKE_BINARY_DIR}/extern/libpng
     CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
 )
 
@@ -49,7 +49,6 @@ ExternalProject_Add(zlib-1.2.11
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-src
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/zlib
     INSTALL_COMMAND ""
-    PREFIX ${CMAKE_BINARY_DIR}/extern/zlib
     CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
 )
 
