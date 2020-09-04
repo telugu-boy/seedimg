@@ -38,6 +38,8 @@ else()
     set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff.so)
 endif()
 
+add_dependencies(libtiff libtiff-4.1.0)
+
 
 
 add_library(seedimg-tiff ${LIB_TYPE} seedimg-tiff.cpp)

@@ -38,6 +38,8 @@ else()
     set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/libpng.a)
 endif()
 
+add_dependencies(libpng libpng-1.6.37)
+
 
 
 
@@ -63,6 +65,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 else()
     set_property(TARGET zlib PROPERTY IMPORTED_LOCATION ${install_dir}/libz.a)
 endif()
+
+add_dependencies(zlib zlib-1.2.11)
+
+
 
 
 

@@ -22,9 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ExternalProject_Add(libjpeg-turbo-2.0.5
     URL https://sourceforge.net/projects/libjpeg-turbo/files/2.0.5/libjpeg-turbo-2.0.5.tar.gz/download
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo-src
+    BUILD_ALWAYS FALSE
     BUILD_IN_SOURCE TRUE
     INSTALL_COMMAND ""
-    PREFIX ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
     CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
 )
 
@@ -40,6 +40,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 else()
     set_property(TARGET libjpeg-turbo PROPERTY IMPORTED_LOCATION ${install_dir}/libturbojpeg.a)
 endif()
+
+add_dependencies(libjpeg-turbo libjpeg-turbo-2.0.5)
 
 
 

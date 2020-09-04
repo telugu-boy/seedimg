@@ -51,6 +51,10 @@ else()
     set_property(TARGET libwebpdecoder PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdecoder.a)
 endif()
 
+add_dependencies(libwebp libwebp-1.1.0)
+add_dependencies(libwebpdemux libwebp-1.1.0)
+add_dependencies(libwebpdecoder libwebp-1.1.0)
+
 
 
 add_library(seedimg-webp ${LIB_TYPE} seedimg-webp.cpp)
