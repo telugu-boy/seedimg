@@ -28,7 +28,7 @@ ExternalProject_Add(libtiff-4.1.0
 
 ExternalProject_Get_Property(libtiff-4.1.0 install_dir)
 
-add_library(libtiff STATIC IMPORTED)
+add_library(libtiff SHARED IMPORTED)
 
 set(TIFF_LIBRARIES libtiff)
 set(TIFF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libtiff-src/libtiff/)

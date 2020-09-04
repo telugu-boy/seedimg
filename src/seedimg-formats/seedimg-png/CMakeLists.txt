@@ -17,12 +17,64 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 add_library(seedimg-png ${LIB_TYPE} seedimg-png.cpp)
 
-find_package(PNG REQUIRED)
+
+
+
+
+ExternalProject_Add(libpng-1.6.37
+    URL https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/libpng-1.6.37.tar.xz/download
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libpng-src
+    BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libpng
+    INSTALL_COMMAND ""
+    PREFIX ${CMAKE_BINARY_DIR}/extern/libpng
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
+)
+
+ExternalProject_Get_Property(libpng-1.6.37 install_dir)
+
+add_library(libpng STATIC IMPORTED)
+
+set(PNG_LIBRARIES libpng)
+set(PNG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libpng-src/)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} seedimg)
+    set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)
 else()
-    target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} seedimg stdc++fs)
+    set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/libpng.a)
 endif()
 
-target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} seedimg)
+
+
+
+
+ExternalProject_Add(zlib-1.2.11
+    URL https://zlib.net/zlib-1.2.11.tar.xz
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-src
+    BINARY_DIR ${CMAKE_BINARY_DIR}/extern/zlib
+    INSTALL_COMMAND ""
+    PREFIX ${CMAKE_BINARY_DIR}/extern/zlib
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
+)
+
+ExternalProject_Get_Property(zlib-1.2.11 install_dir)
+
+add_library(zlib STATIC IMPORTED)
+
+set(ZLIB_LIBRARIES zlib)
+set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-src/)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set_property(TARGET zlib PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)
+else()
+    set_property(TARGET zlib PROPERTY IMPORTED_LOCATION ${install_dir}/libz.a)
+endif()
+
+
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} seedimg)
+else()
+    target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} seedimg stdc++fs)
+endif()
+
+target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} seedimg)
