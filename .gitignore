@@ -365,3 +365,4 @@ CMakeFiles/**
 #image library sources
 **/libjpeg-turbo-src
 **/libwebp-src
+**/libtiff-src

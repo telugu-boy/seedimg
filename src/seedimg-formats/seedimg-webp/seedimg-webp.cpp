@@ -70,25 +70,28 @@ bool to(const std::string &filename, const simg &inp_img, float quality) {
 }
 simg from(const std::string &filename) {
   std::error_code ec;
-  size_t size = std::filesystem::file_size(filename, ec);
+  std::size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{})
     return nullptr;
   int width, height;
-  auto data = std::make_shared<uint8_t[]>(size);
+  std::uint8_t *data = new std::uint8_t[size];
 
   // read into data
   std::ifstream file(filename, std::ios::binary);
-  if (!file.read(reinterpret_cast<char *>(data.get()), static_cast<long>(size)))
+  if (!file.read(reinterpret_cast<char *>(data), static_cast<long>(size)))
     return nullptr;
 
-  int success = WebPGetInfo(data.get(), size, &width, &height);
+  int success = WebPGetInfo(data, size, &width, &height);
   if (!success)
     return nullptr;
 
+  auto *decoded = WebPDecodeRGBA(data, size, &width, &height);
+
+  delete[] data;
+
   return std::make_shared<seedimg::img>(
       static_cast<simg_int>(width), static_cast<simg_int>(height),
-      reinterpret_cast<seedimg::pixel *>(
-          WebPDecodeRGBA(data.get(), size, &width, &height)));
+      reinterpret_cast<seedimg::pixel *>(decoded));
 }
 } // namespace webp
 } // namespace seedimg::modules
