@@ -19,7 +19,7 @@ add_library(seedimg-jpeg ${LIB_TYPE} seedimg-jpeg.cpp)
 
 ExternalProject_Add(libjpeg-turbo-2.0.5
     URL https://sourceforge.net/projects/libjpeg-turbo/files/2.0.5/libjpeg-turbo-2.0.5.tar.gz/download
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo-src/
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo-src
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
     INSTALL_COMMAND ""
     PREFIX ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
