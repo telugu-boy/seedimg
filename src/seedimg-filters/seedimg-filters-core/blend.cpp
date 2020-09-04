@@ -21,7 +21,13 @@
 
 #include <seedimg-filters/seedimg-filters-core.hpp>
 
-#define CLAMP(x, a, b) ((x) < (a) ? (a) : (x) > (b) ? (b) : (x))
+inline std::uint8_t clamp(int a) {
+  if (a > 255)
+    return 255;
+  else if (a < 0)
+    return 0;
+  return static_cast<std::uint8_t>(a);
+}
 
 namespace seedimg::filters {
 void pixel_add_worker(simg &image, simg &other, simg_int start_row,
@@ -31,10 +37,10 @@ void pixel_add_worker(simg &image, simg &other, simg_int start_row,
       auto &pix = image->pixel(x, start_row);
       auto &opix = other->pixel(x, start_row);
 
-      pix.r = CLAMP(pix.r + opix.r, 0, 255);
-      pix.g = CLAMP(pix.g + opix.g, 0, 255);
-      pix.b = CLAMP(pix.b + opix.b, 0, 255);
-      pix.a = CLAMP(pix.a + opix.a, 0, 255);
+      pix.r = clamp(pix.r + opix.r);
+      pix.g = clamp(pix.g + opix.g);
+      pix.b = clamp(pix.b + opix.b);
+      pix.a = clamp(pix.a + opix.a);
     }
   }
 }
