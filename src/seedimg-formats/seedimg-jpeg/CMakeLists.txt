@@ -15,7 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-add_library(seedimg-jpeg ${LIB_TYPE} seedimg-jpeg.cpp)
 
 ExternalProject_Add(libjpeg-turbo-2.0.5
     URL https://sourceforge.net/projects/libjpeg-turbo/files/2.0.5/libjpeg-turbo-2.0.5.tar.gz/download
@@ -40,6 +39,8 @@ else()
 endif()
 
 
+
+add_library(seedimg-jpeg ${LIB_TYPE} seedimg-jpeg.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES} seedimg)

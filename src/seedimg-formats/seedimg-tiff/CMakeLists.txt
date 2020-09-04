@@ -15,7 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-add_library(seedimg-tiff ${LIB_TYPE} seedimg-tiff.cpp)
 
 ExternalProject_Add(libtiff-4.1.0
     URL https://download.osgeo.org/libtiff/tiff-4.1.0.zip
@@ -40,6 +39,8 @@ else()
 endif()
 
 
+
+add_library(seedimg-tiff ${LIB_TYPE} seedimg-tiff.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} seedimg)

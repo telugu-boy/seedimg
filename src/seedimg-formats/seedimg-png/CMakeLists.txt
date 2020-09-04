@@ -15,11 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-add_library(seedimg-png ${LIB_TYPE} seedimg-png.cpp)
-
-
-
-
 
 ExternalProject_Add(libpng-1.6.37
     URL https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/libpng-1.6.37.tar.xz/download
@@ -70,6 +65,8 @@ else()
 endif()
 
 
+
+add_library(seedimg-png ${LIB_TYPE} seedimg-png.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} seedimg)
