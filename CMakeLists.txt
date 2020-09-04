@@ -47,7 +47,7 @@ set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")
 
 option(BUILD_TESTING "" OFF)
 
-include_directories(${CMAKE_SOURCE_DIR}/include/)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
