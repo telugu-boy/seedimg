@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
 # It is MANDATORY to build in-source, until we can run a `cmake .` in the downloaded folder
-# regardless whether or not cmake is in PATH.
+# regardless whether or not cmake is in PATH. This is because jconfig is generated at config time.
 
 ExternalProject_Add(libjpeg-turbo-2.0.5
     URL https://sourceforge.net/projects/libjpeg-turbo/files/2.0.5/libjpeg-turbo-2.0.5.tar.gz/download
