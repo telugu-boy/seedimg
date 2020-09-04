@@ -363,5 +363,5 @@ CMakeFiles/**
 !cat.png
 
 #image library sources
-**/libjpeg-turbo-2.0.5
-**/libwebp-1.1.0
+**/libjpeg-turbo-src
+**/libwebp-src

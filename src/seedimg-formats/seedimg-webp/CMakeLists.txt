@@ -19,7 +19,7 @@ add_library(seedimg-webp ${LIB_TYPE} seedimg-webp.cpp)
 
 ExternalProject_Add(libwebp-1.1.0
     URL https://github.com/webmproject/libwebp/archive/v1.1.0.zip
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libwebp-1.1.0/
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libwebp-src/
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libwebp
     INSTALL_COMMAND ""
     PREFIX ${CMAKE_BINARY_DIR}/extern/libwebp
