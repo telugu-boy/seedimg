@@ -26,6 +26,8 @@
 #include <iostream>
 
 extern "C" {
+#include <jconfig.h>
+
 #include <jpeglib.h>
 }
 

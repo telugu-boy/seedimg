@@ -22,10 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ExternalProject_Add(libjpeg-turbo-2.0.5
     URL https://sourceforge.net/projects/libjpeg-turbo/files/2.0.5/libjpeg-turbo-2.0.5.tar.gz/download
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo-src
-    BUILD_ALWAYS FALSE
-    BUILD_IN_SOURCE TRUE
+    PREFIX ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
+    BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
     INSTALL_COMMAND ""
-    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF"
 )
 
 ExternalProject_Get_Property(libjpeg-turbo-2.0.5 install_dir)
@@ -34,6 +34,7 @@ add_library(libjpeg-turbo STATIC IMPORTED)
 
 set(JPEG_LIBRARIES libjpeg-turbo)
 set(JPEG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo-src/)
+set(JPEG_CONF_INCLUDE_DIR ${install_dir})
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set_property(TARGET libjpeg-turbo PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)
@@ -53,4 +54,4 @@ else()
     target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES} seedimg stdc++fs)
 endif()
 
-target_include_directories(seedimg-jpeg PRIVATE ${JPEG_INCLUDE_DIR})
+target_include_directories(seedimg-jpeg PRIVATE ${JPEG_INCLUDE_DIR} ${JPEG_CONF_INCLUDE_DIR})

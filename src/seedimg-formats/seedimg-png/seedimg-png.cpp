@@ -25,6 +25,8 @@
 #include <iostream>
 
 extern "C" {
+#include <pnglibconf.h>
+
 #include <png.h>
 }
 

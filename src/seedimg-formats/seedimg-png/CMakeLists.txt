@@ -19,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ExternalProject_Add(libpng-1.6.37
     URL https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/libpng-1.6.37.tar.xz/download
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libpng-src
-    BUILD_ALWAYS FALSE
-    BUILD_IN_SOURCE TRUE
+    PREFIX ${CMAKE_BINARY_DIR}/extern/libpng
+    BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libpng
     INSTALL_COMMAND ""
-    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release -DPNG_SHARED=FALSE -DBUILD_TESTING=OFF -DPNG_TESTS=OFF"
 )
 
 ExternalProject_Get_Property(libpng-1.6.37 install_dir)
@@ -31,6 +31,7 @@ add_library(libpng STATIC IMPORTED)
 
 set(PNG_LIBRARIES libpng)
 set(PNG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libpng-src/)
+set(PNG_CONF_INCLUDE_DIR ${install_dir})
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)
@@ -42,14 +43,15 @@ add_dependencies(libpng libpng-1.6.37)
 
 
 
-
+#execute_process(COMMAND ${CMAKE_COMMAND} .)
 
 ExternalProject_Add(zlib-1.2.11
     URL https://zlib.net/zlib-1.2.11.tar.xz
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-src
+    PREFIX ${CMAKE_BINARY_DIR}/extern/zlib
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/zlib
     INSTALL_COMMAND ""
-    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF"
 )
 
 ExternalProject_Get_Property(zlib-1.2.11 install_dir)
@@ -79,4 +81,4 @@ else()
     target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} seedimg stdc++fs)
 endif()
 
-target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} seedimg)
+target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIR} ${PNG_CONF_INCLUDE_DIR})

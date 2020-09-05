@@ -24,6 +24,8 @@
 #include <vector>
 
 extern "C" {
+#include <tiffconf.h>
+
 #include <tiffio.h>
 }
 

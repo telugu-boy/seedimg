@@ -29,6 +29,7 @@ ExternalProject_Add(libwebp-1.1.0
     -DWEBP_BUILD_WEBPMUX=OFF \
     -DWEBP_BUILD_EXTRAS=OFF \
     -DWEBP_BUILD_WEBP_JS=OFF"
+    PREFIX ${CMAKE_BINARY_DIR}/extern/libwebp
 )
 
 ExternalProject_Get_Property(libwebp-1.1.0 install_dir)

@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ExternalProject_Add(libtiff-4.1.0
     URL https://download.osgeo.org/libtiff/tiff-4.1.0.zip
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libtiff-src
-    BUILD_ALWAYS FALSE
-    BUILD_IN_SOURCE TRUE
+    PREFIX ${CMAKE_BINARY_DIR}/extern/libtiff
+    BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libtiff
     INSTALL_COMMAND ""
     CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
 )
@@ -30,17 +30,20 @@ ExternalProject_Get_Property(libtiff-4.1.0 install_dir)
 add_library(libtiff SHARED IMPORTED)
 
 set(TIFF_LIBRARIES libtiff)
-set(TIFF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libtiff-src/libtiff/)
+set(TIFF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libtiff-src/libtiff)
+set(TIFF_CONF_INCLUDE_DIR ${install_dir}/libtiff)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff.so)
+    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/libtiff.so)
 else()
-    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff.so)
+    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/libtiff.so)
 endif()
 
 add_dependencies(libtiff libtiff-4.1.0)
 
 
+
+#execute_process(COMMAND ${CMAKE_COMMAND} .)
 
 add_library(seedimg-tiff ${LIB_TYPE} seedimg-tiff.cpp)
 
@@ -50,4 +53,4 @@ else()
     target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} seedimg stdc++fs)
 endif()
 
-target_include_directories(seedimg-tiff PRIVATE ${TIFF_INCLUDE_DIR} seedimg)
+target_include_directories(seedimg-tiff PRIVATE ${TIFF_INCLUDE_DIR} ${TIFF_CONF_INCLUDE_DIR})
