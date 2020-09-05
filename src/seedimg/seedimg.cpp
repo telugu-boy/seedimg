@@ -37,14 +37,14 @@ simg_int round_up(simg_int inp, simg_int mul) noexcept {
 
 bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
                 seedimg::point point) noexcept {
-  return xy1.first <= point.first && point.first <= xy2.first &&
-         xy1.second <= point.second && point.second <= xy2.second;
+  return xy1.x <= point.x && point.x <= xy2.x && xy1.y <= point.y &&
+         point.y <= xy2.y;
 }
 
-std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
-                                                  seedimg::point p2) noexcept {
-  auto ordered_x = std::minmax(p1.first, p2.first);
-  auto ordered_y = std::minmax(p1.second, p2.second);
+seedimg::point get_rect_dimensions(seedimg::point p1,
+                                   seedimg::point p2) noexcept {
+  auto ordered_x = std::minmax(p1.x, p2.x);
+  auto ordered_y = std::minmax(p1.y, p2.y);
   // width, height
   return {ordered_x.second - ordered_x.first,
           ordered_y.second - ordered_y.first};

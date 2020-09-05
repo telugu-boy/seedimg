@@ -71,7 +71,7 @@ public:
   }
 
   seedimg::pixel &pixel(seedimg::point p) const noexcept {
-    return pixel(p.first, p.second);
+    return pixel(p.x, p.y);
   }
 
   seedimg::pixel &pixel(simg_int x) const noexcept {
@@ -83,9 +83,7 @@ public:
       throw std::out_of_range("Coordinates out of range");
     return data()[y * width() + x];
   }
-  seedimg::pixel &pixel_s(seedimg::point p) const {
-    return pixel(p.first, p.second);
-  }
+  seedimg::pixel &pixel_s(seedimg::point p) const { return pixel(p.x, p.y); }
   seedimg::pixel &pixel_s(simg_int x) const {
     return pixel(x / width(), x % width());
   }
@@ -199,7 +197,7 @@ seedimg::pixel &img::pixel_s(simg_int x, simg_int y) const {
 }
 
 seedimg::pixel &img::pixel_s(seedimg::point p) const {
-  return impl->pixel(p.first, p.second);
+  return impl->pixel(p.x, p.y);
 }
 
 seedimg::pixel &img::pixel_s(simg_int x) const { return impl->pixel(x); }

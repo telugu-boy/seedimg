@@ -28,16 +28,25 @@ typedef std::size_t simg_int;
 
 namespace seedimg {
 
-typedef std::pair<simg_int, simg_int> point;
+typedef struct point {
+  simg_int x;
+  simg_int y;
+  inline bool operator==(const point &other) const noexcept {
+    return std::tie(x, y) == std::tie(other.x, other.y);
+  }
+  inline bool operator!=(const point &other) const noexcept {
+    return !(*this == other);
+  }
+} point;
 
 simg_int round_up(simg_int inp, simg_int mul) noexcept;
 
 bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
                 seedimg::point point) noexcept;
-std::pair<simg_int, simg_int> get_rect_dimensions(seedimg::point p1,
-                                                  seedimg::point p2) noexcept;
 
-struct pixel {
+point get_rect_dimensions(seedimg::point p1, seedimg::point p2) noexcept;
+
+typedef struct pixel {
   std::uint8_t r;
   std::uint8_t g;
   std::uint8_t b;
@@ -48,7 +57,7 @@ struct pixel {
   inline bool operator!=(const pixel &other) const noexcept {
     return !(*this == other);
   }
-};
+} pixel;
 
 class img {
 public:

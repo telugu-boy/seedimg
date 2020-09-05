@@ -31,7 +31,7 @@ void seedimg::filters::convolution(simg &input,
                              kernel.size()};
   // NOTE: only square aka. NxN kernels are allowed as they're symmetric and
   //       thus very easy to implement, if not then just ignore.
-  if (kernel_dims.first != kernel_dims.second || kernel_dims.first == 0)
+  if (kernel_dims.x != kernel_dims.y || kernel_dims.x == 0)
     return;
 
   {
@@ -41,7 +41,7 @@ void seedimg::filters::convolution(simg &input,
           return s + std::accumulate(r.begin(), r.end(), 0.0);
         }));
 
-    for (simg_int r = 0; r < kernel_dims.second; ++r)
+    for (simg_int r = 0; r < kernel_dims.y; ++r)
       std::transform(
           kernel[r].begin(), kernel[r].end(), kernel[r].begin(),
           [&](auto elem) -> float { return elem / kernmatrix_normdiv; });
@@ -50,7 +50,7 @@ void seedimg::filters::convolution(simg &input,
   // the centerpoint of the kernel, where the current pixel is located.
   // kernel { y-axis: [-a..+a], x-axis: [-b..b] }, (a) and (b) are half
   // of kernel's (width) and (height).
-  seedimg::point kernel_origin{kernel_dims.first / 2, kernel_dims.second / 2};
+  seedimg::point kernel_origin{kernel_dims.x / 2, kernel_dims.y / 2};
 
   for (simg_int y = 0; y < input->height(); ++y) {
     for (simg_int x = 0; x < input->width(); ++x) {
@@ -60,8 +60,8 @@ void seedimg::filters::convolution(simg &input,
         float r = 0, g = 0, b = 0, a = 0;
       } outpix;
 
-      for (std::size_t dy = 0; dy < kernel_dims.second; ++dy) {
-        for (std::size_t dx = 0; dx < kernel_dims.first; ++dx) {
+      for (std::size_t dy = 0; dy < kernel_dims.y; ++dy) {
+        for (std::size_t dx = 0; dx < kernel_dims.x; ++dx) {
           // NOTE: for edge handling a mixture of mirroring and wrapping is
           // done. wrapping when it reaches the end, mirroring when it reaches
           // the start.
@@ -69,12 +69,12 @@ void seedimg::filters::convolution(simg &input,
               static_cast<simg_int>(
                   static_cast<unsigned long long>(std::llabs(
                       static_cast<long long>(x) + static_cast<long long>(dx) -
-                      static_cast<long long>(kernel_origin.first))) %
+                      static_cast<long long>(kernel_origin.x))) %
                   input->width()),
               static_cast<simg_int>(
                   static_cast<unsigned long long>(std::llabs(
                       static_cast<long long>(y) + static_cast<long long>(dy) -
-                      static_cast<long long>(kernel_origin.second))) %
+                      static_cast<long long>(kernel_origin.y))) %
                   input->height()));
 
           // TODO: alpha isn't altered, need to add an option for it.

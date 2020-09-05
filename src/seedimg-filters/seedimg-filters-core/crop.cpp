@@ -34,12 +34,11 @@ bool crop(simg &inp_img, simg &res_img, seedimg::point p1, seedimg::point p2) {
                             p1) &&
         seedimg::is_on_rect({0, 0}, {inp_img->width(), inp_img->height()}, p2)))
     return false;
-  auto ordered_crop_x = std::minmax(p1.first, p2.first);
-  auto ordered_crop_y = std::minmax(p1.second, p2.second);
+  auto least_crop_x = std::min(p1.x, p2.x);
+  auto least_crop_y = std::min(p1.y, p2.y);
 
   for (simg_int y = 0; y < res_img->height(); ++y) {
-    std::memcpy(res_img->row(y),
-                inp_img->row(y + ordered_crop_y.first) + ordered_crop_x.first,
+    std::memcpy(res_img->row(y), inp_img->row(y + least_crop_y) + least_crop_x,
                 res_img->width() * sizeof(seedimg::pixel));
   }
   return true;
@@ -57,21 +56,20 @@ bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
                             p2)))
     return false;
 
-  auto ordered_crop_x = std::minmax(p1.first, p2.first);
-  auto ordered_crop_y = std::minmax(p1.second, p2.second);
+  auto least_crop_x = std::min(p1.x, p2.x);
+  auto least_crop_y = std::min(p1.y, p2.y);
 
   auto dims = get_rect_dimensions(p1, p2);
 
-  // width is dims.first, height is dims.second.
-  for (simg_int y = 0; y < dims.second; ++y) {
-    std::memmove(unmanaged->data() + y * dims.first,
-                 unmanaged->row(y + ordered_crop_y.first) +
-                     ordered_crop_x.first,
-                 dims.first * sizeof(seedimg::pixel));
+  // width is dims.x, height is dims.y.
+  for (simg_int y = 0; y < dims.y; ++y) {
+    std::memmove(unmanaged->data() + y * dims.x,
+                 unmanaged->row(y + least_crop_y) + least_crop_x,
+                 dims.x * sizeof(seedimg::pixel));
   }
 
-  unmanaged->set_width(dims.first);
-  unmanaged->set_height(dims.second);
+  unmanaged->set_width(dims.x);
+  unmanaged->set_height(dims.y);
 
   auto *tmp = static_cast<seedimg::pixel *>(
       std::realloc(unmanaged->data(), unmanaged->width() * unmanaged->height() *
