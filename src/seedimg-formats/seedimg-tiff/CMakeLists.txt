@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ExternalProject_Add(libtiff-4.1.0
     URL https://download.osgeo.org/libtiff/tiff-4.1.0.zip
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libtiff-src
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/libtiff-src
     PREFIX ${CMAKE_BINARY_DIR}/extern/libtiff
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libtiff
     INSTALL_COMMAND ""
@@ -26,11 +26,13 @@ ExternalProject_Add(libtiff-4.1.0
 )
 
 ExternalProject_Get_Property(libtiff-4.1.0 install_dir)
+ExternalProject_Get_Property(libtiff-4.1.0 SOURCE_DIR)
+
 
 add_library(libtiff SHARED IMPORTED)
 
 set(TIFF_LIBRARIES libtiff)
-set(TIFF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libtiff-src/libtiff)
+set(TIFF_INCLUDE_DIR ${SOURCE_DIR}/libtiff)
 set(TIFF_CONF_INCLUDE_DIR ${install_dir}/libtiff)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")

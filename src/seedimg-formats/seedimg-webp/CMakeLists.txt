@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ExternalProject_Add(libwebp-1.1.0
     URL https://github.com/webmproject/libwebp/archive/v1.1.0.zip
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libwebp-src
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/libwebp-src
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libwebp
     INSTALL_COMMAND ""
     CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release \
@@ -33,13 +33,14 @@ ExternalProject_Add(libwebp-1.1.0
 )
 
 ExternalProject_Get_Property(libwebp-1.1.0 install_dir)
+ExternalProject_Get_Property(libwebp-1.1.0 SOURCE_DIR)
 
 add_library(libwebp STATIC IMPORTED)
 add_library(libwebpdemux STATIC IMPORTED)
 add_library(libwebpdecoder STATIC IMPORTED)
 
 set(WEBP_LIBRARIES libwebp libwebpdemux libwebpdecoder)
-set(WEBP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libwebp-src/src/)
+set(WEBP_INCLUDE_DIR ${SOURCE_DIR}/src)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set_property(TARGET libwebp PROPERTY IMPORTED_LOCATION ${install_dir}/libwebp.a)

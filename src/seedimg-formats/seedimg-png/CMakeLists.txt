@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ExternalProject_Add(libpng-1.6.37
     URL https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/libpng-1.6.37.tar.xz/download
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libpng-src
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/libpng-src
     PREFIX ${CMAKE_BINARY_DIR}/extern/libpng
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libpng
     INSTALL_COMMAND ""
@@ -26,11 +26,12 @@ ExternalProject_Add(libpng-1.6.37
 )
 
 ExternalProject_Get_Property(libpng-1.6.37 install_dir)
+ExternalProject_Get_Property(libpng-1.6.37 SOURCE_DIR)
 
 add_library(libpng STATIC IMPORTED)
 
 set(PNG_LIBRARIES libpng)
-set(PNG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libpng-src/)
+set(PNG_INCLUDE_DIR ${SOURCE_DIR})
 set(PNG_CONF_INCLUDE_DIR ${install_dir})
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
@@ -47,7 +48,7 @@ add_dependencies(libpng libpng-1.6.37)
 
 ExternalProject_Add(zlib-1.2.11
     URL https://zlib.net/zlib-1.2.11.tar.xz
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-src
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/zlib-src
     PREFIX ${CMAKE_BINARY_DIR}/extern/zlib
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/zlib
     INSTALL_COMMAND ""
@@ -55,11 +56,12 @@ ExternalProject_Add(zlib-1.2.11
 )
 
 ExternalProject_Get_Property(zlib-1.2.11 install_dir)
+ExternalProject_Get_Property(zlib-1.2.11 SOURCE_DIR)
 
 add_library(zlib STATIC IMPORTED)
 
 set(ZLIB_LIBRARIES zlib)
-set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-src/)
+set(ZLIB_INCLUDE_DIR ${SOURCE_DIR})
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set_property(TARGET zlib PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)

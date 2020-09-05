@@ -363,8 +363,4 @@ CMakeFiles/**
 !cat.png
 
 #image library sources
-**/libjpeg-turbo-src
-**/libwebp-src
-**/libtiff-src
-**/libpng-src
-**/zlib-src
+**/extern-src
