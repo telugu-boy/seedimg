@@ -161,15 +161,18 @@ int main(int argc, char *argv[]) {
   case filter_functions::H_MIRROR:
     seedimg::filters::h_mirror_i(img);
     break;
+  #ifdef SEEDIMG_OCL
   case filter_functions::ROTATE_HUE_OCL:
     seedimg::filters::ocl::rotate_hue_i(img, 180);
     break;
+
   case filter_functions::GRAYSCALE_LUM_OCL:
     seedimg::filters::ocl::grayscale_i(img, true);
     break;
   case filter_functions::GRAYSCALE_AVG_OCL:
     seedimg::filters::ocl::grayscale_i(img, false);
     break;
+  #endif
   }
   char name_buf[256];
   /*
