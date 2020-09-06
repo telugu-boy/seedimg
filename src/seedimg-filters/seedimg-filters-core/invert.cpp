@@ -30,9 +30,9 @@ void invert_worker(simg &inp_img, simg &res_img, simg_int start_row,
     for (simg_int x = 0; x < w; ++x) {
       seedimg::pixel pix = inp_img->pixel(x, start_row);
       res_img->pixel(x, start_row) = {
-          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
-          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
-          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b),
+          {{static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
+            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
+            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b)}},
           pix.a};
     }
   }
@@ -45,9 +45,9 @@ void invert_worker_alpha(simg &inp_img, simg &res_img, simg_int start_row,
     for (simg_int x = 0; x < w; ++x) {
       seedimg::pixel pix = inp_img->pixel(x, start_row);
       res_img->pixel(x, start_row) = {
-          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
-          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
-          static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b),
+          {{static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.r),
+            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.g),
+            static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.b)}},
           static_cast<std::uint8_t>(seedimg::img::MAX_PIXEL_VALUE - pix.a)};
     }
   }

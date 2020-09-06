@@ -25,7 +25,7 @@ ExternalProject_Add(libjpeg-turbo-2.0.5
     PREFIX ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
     INSTALL_COMMAND ""
-    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF"
+    CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
 )
 
 ExternalProject_Get_Property(libjpeg-turbo-2.0.5 install_dir)

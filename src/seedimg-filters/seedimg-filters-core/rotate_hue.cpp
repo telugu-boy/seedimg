@@ -1,6 +1,6 @@
-#include <seedimg-filters/seedimg-filters-core.hpp>
 #include <cmath>
 #include <memory>
+#include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg.hpp>
 #include <thread>
 
@@ -9,15 +9,14 @@ const double PI = 4 * std::atan(1);
 double clamp(double num) {
   if (num < 0.0) {
     return 0.0;
-  } else if (num > 255.0) {
-    return 255.0;
+  } else if (num > seedimg::img::MAX_PIXEL_VALUE) {
+    return static_cast<double>(seedimg::img::MAX_PIXEL_VALUE);
   } else {
     return num;
   }
 }
 
-void rotate_hue_worker(simg &inp_img,
-                       simg &res_img, simg_int start,
+void rotate_hue_worker(simg &inp_img, simg &res_img, simg_int start,
                        simg_int end, const double hue_kernel[9]) {
 
   for (; start < end; start++) {
@@ -52,8 +51,7 @@ void get_hue_kernel(int angle, double hue_kernel[9]) {
 }
 
 namespace seedimg::filters {
-void rotate_hue(simg &inp_img,
-                simg &res_img, int angle) {
+void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   double hue_kernel[9];
   get_hue_kernel(angle, hue_kernel);
   auto start_end = inp_img->start_end_rows();

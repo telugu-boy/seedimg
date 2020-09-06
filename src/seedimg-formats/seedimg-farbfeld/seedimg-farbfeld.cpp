@@ -98,8 +98,9 @@ simg from(const std::string &filename) {
       }
 
       result->pixel(x, y) = {
-          b16_8(fu16be(rawpixel)), b16_8(fu16be((rawpixel + 2))),
-          b16_8(fu16be((rawpixel + 4))), b16_8(fu16be((rawpixel + 6)))};
+          {{b16_8(fu16be(rawpixel)), b16_8(fu16be((rawpixel + 2))),
+            b16_8(fu16be((rawpixel + 4)))}},
+          b16_8(fu16be((rawpixel + 6)))};
     }
   }
 

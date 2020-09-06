@@ -22,8 +22,8 @@
 #include <seedimg-filters/seedimg-filters-core.hpp>
 
 inline std::uint8_t clamp(int a) {
-  if (a > 255)
-    return 255;
+  if (a > seedimg::img::MAX_PIXEL_VALUE)
+    return seedimg::img::MAX_PIXEL_VALUE;
   else if (a < 0)
     return 0;
   return static_cast<std::uint8_t>(a);

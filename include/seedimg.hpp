@@ -47,9 +47,23 @@ bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
 point get_rect_dimensions(seedimg::point p1, seedimg::point p2) noexcept;
 
 typedef struct pixel {
-  std::uint8_t r;
-  std::uint8_t g;
-  std::uint8_t b;
+  union {
+    struct {
+      std::uint8_t r;
+      std::uint8_t g;
+      std::uint8_t b;
+    };
+    struct {
+      std::uint8_t h;
+      std::uint8_t s;
+      std::uint8_t v;
+    };
+    struct {
+      std::uint8_t y;
+      std::uint8_t cb;
+      std::uint8_t cr;
+    };
+  };
   std::uint8_t a;
   inline bool operator==(const pixel &other) const noexcept {
     return std::tie(r, g, b, a) == std::tie(other.r, other.g, other.b, other.a);

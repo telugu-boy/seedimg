@@ -29,9 +29,13 @@ void brightness_worker(simg &input, simg &output, simg_int start_row,
       auto &pix = input->pixel(x, start_row);
 
       output->pixel(x, start_row) = {
-          static_cast<std::uint8_t>(pix.r * intensity / 255),
-          static_cast<std::uint8_t>(pix.g * intensity / 255),
-          static_cast<std::uint8_t>(pix.b * intensity / 255), pix.a};
+          {{static_cast<std::uint8_t>(pix.r * intensity /
+                                      seedimg::img::MAX_PIXEL_VALUE),
+            static_cast<std::uint8_t>(pix.g * intensity /
+                                      seedimg::img::MAX_PIXEL_VALUE),
+            static_cast<std::uint8_t>(pix.b * intensity /
+                                      seedimg::img::MAX_PIXEL_VALUE)}},
+          pix.a};
     }
   }
 }
@@ -43,16 +47,20 @@ void brightness_alpha_worker(simg &input, simg &output, simg_int start_row,
       auto &pix = input->pixel(x, start_row);
 
       output->pixel(x, start_row) = {
-          static_cast<std::uint8_t>(pix.r * intensity / 255),
-          static_cast<std::uint8_t>(pix.g * intensity / 255),
-          static_cast<std::uint8_t>(pix.b * intensity / 255),
-          static_cast<std::uint8_t>(pix.a * intensity / 255)};
+          {{static_cast<std::uint8_t>(pix.r * intensity /
+                                      seedimg::img::MAX_PIXEL_VALUE),
+            static_cast<std::uint8_t>(pix.g * intensity /
+                                      seedimg::img::MAX_PIXEL_VALUE),
+            static_cast<std::uint8_t>(pix.b * intensity /
+                                      seedimg::img::MAX_PIXEL_VALUE)}},
+          static_cast<std::uint8_t>(pix.a * intensity /
+                                    seedimg::img::MAX_PIXEL_VALUE)};
     }
   }
 }
 
 void brightness(simg &input, simg &output, std::uint8_t intensity) {
-  intensity = CLAMP(intensity, 0, 100) * 255 / 100;
+  intensity = CLAMP(intensity, 0, 100) * seedimg::img::MAX_PIXEL_VALUE / 100;
 
   auto start_end = input->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
@@ -66,7 +74,7 @@ void brightness(simg &input, simg &output, std::uint8_t intensity) {
 }
 
 void brightness_a(simg &input, simg &output, std::uint8_t intensity) {
-  intensity = CLAMP(intensity, 0, 100) * 255 / 100;
+  intensity = CLAMP(intensity, 0, 100) * seedimg::img::MAX_PIXEL_VALUE / 100;
 
   auto start_end = input->start_end_rows();
   std::vector<std::thread> workers(start_end.size());

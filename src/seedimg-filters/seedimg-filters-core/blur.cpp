@@ -33,9 +33,9 @@ void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
       g += pix.g;
       b += pix.b;
     }
-    res_img->pixel(0, y) = {static_cast<std::uint8_t>(r / (blur_level + 1)),
-                            static_cast<std::uint8_t>(g / (blur_level + 1)),
-                            static_cast<std::uint8_t>(b / (blur_level + 1)),
+    res_img->pixel(0, y) = {{{static_cast<std::uint8_t>(r / (blur_level + 1)),
+                              static_cast<std::uint8_t>(g / (blur_level + 1)),
+                              static_cast<std::uint8_t>(b / (blur_level + 1))}},
                             inp_img->pixel(0, y).a};
     for (simg_int x = 1; x < blur_level; ++x) {
       simg_int sbl = x + blur_level + 1;
@@ -43,9 +43,9 @@ void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
       r += pix.r;
       g += pix.g;
       b += pix.b;
-      res_img->pixel(x, y) = {static_cast<std::uint8_t>(r / sbl),
-                              static_cast<std::uint8_t>(g / sbl),
-                              static_cast<std::uint8_t>(b / sbl),
+      res_img->pixel(x, y) = {{{static_cast<std::uint8_t>(r / sbl),
+                                static_cast<std::uint8_t>(g / sbl),
+                                static_cast<std::uint8_t>(b / sbl)}},
                               inp_img->pixel(x, y).a};
     }
     for (simg_int x = blur_level; x < inp_img->width() - blur_level; ++x) {
@@ -64,10 +64,11 @@ void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
                                             static_cast<int_fast64_t>(pix.b) -
                                             static_cast<int_fast64_t>(prev.b)));
 
-      res_img->pixel(x, y) = {static_cast<std::uint8_t>(r / (2 * blur_level)),
-                              static_cast<std::uint8_t>(g / (2 * blur_level)),
-                              static_cast<std::uint8_t>(b / (2 * blur_level)),
-                              inp_img->pixel(x, y).a};
+      res_img->pixel(x,
+                     y) = {{{static_cast<std::uint8_t>(r / (2 * blur_level)),
+                             static_cast<std::uint8_t>(g / (2 * blur_level)),
+                             static_cast<std::uint8_t>(b / (2 * blur_level))}},
+                           inp_img->pixel(x, y).a};
     }
     for (simg_int x = inp_img->width() - blur_level; x < inp_img->width();
          ++x) {
@@ -76,9 +77,9 @@ void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
       r -= pix.r;
       g -= pix.g;
       b -= pix.b;
-      res_img->pixel(x, y) = {static_cast<std::uint8_t>(r / ebl),
-                              static_cast<std::uint8_t>(g / ebl),
-                              static_cast<std::uint8_t>(b / ebl),
+      res_img->pixel(x, y) = {{{static_cast<std::uint8_t>(r / ebl),
+                                static_cast<std::uint8_t>(g / ebl),
+                                static_cast<std::uint8_t>(b / ebl)}},
                               inp_img->pixel(x, y).a};
     }
   }
@@ -94,9 +95,9 @@ void vertical_blur_i_single_worker(simg &inp_img, simg &res_img, simg_int start,
       g += pix.g;
       b += pix.b;
     }
-    res_img->pixel(x, 0) = {static_cast<std::uint8_t>(r / (blur_level + 1)),
-                            static_cast<std::uint8_t>(g / (blur_level + 1)),
-                            static_cast<std::uint8_t>(b / (blur_level + 1)),
+    res_img->pixel(x, 0) = {{{static_cast<std::uint8_t>(r / (blur_level + 1)),
+                              static_cast<std::uint8_t>(g / (blur_level + 1)),
+                              static_cast<std::uint8_t>(b / (blur_level + 1))}},
                             inp_img->pixel(x, 0).a};
     for (simg_int y = 1; y < blur_level; ++y) {
       simg_int sbl = y + blur_level + 1;
@@ -104,9 +105,9 @@ void vertical_blur_i_single_worker(simg &inp_img, simg &res_img, simg_int start,
       r += pix.r;
       g += pix.g;
       b += pix.b;
-      res_img->pixel(x, y) = {static_cast<std::uint8_t>(r / sbl),
-                              static_cast<std::uint8_t>(g / sbl),
-                              static_cast<std::uint8_t>(b / sbl),
+      res_img->pixel(x, y) = {{{static_cast<std::uint8_t>(r / sbl),
+                                static_cast<std::uint8_t>(g / sbl),
+                                static_cast<std::uint8_t>(b / sbl)}},
                               inp_img->pixel(x, y).a};
     }
     for (simg_int y = blur_level; y < inp_img->height() - blur_level; ++y) {
@@ -125,10 +126,11 @@ void vertical_blur_i_single_worker(simg &inp_img, simg &res_img, simg_int start,
                                             static_cast<int_fast64_t>(pix.b) -
                                             static_cast<int_fast64_t>(prev.b)));
 
-      res_img->pixel(x, y) = {static_cast<std::uint8_t>(r / (2 * blur_level)),
-                              static_cast<std::uint8_t>(g / (2 * blur_level)),
-                              static_cast<std::uint8_t>(b / (2 * blur_level)),
-                              inp_img->pixel(x, y).a};
+      res_img->pixel(x,
+                     y) = {{{static_cast<std::uint8_t>(r / (2 * blur_level)),
+                             static_cast<std::uint8_t>(g / (2 * blur_level)),
+                             static_cast<std::uint8_t>(b / (2 * blur_level))}},
+                           inp_img->pixel(x, y).a};
     }
     for (simg_int y = inp_img->height() - blur_level; y < inp_img->height();
          ++y) {
@@ -137,9 +139,9 @@ void vertical_blur_i_single_worker(simg &inp_img, simg &res_img, simg_int start,
       r -= pix.r;
       g -= pix.g;
       b -= pix.b;
-      res_img->pixel(x, y) = {static_cast<std::uint8_t>(r / ebl),
-                              static_cast<std::uint8_t>(g / ebl),
-                              static_cast<std::uint8_t>(b / ebl),
+      res_img->pixel(x, y) = {{{static_cast<std::uint8_t>(r / ebl),
+                                static_cast<std::uint8_t>(g / ebl),
+                                static_cast<std::uint8_t>(b / ebl)}},
                               inp_img->pixel(x, y).a};
     }
   }

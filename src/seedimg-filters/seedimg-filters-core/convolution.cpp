@@ -85,9 +85,9 @@ void seedimg::filters::convolution(simg &input,
         }
       }
 
-      input->pixel(x, y) = {static_cast<std::uint8_t>(outpix.r),
-                            static_cast<std::uint8_t>(outpix.g),
-                            static_cast<std::uint8_t>(outpix.b),
+      input->pixel(x, y) = {{{static_cast<std::uint8_t>(outpix.r),
+                              static_cast<std::uint8_t>(outpix.g),
+                              static_cast<std::uint8_t>(outpix.b)}},
                             static_cast<std::uint8_t>(outpix.a)};
     }
   }

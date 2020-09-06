@@ -23,7 +23,7 @@ seedimg - module based image manipulation library written in modern
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 
-int main() {
+auto main() -> int {
   using namespace seedimg::filters;
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;

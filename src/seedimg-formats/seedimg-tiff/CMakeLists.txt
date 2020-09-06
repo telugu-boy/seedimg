@@ -22,14 +22,23 @@ ExternalProject_Add(libtiff-4.1.0
     PREFIX ${CMAKE_BINARY_DIR}/extern/libtiff
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libtiff
     INSTALL_COMMAND ""
-    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release"
+    CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
+    -Dzlib=OFF
+    -Dpixarlog=OFF
+    -Djpeg=OFF
+    -Dold-jpeg=OFF
+    -Djbig=OFF
+    -Dlzma=OFF
+    -Dzstd=OFF
+    -Dwebp=OFF
+    -Djpeg12=OFF
 )
 
 ExternalProject_Get_Property(libtiff-4.1.0 install_dir)
 ExternalProject_Get_Property(libtiff-4.1.0 SOURCE_DIR)
 
 
-add_library(libtiff SHARED IMPORTED)
+add_library(libtiff STATIC IMPORTED)
 
 set(TIFF_LIBRARIES libtiff)
 set(TIFF_INCLUDE_DIR ${SOURCE_DIR}/libtiff)
@@ -38,7 +47,7 @@ set(TIFF_CONF_INCLUDE_DIR ${install_dir}/libtiff)
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/libtiff.so)
 else()
-    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/libtiff.so)
+    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/libtiff.a)
 endif()
 
 add_dependencies(libtiff libtiff-4.1.0)
