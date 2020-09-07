@@ -27,15 +27,9 @@ ExternalProject_Add(libtiff-4.1.0
     -DZLIB_LIBRARY=${EXTERN_BINS}/zlib/libz.a
     -DZLIB_INCLUDE_DIR=${EXTERN_SRCS}/zlib-src
 
-    -DJPEG_LIBRARY=${EXTERN_BINS}/libjpeg-turbo/libturbojpeg.a
-    -DJPEG_INCLUDE_DIR=${EXTERN_SRCS}/libjpeg-turbo-src
-
-    -DWEBP_LIBRARY=${EXTERN_BINS}/libwebp/libwebp.a
-    -DWEBP_INCLUDE_DIR=${EXTERN_SRCS}/libwebp-src/src
-
     -Dzlib=ON
     -Dpixarlog=ON
-    -Djpeg=ON
+    -Djpeg=OFF
     -Dold-jpeg=OFF
     -Djbig=OFF
     -Dlzma=OFF
@@ -54,7 +48,7 @@ set(TIFF_LIBRARIES libtiff)
 set(TIFF_INCLUDE_DIR ${SOURCE_DIR}/libtiff)
 set(TIFF_CONF_INCLUDE_DIR ${install_dir}/libtiff)
 
-set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}tiff${suffix})
+set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/${prefix}tiff${suffix})
 
 add_dependencies(libtiff libtiff-4.1.0 pthread)
 
