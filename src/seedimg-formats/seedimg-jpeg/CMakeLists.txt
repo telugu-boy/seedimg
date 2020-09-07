@@ -37,11 +37,8 @@ set(JPEG_LIBRARIES libjpeg-turbo)
 set(JPEG_INCLUDE_DIR ${SOURCE_DIR})
 set(JPEG_CONF_INCLUDE_DIR ${install_dir})
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set_property(TARGET libjpeg-turbo PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)
-else()
-    set_property(TARGET libjpeg-turbo PROPERTY IMPORTED_LOCATION ${install_dir}/libturbojpeg.a)
-endif()
+
+set_property(TARGET libjpeg-turbo PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}turbojpeg-static${suffix})
 
 add_dependencies(libjpeg-turbo libjpeg-turbo-2.0.5)
 

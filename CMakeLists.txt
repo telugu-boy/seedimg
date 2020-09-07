@@ -66,6 +66,19 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+if(WIN32)
+  set(prefix "")
+  set(suffix ".lib")
+elseif(APPLE)
+  set(prefix "lib")
+  set(suffix ".a")
+else()
+  set(prefix "lib")
+  set(suffix ".a")
+endif()
+
+add_subdirectory(src)
+
 CHECK_CXX_COMPILER_FLAG(-Wextra COMPILER_SUPPORTS_WEXTRA)
 if(COMPILER_SUPPORTS_WEXTRA)
     set(CMAKE_CXX_FLAGS "-Wall -Wextra -pthread")
@@ -73,11 +86,8 @@ else()
     set(CMAKE_CXX_FLAGS "-Wall -pthread")
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
-
-add_subdirectory(src)
+set(CMAKE_CXX_FLAGS_DEBUG -g)
+set(CMAKE_CXX_FLAGS_RELEASE -O3)
 
 # tests
 if (${BUILD_TESTING})

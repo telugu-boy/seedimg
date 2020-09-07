@@ -23,9 +23,19 @@ ExternalProject_Add(libtiff-4.1.0
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libtiff
     INSTALL_COMMAND ""
     CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
-    -Dzlib=OFF
-    -Dpixarlog=OFF
-    -Djpeg=OFF
+
+    -DZLIB_LIBRARY=${EXTERN_BINS}/zlib/libz.a
+    -DZLIB_INCLUDE_DIR=${EXTERN_SRCS}/zlib-src
+
+    -DJPEG_LIBRARY=${EXTERN_BINS}/libjpeg-turbo/libturbojpeg.a
+    -DJPEG_INCLUDE_DIR=${EXTERN_SRCS}/libjpeg-turbo-src
+
+    -DWEBP_LIBRARY=${EXTERN_BINS}/libwebp/libwebp.a
+    -DWEBP_INCLUDE_DIR=${EXTERN_SRCS}/libwebp-src/src
+
+    -Dzlib=ON
+    -Dpixarlog=ON
+    -Djpeg=ON
     -Dold-jpeg=OFF
     -Djbig=OFF
     -Dlzma=OFF
@@ -44,13 +54,9 @@ set(TIFF_LIBRARIES libtiff)
 set(TIFF_INCLUDE_DIR ${SOURCE_DIR}/libtiff)
 set(TIFF_CONF_INCLUDE_DIR ${install_dir}/libtiff)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/libtiff.so)
-else()
-    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/libtiff.a)
-endif()
+set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}tiff${suffix})
 
-add_dependencies(libtiff libtiff-4.1.0)
+add_dependencies(libtiff libtiff-4.1.0 pthread)
 
 
 
@@ -59,9 +65,9 @@ add_dependencies(libtiff libtiff-4.1.0)
 add_library(seedimg-tiff ${LIB_TYPE} seedimg-tiff.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} seedimg)
+    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} pthread seedimg)
 else()
-    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} seedimg stdc++fs)
+    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} pthread seedimg stdc++fs)
 endif()
 
 target_include_directories(seedimg-tiff PRIVATE ${TIFF_INCLUDE_DIR} ${TIFF_CONF_INCLUDE_DIR})

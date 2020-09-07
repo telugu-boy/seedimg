@@ -33,11 +33,7 @@ add_library(zlib STATIC IMPORTED)
 set(ZLIB_LIBRARIES zlib)
 set(ZLIB_INCLUDE_DIR ${SOURCE_DIR})
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set_property(TARGET zlib PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)
-else()
-    set_property(TARGET zlib PROPERTY IMPORTED_LOCATION ${install_dir}/libz.a)
-endif()
+set_property(TARGET zlib PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}z${suffix})
 
 add_dependencies(zlib zlib-1.2.11)
 
@@ -64,11 +60,7 @@ set(PNG_LIBRARIES libpng)
 set(PNG_INCLUDE_DIR ${SOURCE_DIR})
 set(PNG_CONF_INCLUDE_DIR ${install_dir})
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)
-else()
-    set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/libpng.a)
-endif()
+set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}png${suffix})
 
 add_dependencies(libpng libpng-1.6.37)
 

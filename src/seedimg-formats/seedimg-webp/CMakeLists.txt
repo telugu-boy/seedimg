@@ -39,31 +39,26 @@ add_library(libwebp STATIC IMPORTED)
 add_library(libwebpdemux STATIC IMPORTED)
 add_library(libwebpdecoder STATIC IMPORTED)
 
-set(WEBP_LIBRARIES libwebp libwebpdemux libwebpdecoder)
+set(WEBP_LIBRARIES libwebp libwebpdemux libwebpdecoder pthread)
 set(WEBP_INCLUDE_DIR ${SOURCE_DIR}/src)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set_property(TARGET libwebp PROPERTY IMPORTED_LOCATION ${install_dir}/libwebp.a)
-    set_property(TARGET libwebpdemux PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdemux.a)
-    set_property(TARGET libwebpdecoder PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdecoder.a)
-else()
-    set_property(TARGET libwebp PROPERTY IMPORTED_LOCATION ${install_dir}/libwebp.a)
-    set_property(TARGET libwebpdemux PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdemux.a)
-    set_property(TARGET libwebpdecoder PROPERTY IMPORTED_LOCATION ${install_dir}/libwebpdecoder.a)
-endif()
+set_property(TARGET libwebp PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}webp${suffix})
+set_property(TARGET libwebpdemux PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}webpdemux${suffix})
+set_property(TARGET libwebpdecoder PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}webpdecoder${suffix})
 
-add_dependencies(libwebp libwebp-1.1.0)
-add_dependencies(libwebpdemux libwebp-1.1.0)
-add_dependencies(libwebpdecoder libwebp-1.1.0)
+
+add_dependencies(libwebp libwebp-1.1.0 pthread)
+add_dependencies(libwebpdemux libwebp-1.1.0 pthread)
+add_dependencies(libwebpdecoder libwebp-1.1.0 pthread)
 
 
 
 add_library(seedimg-webp ${LIB_TYPE} seedimg-webp.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-webp PRIVATE ${WEBP_LIBRARIES} seedimg)
+    target_link_libraries(seedimg-webp PRIVATE ${WEBP_LIBRARIES} pthread seedimg)
 else()
-    target_link_libraries(seedimg-webp PRIVATE ${WEBP_LIBRARIES} seedimg stdc++fs)
+    target_link_libraries(seedimg-webp PRIVATE ${WEBP_LIBRARIES} pthread seedimg stdc++fs)
 endif()
 
 target_include_directories(seedimg-webp PRIVATE ${WEBP_INCLUDE_DIR} seedimg)
