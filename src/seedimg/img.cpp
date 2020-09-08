@@ -138,6 +138,8 @@ public:
     return res;
   }
 
+  colourspaces colourspace() const noexcept { return this->colourspace_; }
+
   ~img_impl() { std::free(data_); }
 
 private:
@@ -147,6 +149,7 @@ private:
   // width amount of pixels in a row
   // height amount of rows.
   seedimg::pixel *data_;
+  colourspaces colourspace_;
 };
 
 // PIMPL stubs
@@ -209,6 +212,8 @@ seedimg::pixel *img::row_s(simg_int y) const { return impl->row(y); }
 seedimg::pixel *img::data() const noexcept { return impl->data(); }
 simg_int img::width() const noexcept { return impl->width(); }
 simg_int img::height() const noexcept { return impl->height(); }
+
+colourspaces img::colourspace() const noexcept { return impl->colourspace(); }
 
 // for unmanaged images, a derived class of img.
 void uimg::set_width(simg_int w) noexcept { impl->set_width(w); }
