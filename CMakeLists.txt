@@ -25,7 +25,10 @@ foreach(var ${vars})
     endif()
 endforeach()
 
-project(seedimg VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
+project(seedimg CXX VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(CTest)
 include(ExternalProject)
@@ -57,7 +60,6 @@ option(BUILD_TESTING "" OFF)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 set(BUILD_SHARED_LIBS TRUE)
 set(LIB_TYPE STATIC CACHE STRING "Build and link as STATIC or SHARED")

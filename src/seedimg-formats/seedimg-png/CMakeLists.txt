@@ -34,6 +34,9 @@ ExternalProject_Get_Property(zlib-1.2.11 SOURCE_DIR)
 
 add_library(zlib STATIC IMPORTED)
 
+set(ZLIB_LIBRARY zlib)
+set(ZLIB_INCLUDE_DIR ${SOURCE_DIR})
+
 set(ZLIB_LIBRARIES zlib)
 set(ZLIB_INCLUDE_DIRS ${SOURCE_DIR})
 
@@ -61,6 +64,9 @@ if(NOT PNG_FOUND)
     ExternalProject_Get_Property(libpng-1.6.37 SOURCE_DIR)
 
     add_library(libpng STATIC IMPORTED)
+
+    set(PNG_LIBRARY libpng)
+    set(PNG_INCLUDE_DIR ${SOURCE_DIR})
 
     set(PNG_LIBRARIES libpng)
     set(PNG_INCLUDE_DIRS ${SOURCE_DIR})

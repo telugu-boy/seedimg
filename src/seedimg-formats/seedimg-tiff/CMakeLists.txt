@@ -43,6 +43,9 @@ if(NOT TIFF_FOUND)
 
     add_library(libtiff STATIC IMPORTED)
 
+    set(TIFF_LIBRARY libtiff)
+    set(TIFF_INCLUDE_DIR ${SOURCE_DIR}/libtiff)
+
     set(TIFF_LIBRARIES libtiff)
     set(TIFF_INCLUDE_DIRS ${SOURCE_DIR}/libtiff)
     set(TIFF_CONF_INCLUDE_DIR ${install_dir}/libtiff)
