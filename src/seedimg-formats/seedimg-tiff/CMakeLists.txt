@@ -27,11 +27,8 @@ if(NOT TIFF_FOUND)
         INSTALL_COMMAND ""
         CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
 
-        -DZLIB_LIBRARY=${EXTERN_BINS}/zlib/libz.a
-        -DZLIB_INCLUDE_DIR=${EXTERN_SRCS}/zlib-src
-
-        -Dzlib=ON
-        -Dpixarlog=ON
+        -Dzlib=OFF
+        -Dpixarlog=OFF
         -Djpeg=OFF
         -Dold-jpeg=OFF
         -Djbig=OFF
@@ -45,6 +42,9 @@ if(NOT TIFF_FOUND)
     ExternalProject_Get_Property(libtiff-4.1.0 SOURCE_DIR)
 
     add_library(libtiff STATIC IMPORTED)
+
+    set(TIFF_LIBRARY libtiff)
+    set(TIFF_INCLUDE_DIR ${SOURCE_DIR}/libtiff)
 
     set(TIFF_LIBRARIES libtiff)
     set(TIFF_INCLUDE_DIRS ${SOURCE_DIR}/libtiff)

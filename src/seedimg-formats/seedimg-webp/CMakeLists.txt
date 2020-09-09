@@ -40,6 +40,9 @@ if(NOT WEBP_FOUND)
     add_library(libwebpdemux STATIC IMPORTED)
     add_library(libwebpdecoder STATIC IMPORTED)
 
+    set(WEBP_LIBRARY libwebp libwebpdemux libwebpdecoder pthread)
+    set(WEBP_INCLUDE_DIR ${SOURCE_DIR}/src)
+
     set(WEBP_LIBRARIES libwebp libwebpdemux libwebpdecoder pthread)
     set(WEBP_INCLUDE_DIRS ${SOURCE_DIR}/src)
 
