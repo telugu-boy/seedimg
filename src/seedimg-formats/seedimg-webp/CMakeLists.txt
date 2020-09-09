@@ -15,8 +15,10 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
+
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}")
 find_package(WEBP)
+
 if(NOT WEBP_FOUND)
     ExternalProject_Add(libwebp-1.1.0
         URL https://github.com/webmproject/libwebp/archive/v1.1.0.zip
