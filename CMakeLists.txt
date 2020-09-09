@@ -52,6 +52,13 @@ else()
     set(IRDUMP_ENABLED ON)
 endif()
 
+set(FILTERS_ENABLED ON CACHE BOOL "Enable image operations")
+set(CCONV_ENABLED ON CACHE BOOL "Enable colourspace conversion")
+
+if(FILTERS_ENABLED AND NOT CCONV_ENABLED)
+    message("CCONV_ENABLED must be set to ON for image operations.")
+endif()
+
 set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")
 
 

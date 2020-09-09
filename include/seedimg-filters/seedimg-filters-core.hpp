@@ -69,6 +69,8 @@ void blend(std::pair<simg &, const std::uint8_t> input,
            std::pair<simg &, const std::uint8_t> other, simg &output);
 void blend_i(std::pair<simg &, const std::uint8_t> input,
              std::pair<simg &, const std::uint8_t> other);
+
+namespace cconv {};
 namespace ocl {}
 } // namespace seedimg::filters
 
