@@ -46,7 +46,7 @@ bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
 
 point get_rect_dimensions(seedimg::point p1, seedimg::point p2) noexcept;
 
-enum class colourspaces { rgb, hsv, ycbcr };
+enum class colourspaces : std::size_t { rgb, hsv, ycbcr };
 
 typedef struct pixel {
   union {

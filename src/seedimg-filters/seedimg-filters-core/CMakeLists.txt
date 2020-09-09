@@ -26,5 +26,4 @@ add_library(seedimg-filters-core ${LIB_TYPE}
     rotate-mirror.cpp
     crop.cpp)
 
-target_link_libraries(seedimg-filters-core PRIVATE seedimg pthread)
-target_include_directories(seedimg-filters-core PRIVATE seedimg)
+target_link_libraries(seedimg-filters-core PRIVATE seedimg seedimg-filters-cconv pthread)

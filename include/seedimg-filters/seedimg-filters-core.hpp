@@ -23,6 +23,8 @@
 
 #include <seedimg.hpp>
 
+#include "seedimg-filters-cconv.hpp"
+
 namespace seedimg::filters {
 void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
 void grayscale_i(simg &inp_img, bool luminosity = true);
