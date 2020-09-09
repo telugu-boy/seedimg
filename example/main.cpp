@@ -45,7 +45,7 @@ auto main() -> int {
       // h_mirror_i(a);
       // ocl::rotate_hue_i(a, -90);
       // ocl::grayscale_i(a, true);
-      cconv::hsv(a, a);
+      cconv::hsv_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
