@@ -34,7 +34,7 @@ void hsv(const simg &inp_img, const simg &res_img) {
     // the p suffix in this sense stands for prime. normally we use R' G' B' to
     // represent normalized colour.
     for (simg_int y = 0; y < inp_img->height(); y++) {
-      for (simg_int x = 0; x < inp_img->height(); x++) {
+      for (simg_int x = 0; x < inp_img->width(); x++) {
         float rp = static_cast<float>(inp_img->pixel(x, y).r) / 255.0f;
         float gp = static_cast<float>(inp_img->pixel(x, y).g) / 255.0f;
         float bp = static_cast<float>(inp_img->pixel(x, y).b) / 255.0f;
@@ -71,6 +71,8 @@ void hsv(const simg &inp_img, const simg &res_img) {
 void hsv_i(const simg &inp_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     return;
+  } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
+    hsv(inp_img, inp_img);
   }
 }
 } // namespace cconv
