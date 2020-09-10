@@ -35,6 +35,11 @@ void hsv(const simg &inp_img, const simg &res_img) {
     // represent normalized colour.
     for (simg_int y = 0; y < inp_img->height(); y++) {
       for (simg_int x = 0; x < inp_img->width(); x++) {
+        std::uint8_t r = inp_img->pixel(x, y).r;
+        std::uint8_t g = inp_img->pixel(x, y).g;
+        std::uint8_t b = inp_img->pixel(x, y).b;
+        std::uint8_t rmax = std::max(r, std::max(g, b));
+
         float rp = static_cast<float>(inp_img->pixel(x, y).r) / 255.0f;
         float gp = static_cast<float>(inp_img->pixel(x, y).g) / 255.0f;
         float bp = static_cast<float>(inp_img->pixel(x, y).b) / 255.0f;
@@ -46,19 +51,16 @@ void hsv(const simg &inp_img, const simg &res_img) {
         std::uint8_t sat;
         std::uint8_t val = static_cast<std::uint8_t>(cmax * 100.0f);
 
-        if (feq(rp, cmax)) {
-          hue = static_cast<std::uint8_t>(
-              std::fmod(60 * (gp - bp) / delta, 180.0f));
-        } else if (feq(gp, cmax)) {
-          hue = static_cast<std::uint8_t>(
-              std::fmod(60 * (bp - rp) / delta + 60.0f, 180.0f));
-        } else if (feq(bp, cmax)) {
-          hue = static_cast<std::uint8_t>(
-              std::fmod(60 * (rp - gp) / delta + 120.0f, 180.0f));
+        if (r == rmax) {
+          hue = static_cast<std::uint8_t>(60 * std::fmod((gp - bp) / delta, 3));
+        } else if (g == rmax) {
+          hue = static_cast<std::uint8_t>(60 * ((bp - rp) / delta + 1));
+        } else if (b == rmax) {
+          hue = static_cast<std::uint8_t>(60 * ((rp - gp) / delta + 2));
         }
 
         // saturation
-        if (!feq(cmax, 0)) {
+        if (rmax != 0) {
           sat = static_cast<std::uint8_t>((delta / cmax) * 100.0f);
         } else {
           sat = 0;
