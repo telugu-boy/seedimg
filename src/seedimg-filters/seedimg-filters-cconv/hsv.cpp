@@ -65,7 +65,8 @@ void hsv(const simg &inp_img, const simg &res_img) {
     rgb(inp_img, res_img);
     hsv(inp_img, res_img);
   }
-  res_img->colourspace() = seedimg::colourspaces::hsv;
+  std::static_pointer_cast<seedimg::uimg>(res_img)->set_colourspace(
+      seedimg::colourspaces::hsv);
 }
 void hsv_i(const simg &inp_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
