@@ -38,12 +38,13 @@ public:
            colourspaces space = colourspaces::rgb)
       : colourspace_{space}, width_{w}, height_{h}, data_{u_data} {}
 
-  img_impl(img_impl const &img_) : img_impl(img_.width_, img_.height_) {
+  img_impl(img_impl const &img_) noexcept
+      : img_impl(img_.width_, img_.height_) {
     std::copy(img_.data(), img_.data() + img_.width_ * img_.height_,
               this->data());
   }
 
-  img_impl(img_impl &&other) {
+  img_impl(img_impl &&other) noexcept {
     this->width_ = other.width_;
     this->height_ = other.height_;
     this->data_ = other.data_;
@@ -53,14 +54,14 @@ public:
     other.data_ = nullptr;
   }
 
-  img_impl &operator=(img_impl other) {
+  img_impl &operator=(img_impl other) noexcept {
     std::swap(this->data_, other.data_);
     std::swap(this->width_, other.width_);
     std::swap(this->height_, other.height_);
     std::swap(this->colourspace_, other.colourspace_);
     return *this;
   }
-  img_impl &operator=(img_impl &&other) {
+  img_impl &operator=(img_impl &&other) noexcept {
     if (&other != this) {
       std::free(this->data_);
       this->data_ = other.data_;
@@ -145,6 +146,9 @@ public:
   }
 
   colourspaces colourspace() const noexcept { return this->colourspace_; }
+  void set_colourspace(seedimg::colourspaces colourspace) noexcept {
+    this->colourspace_ = colourspace;
+  }
 
   ~img_impl() { std::free(data_); }
 
@@ -168,13 +172,13 @@ img::img(simg_int w, simg_int h, seedimg::pixel *u_data)
 
 img::img(seedimg::img const &img_) : impl{new img_impl{*img_.impl}} {}
 
-img::img(seedimg::img &&other) : impl{new img_impl{*other.impl}} {}
+img::img(seedimg::img &&other) noexcept : impl{new img_impl{*other.impl}} {}
 
-img &img::operator=(img other) {
+img &img::operator=(img other) noexcept {
   *this->impl = *other.impl;
   return *this;
 }
-img &img::operator=(img &&other) {
+img &img::operator=(img &&other) noexcept {
   *this->impl = *other.impl;
   return *this;
 }
@@ -225,4 +229,7 @@ colourspaces img::colourspace() const noexcept { return impl->colourspace(); }
 void uimg::set_width(simg_int w) noexcept { impl->set_width(w); }
 void uimg::set_height(simg_int h) noexcept { impl->set_height(h); }
 void uimg::set_data(seedimg::pixel *data) noexcept { impl->set_data(data); }
+void uimg::set_colourspace(seedimg::colourspaces colourspace) noexcept {
+  impl->set_colourspace(colourspace);
+}
 } // namespace seedimg
