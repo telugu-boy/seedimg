@@ -25,14 +25,14 @@
 namespace seedimg::filters {
 namespace cconv {
 
-void rgb(const simg &inp_img, const simg &res_img);
-void rgb_i(const simg &inp_img);
+void rgb(simg &inp_img, simg &res_img);
+void rgb_i(simg &inp_img);
 
-void hsv(const simg &inp_img, const simg &res_img);
-void hsv_i(const simg &inp_img);
+void hsv(simg &inp_img, simg &res_img);
+void hsv_i(simg &inp_img);
 
-void ycbcr(const simg &inp_img, const simg &res_img);
-void ycbcr_i(const simg &inp_img);
+void ycbcr(simg &inp_img, simg &res_img);
+void ycbcr_i(simg &inp_img);
 } // namespace cconv
 } // namespace seedimg::filters
 

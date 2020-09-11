@@ -19,12 +19,12 @@
 
 namespace seedimg::filters {
 namespace cconv {
-void ycbcr(const simg &inp_img, const simg &res_img) {
+void ycbcr(simg &inp_img, simg &res_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::ycbcr) {
     return;
   }
 }
-void ycbcr_i(const simg &inp_img) {
+void ycbcr_i(simg &inp_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::ycbcr) {
     return;
   }

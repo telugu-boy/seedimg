@@ -19,48 +19,58 @@
 #include <cmath>
 #include <numeric>
 #include <seedimg-filters/seedimg-filters-cconv.hpp>
+#include <seedimg-utils.hpp>
 
 inline bool feq(float a, float b) {
   return std::fabs(a - b) < std::numeric_limits<float>::epsilon();
 }
 
+void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
+                    simg_int end) {
+  for (; start < end; ++start) {
+    for (simg_int x = 0; x < res_img->width(); ++x) {
+      // the p suffix in this sense stands for prime. normally we use R' G' B'
+      // to represent normalized colour.
+      float rp = static_cast<float>(inp_img->pixel(x, start).r) /
+                 static_cast<float>(seedimg::img::MAX_PIXEL_VALUE);
+      float gp = static_cast<float>(inp_img->pixel(x, start).g) /
+                 static_cast<float>(seedimg::img::MAX_PIXEL_VALUE);
+      float bp = static_cast<float>(inp_img->pixel(x, start).b) /
+                 static_cast<float>(seedimg::img::MAX_PIXEL_VALUE);
+      float cmax = std::max(rp, std::max(gp, bp));
+      float cmin = std::min(rp, std::min(gp, bp));
+      float delta = cmax - cmin;
+
+      std::uint8_t hue = static_cast<std::uint8_t>(delta);
+      std::uint8_t sat = 0;
+      std::uint8_t val = static_cast<std::uint8_t>(cmax * 100.0f);
+
+      if (feq(rp, cmax)) {
+        hue = static_cast<std::uint8_t>(60 * std::fmod((gp - bp) / delta, 3));
+      } else if (feq(gp, cmax)) {
+        hue = static_cast<std::uint8_t>(60 * ((bp - rp) / delta + 1));
+      } else if (feq(bp, cmax)) {
+        hue = static_cast<std::uint8_t>(60 * ((rp - gp) / delta + 2));
+      }
+
+      // saturation
+      if (!feq(cmax, 0)) {
+        sat = static_cast<std::uint8_t>((delta / cmax) * 100.0f);
+      }
+      res_img->pixel(x, start) = {{{hue, sat, val}},
+                                  inp_img->pixel(x, start).a};
+    }
+  }
+}
+
 namespace seedimg::filters {
 namespace cconv {
 
-void hsv(const simg &inp_img, const simg &res_img) {
+void hsv(simg &inp_img, simg &res_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
-    // the p suffix in this sense stands for prime. normally we use R' G' B' to
-    // represent normalized colour.
-    for (simg_int y = 0; y < inp_img->height(); y++) {
-      for (simg_int x = 0; x < inp_img->width(); x++) {
-        float rp = static_cast<float>(inp_img->pixel(x, y).r) / 255.0f;
-        float gp = static_cast<float>(inp_img->pixel(x, y).g) / 255.0f;
-        float bp = static_cast<float>(inp_img->pixel(x, y).b) / 255.0f;
-        float cmax = std::max(rp, std::max(gp, bp));
-        float cmin = std::min(rp, std::min(gp, bp));
-        float delta = cmax - cmin;
-
-        std::uint8_t hue = static_cast<std::uint8_t>(delta);
-        std::uint8_t sat = 0;
-        std::uint8_t val = static_cast<std::uint8_t>(cmax * 100.0f);
-
-        if (feq(rp, cmax)) {
-          hue = static_cast<std::uint8_t>(60 * std::fmod((gp - bp) / delta, 3));
-        } else if (feq(gp, cmax)) {
-          hue = static_cast<std::uint8_t>(60 * ((bp - rp) / delta + 1));
-        } else if (feq(bp, cmax)) {
-          hue = static_cast<std::uint8_t>(60 * ((rp - gp) / delta + 2));
-        }
-
-        // saturation
-        if (!feq(cmax, 0)) {
-          sat = static_cast<std::uint8_t>((delta / cmax) * 100.0f);
-        }
-        res_img->pixel(x, y) = {{{hue, sat, val}}, inp_img->pixel(x, y).a};
-      }
-    }
+    seedimg::utils::hrz_thread(rgb2hsv_worker, inp_img, res_img);
   } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr) {
     rgb(inp_img, res_img);
     hsv(inp_img, res_img);
@@ -68,12 +78,6 @@ void hsv(const simg &inp_img, const simg &res_img) {
   std::static_pointer_cast<seedimg::uimg>(res_img)->set_colourspace(
       seedimg::colourspaces::hsv);
 }
-void hsv_i(const simg &inp_img) {
-  if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
-    return;
-  } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
-    hsv(inp_img, inp_img);
-  }
-}
+void hsv_i(simg &inp_img) { hsv(inp_img, inp_img); }
 } // namespace cconv
 } // namespace seedimg::filters
