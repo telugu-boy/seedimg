@@ -20,6 +20,10 @@
 #include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-utils.hpp>
 
+inline bool feq(float a, float b) {
+  return std::fabs(a - b) < std::numeric_limits<float>::epsilon();
+}
+
 void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
                     simg_int end) {
   for (; start < end; start++) {
@@ -34,10 +38,46 @@ void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
 
       float m = static_cast<float>(pix.v) - C;
 
-      float componentsp[4] =
+      float componentsp[4] = {m, m, m};
+      switch (static_cast<int>(pix.h / 30)) {
+      case 0: {
+        componentsp[0] += C;
+        componentsp[1] += X;
+        componentsp[2] += 0;
+      } break;
+      case 1: {
+        componentsp[0] += X;
+        componentsp[1] += C;
+        componentsp[2] += 0;
+      } break;
+      case 2: {
+        componentsp[0] += 0;
+        componentsp[1] += C;
+        componentsp[2] += X;
+      } break;
+      case 3: {
+        componentsp[0] += 0;
+        componentsp[1] += X;
+        componentsp[2] += C;
+      } break;
+      case 4: {
+        componentsp[0] += X;
+        componentsp[1] += 0;
+        componentsp[2] += C;
+      } break;
+      case 5: {
+        componentsp[0] += C;
+        componentsp[1] += 0;
+        componentsp[2] += X;
+      } break;
+      }
+      res_img->pixel(x, start) = {
+          {{static_cast<std::uint8_t>(componentsp[0] * 255),
+            static_cast<std::uint8_t>(componentsp[1] * 255),
+            static_cast<std::uint8_t>(componentsp[2] * 255)}},
+          pix.a};
     }
   }
-}
 }
 
 namespace seedimg::filters {
@@ -46,12 +86,9 @@ void rgb(simg &inp_img, simg &res_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
+    seedimg::utils::hrz_thread(hsv2rgb_worker, inp_img, res_img);
   }
 }
-void rgb_i(simg &inp_img) {
-  if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
-    return;
-  }
-}
+void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }
 } // namespace cconv
 } // namespace seedimg::filters
