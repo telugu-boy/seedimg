@@ -38,7 +38,7 @@ public:
            colourspaces space = colourspaces::rgb)
       : colourspace_{space}, width_{w}, height_{h}, data_{u_data} {}
 
-  img_impl(img_impl const &img_) noexcept
+  img_impl(img_impl const &img_)
       : img_impl(img_.width_, img_.height_) {
     std::copy(img_.data(), img_.data() + img_.width_ * img_.height_,
               this->data());
