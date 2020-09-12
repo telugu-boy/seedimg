@@ -72,6 +72,10 @@ void blend(std::pair<simg &, const std::uint8_t> input,
 void blend_i(std::pair<simg &, const std::uint8_t> input,
              std::pair<simg &, const std::uint8_t> other);
 
+// HSV colourspace filters
+void saturation(simg &inp_img, simg &res_img, float mul);
+void saturation_i(simg &inp_img, float mul);
+
 namespace cconv {};
 namespace ocl {}
 } // namespace seedimg::filters

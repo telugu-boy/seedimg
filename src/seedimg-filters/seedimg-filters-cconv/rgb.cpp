@@ -91,8 +91,8 @@ void rgb(simg &inp_img, simg &res_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
-    // seedimg::utils::hrz_thread(hsv2rgb_worker, inp_img, res_img);
-    hsv2rgb_worker(inp_img, res_img, 0, res_img->height());
+    seedimg::utils::hrz_thread(hsv2rgb_worker, inp_img, res_img);
+  } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr) {
   }
 }
 void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }
