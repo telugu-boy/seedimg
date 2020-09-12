@@ -25,7 +25,6 @@
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
-
 enum class filter_functions {
   GRAYSCALE_LUM,
   GRAYSCALE_AVG,
@@ -47,11 +46,12 @@ enum class filter_functions {
   ROTATE_CCW,
   V_MIRROR,
   H_MIRROR,
-  #ifdef SEEDIMG_OCL
-  ROTATE_HUE_OCL,
-  GRAYSCALE_LUM_OCL,
-  GRAYSCALE_AVG_OCL,
-  #endif
+  SATURATION,
+#ifdef SEEDIMG_OCL
+  rotate_hue_ocl,
+  grayscale_lum_ocl,
+  grayscale_avg_ocl,
+#endif
 };
 
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
@@ -76,11 +76,12 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"rotate_ccw", filter_functions::ROTATE_CCW},
         {"v_mirror", filter_functions::V_MIRROR},
         {"h_mirror", filter_functions::H_MIRROR},
-        #ifdef SEEDIMG_OCL
-        {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
-        {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
-        {"grayscale_avg_ocl", filter_functions::GRAYSCALE_AVG_OCL},
-        #endif
+        {"saturation", filter_functions::SATURATION},
+#ifdef SEEDIMG_OCL
+        {"ROTATE_HUE_OCL", filter_functions::rotate_hue_ocl},
+        {"GRAYSCALE_LUM_OCL", filter_functions::grayscale_lum_ocl},
+        {"GRAYSCALE_AVG_OCL", filter_functions::grayscale_avg_ocl},
+#endif
 };
 
 int main(int argc, char *argv[]) {
@@ -100,7 +101,7 @@ int main(int argc, char *argv[]) {
   filter_functions filter;
   try {
     filter = filter_mapping.at(argv[1]);
-  } catch(std::exception e) {
+  } catch (std::exception e) {
     std::cout << "Test not found (is OpenCL disabled?)";
     exit(0);
   }
@@ -172,7 +173,11 @@ int main(int argc, char *argv[]) {
   case filter_functions::H_MIRROR:
     seedimg::filters::h_mirror_i(img);
     break;
-  #ifdef SEEDIMG_OCL
+  case filter_functions::SATURATION: {
+    seedimg::filters::cconv::hsv_i(img);
+    seedimg::filters::saturation_i(img, 2.5);
+  }
+#ifdef SEEDIMG_OCL
   case filter_functions::ROTATE_HUE_OCL:
     seedimg::filters::ocl::rotate_hue_i(img, 180);
     break;
@@ -183,8 +188,9 @@ int main(int argc, char *argv[]) {
   case filter_functions::GRAYSCALE_AVG_OCL:
     seedimg::filters::ocl::grayscale_i(img, false);
     break;
-  #endif
+#endif
   }
+  seedimg::filters::cconv::rgb_i(img);
   char name_buf[256];
   /*
   std::snprintf(name_buf, 256, "tests_output/filters/png/result-%s.png",

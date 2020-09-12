@@ -23,7 +23,6 @@ file(COPY cat.png DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
 
 target_link_libraries(${APP_EXE} 
     seedimg-filters-core
-    seedimg-filters-cconv
     seedimg-autodetect
 )
 

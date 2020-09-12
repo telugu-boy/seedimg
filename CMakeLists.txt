@@ -68,10 +68,7 @@ option(BUILD_TESTING "" OFF)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-
-set(LIB_TYPE SHARED CACHE STRING "Build and link as STATIC or SHARED")
-
-message("Building all seedimg libs as ${LIB_TYPE}.")
+set(LIB_TYPE STATIC CACHE STRING "Build and link as STATIC or SHARED")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -103,8 +100,8 @@ else()
     set(CMAKE_CXX_FLAGS "-Wall ${CMAKE_CXX_FLAGS}")
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
+set(CMAKE_CXX_FLAGS_DEBUG -g)
+set(CMAKE_CXX_FLAGS_RELEASE -O3)
 
 # tests
 if (${BUILD_TESTING})

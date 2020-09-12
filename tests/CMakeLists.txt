@@ -16,15 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
 set(TESTS_EXE tests)
+
 add_executable(${TESTS_EXE} test-filters-core.cpp)
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(tests seedimg-filters-core seedimg-filters-cconv seedimg-filters-ocl seedimg-autodetect)
+    target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect)
 else()
-    target_link_libraries(tests seedimg-filters-core seedimg-filters-cconv seedimg-filters-ocl seedimg-autodetect stdc++fs)
+    target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect stdc++fs)
 endif()
+
 target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
 file(COPY test_image.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
+
 include_directories(../)
+
 add_test(grayscale_lum_test ${TESTS_EXE} grayscale_lum)
 set_tests_properties(grayscale_lum_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
@@ -84,4 +89,7 @@ set_tests_properties(v_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(h_mirror_test ${TESTS_EXE} h_mirror)
 set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(saturation_test ${TESTS_EXE} saturation)
+set_tests_properties(saturation_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
