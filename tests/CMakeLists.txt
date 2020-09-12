@@ -15,101 +15,78 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-cmake_minimum_required(VERSION 3.5)
+set(TESTS_EXE tests)
 
-get_cmake_property(vars CACHE_VARIABLES)
-foreach(var ${vars})
-  get_property(currentHelpString CACHE "${var}" PROPERTY HELPSTRING)
-    if("${currentHelpString}" MATCHES "No help, variable specified on the command line." OR "${currentHelpString}" STREQUAL "")
-        list(APPEND CL_ARGS "-D${var}=${${var}}")
-    endif()
-endforeach()
+add_executable(${TESTS_EXE} test-filters-core.cpp)
 
-project(seedimg LANGUAGES CXX VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-include(CTest)
-include(ExternalProject)
-include(CheckCXXCompilerFlag)
-
-set(AUTODETECT_ENABLED ON CACHE BOOL "Enable automatic detection of images. Requires ALL format modules.")
-
-if(NOT AUTODETECT_ENABLED)
-    set(PNG_ENABLED ON CACHE BOOL "Enable PNG")
-    set(JPEG_ENABLED ON CACHE BOOL "Enable JPEG")
-    set(WEBP_ENABLED ON CACHE BOOL "Enable WebP")
-    set(TIFF_ENABLED ON CACHE BOOL "Enable TIFF")
-    set(FARBFELD_ENABLED ON CACHE BOOL "Enable Farbfeld")
-    set(IRDUMP_ENABLED OFF CACHE BOOL "Enable IR dumping")
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect)
 else()
-    set(PNG_ENABLED ON)
-    set(JPEG_ENABLED ON)
-    set(WEBP_ENABLED ON)
-    set(TIFF_ENABLED ON)
-    set(FARBFELD_ENABLED ON)
-    set(IRDUMP_ENABLED ON)
+    target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect stdc++fs)
 endif()
 
-set(FILTERS_ENABLED ON CACHE BOOL "Enable image operations")
-set(CCONV_ENABLED ON CACHE BOOL "Enable colourspace conversion")
+target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
+file(COPY test_image.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
 
-if(FILTERS_ENABLED AND NOT CCONV_ENABLED)
-    message("CCONV_ENABLED must be set to ON for image operations.")
-endif()
+include_directories(../)
 
-set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")
+add_test(grayscale_lum_test ${TESTS_EXE} grayscale_lum)
+set_tests_properties(grayscale_lum_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
+add_test(grayscale_avg_test ${TESTS_EXE} grayscale_avg)
+set_tests_properties(grayscale_avg_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
+add_test(invert_test ${TESTS_EXE} invert)
+set_tests_properties(invert_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-option(BUILD_TESTING "" OFF)
+add_test(invert_alpha_test ${TESTS_EXE} invert_alpha)
+set_tests_properties(invert_alpha_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+add_test(invert_alpha_only_test ${TESTS_EXE} invert_alpha_only)
+set_tests_properties(invert_alpha_only_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-set(LIB_TYPE STATIC CACHE STRING "Build and link as STATIC or SHARED")
+add_test(crop_test ${TESTS_EXE} crop)
+set_tests_properties(crop_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
+add_test(blur_test ${TESTS_EXE} blur)
+set_tests_properties(blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-set(CMAKE_THREAD_LIBS_INIT "-pthread")
-set(CMAKE_HAVE_THREADS_LIBRARY 1)
-set(CMAKE_USE_WIN32_THREADS_INIT 0)
-set(CMAKE_USE_PTHREADS_INIT 1)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
+add_test(h_blur_test ${TESTS_EXE} h_blur)
+set_tests_properties(h_blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-if(WIN32)
-  set(prefix "")
-  set(suffix ".lib")
-elseif(APPLE)
-  set(prefix "lib")
-  set(suffix ".a")
-else()
-  set(prefix "lib")
-  set(suffix ".a")
-endif()
+add_test(v_blur_test ${TESTS_EXE} v_blur)
+set_tests_properties(v_blur_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-add_subdirectory(src)
+add_test(kernel_convolution_test ${TESTS_EXE} kernel_convolution)
+set_tests_properties(kernel_convolution_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-CHECK_CXX_COMPILER_FLAG(-Wextra COMPILER_SUPPORTS_WEXTRA)
-if(COMPILER_SUPPORTS_WEXTRA)
-    set(CMAKE_CXX_FLAGS "-Wall -Wextra ${CMAKE_CXX_FLAGS}")
-else()
-    set(CMAKE_CXX_FLAGS "-Wall ${CMAKE_CXX_FLAGS}")
-endif()
+add_test(rotate_hue_test ${TESTS_EXE} rotate_hue)
+set_tests_properties(rotate_hue_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-set(CMAKE_CXX_FLAGS_DEBUG -g)
-set(CMAKE_CXX_FLAGS_RELEASE -O3)
+add_test(brightness_test ${TESTS_EXE} brightness)
+set_tests_properties(brightness_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-# tests
-if (${BUILD_TESTING})
-    add_subdirectory(tests)
-endif()
+add_test(brightness_alpha_test ${TESTS_EXE} brightness_alpha)
+set_tests_properties(brightness_alpha_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-# dependent project
-add_subdirectory(example)
+add_test(blend_test ${TESTS_EXE} blend)
+set_tests_properties(blend_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
+add_test(blend_alpha_test ${TESTS_EXE} blend_alpha)
+set_tests_properties(blend_alpha_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
+add_test(rotate_cw_test ${TESTS_EXE} rotate_cw)
+set_tests_properties(rotate_cw_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(rotate_180_test ${TESTS_EXE} rotate_180)
+set_tests_properties(rotate_180_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(rotate_ccw_test ${TESTS_EXE} rotate_ccw)
+set_tests_properties(rotate_ccw_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(v_mirror_test ${TESTS_EXE} v_mirror)
+set_tests_properties(v_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(h_mirror_test ${TESTS_EXE} h_mirror)
+set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
