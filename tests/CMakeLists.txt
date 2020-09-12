@@ -1,4 +1,4 @@
-﻿#[[ 
+#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -19,15 +19,10 @@ set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
 
-if(OPENCL_ENABLED)
-    set(SEEDIMG_OCL seedimg-filters-ocl)
-    set(CMAKE_CXX_FLAGS "-D SEEDIMG_OCL")
-endif()
-
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(tests seedimg-filters-core ${SEEDIMG_OCL} seedimg-autodetect)
+    target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect)
 else()
-    target_link_libraries(tests seedimg-filters-core ${SEEDIMG_OCL} seedimg-autodetect stdc++fs)
+    target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect stdc++fs)
 endif()
 
 target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
@@ -95,12 +90,6 @@ set_tests_properties(v_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 add_test(h_mirror_test ${TESTS_EXE} h_mirror)
 set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-add_test(rotate_hue_ocl_test ${TESTS_EXE} rotate_hue_ocl)
-set_tests_properties(rotate_hue_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
-
-add_test(grayscale_lum_ocl_test ${TESTS_EXE} grayscale_lum_ocl)
-set_tests_properties(grayscale_lum_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
-
-add_test(grayscale_avg_ocl_test ${TESTS_EXE} grayscale_avg_ocl)
-set_tests_properties(grayscale_avg_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+add_test(saturation_test ${TESTS_EXE} saturation)
+set_tests_properties(saturation_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
