@@ -65,7 +65,7 @@ simg load(const std::string &filename) {
   auto type = imgtype(filename);
   if (type == std::nullopt)
     return nullptr;
-  switch (*type) {
+  switch (*imgtype(filename)) {
   case img_type::png:
     return seedimg::modules::png::from(filename);
   case img_type::jpeg:

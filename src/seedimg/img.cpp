@@ -23,52 +23,45 @@
 namespace seedimg {
 class img::img_impl {
 public:
-  img_impl(colourspaces space = colourspaces::rgb)
-      : colourspace_{space}, width_{0}, height_{0}, data_{nullptr} {}
+  img_impl() : width_(0), height_(0), data_(nullptr) {}
 
-  img_impl(simg_int w, simg_int h, colourspaces space = colourspaces::rgb)
-      : colourspace_{space}, width_{w}, height_{h} {
+  img_impl(simg_int w, simg_int h) : width_{w}, height_{h} {
     data_ = static_cast<seedimg::pixel *>(std::malloc(
         static_cast<std::size_t>(height_ * width_) * sizeof(seedimg::pixel *)));
     if (data_ == nullptr)
       throw std::bad_alloc();
   }
 
-  img_impl(simg_int w, simg_int h, seedimg::pixel *u_data,
-           colourspaces space = colourspaces::rgb)
-      : colourspace_{space}, width_{w}, height_{h}, data_{u_data} {}
+  img_impl(simg_int w, simg_int h, seedimg::pixel *u_data)
+      : width_{w}, height_{h}, data_{u_data} {}
 
-  img_impl(img_impl const &img_)
-      : img_impl(img_.width_, img_.height_) {
+  img_impl(img_impl const &img_) : img_impl(img_.width_, img_.height_) {
     std::copy(img_.data(), img_.data() + img_.width_ * img_.height_,
               this->data());
   }
 
-  img_impl(img_impl &&other) noexcept {
+  img_impl(img_impl &&other) : width_{0}, height_{0}, data_{nullptr} {
     this->width_ = other.width_;
     this->height_ = other.height_;
     this->data_ = other.data_;
-    this->colourspace_ = other.colourspace_;
     other.width_ = 0;
     other.height_ = 0;
     other.data_ = nullptr;
   }
 
-  img_impl &operator=(img_impl other) noexcept {
+  img_impl &operator=(img_impl other) {
     std::swap(this->data_, other.data_);
     std::swap(this->width_, other.width_);
     std::swap(this->height_, other.height_);
-    std::swap(this->colourspace_, other.colourspace_);
     return *this;
   }
-  img_impl &operator=(img_impl &&other) noexcept {
+  img_impl &operator=(img_impl &&other) {
     if (&other != this) {
       std::free(this->data_);
       this->data_ = other.data_;
       other.data_ = nullptr;
       width_ = other.width_;
       height_ = other.height_;
-      this->colourspace_ = other.colourspace_;
     }
     return *this;
   }
@@ -146,20 +139,17 @@ public:
   }
 
   colourspaces colourspace() const noexcept { return this->colourspace_; }
-  void set_colourspace(seedimg::colourspaces colourspace) noexcept {
-    this->colourspace_ = colourspace;
-  }
 
   ~img_impl() { std::free(data_); }
 
 private:
-  colourspaces colourspace_;
   simg_int width_;
   simg_int height_;
   // stored in row major order
   // width amount of pixels in a row
   // height amount of rows.
   seedimg::pixel *data_;
+  colourspaces colourspace_;
 };
 
 // PIMPL stubs
@@ -172,13 +162,13 @@ img::img(simg_int w, simg_int h, seedimg::pixel *u_data)
 
 img::img(seedimg::img const &img_) : impl{new img_impl{*img_.impl}} {}
 
-img::img(seedimg::img &&other) noexcept : impl{new img_impl{*other.impl}} {}
+img::img(seedimg::img &&other) : impl{new img_impl{*other.impl}} {}
 
-img &img::operator=(img other) noexcept {
+img &img::operator=(img other) {
   *this->impl = *other.impl;
   return *this;
 }
-img &img::operator=(img &&other) noexcept {
+img &img::operator=(img &&other) {
   *this->impl = *other.impl;
   return *this;
 }
@@ -229,7 +219,4 @@ colourspaces img::colourspace() const noexcept { return impl->colourspace(); }
 void uimg::set_width(simg_int w) noexcept { impl->set_width(w); }
 void uimg::set_height(simg_int h) noexcept { impl->set_height(h); }
 void uimg::set_data(seedimg::pixel *data) noexcept { impl->set_data(data); }
-void uimg::set_colourspace(seedimg::colourspaces colourspace) noexcept {
-  impl->set_colourspace(colourspace);
-}
 } // namespace seedimg

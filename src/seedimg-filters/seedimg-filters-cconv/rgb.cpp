@@ -28,23 +28,18 @@ void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
                     simg_int end) {
   for (; start < end; start++) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
-      seedimg::pixel pix_src = inp_img->pixel(x, start);
-      struct {
-        float h;
-        float s;
-        float v;
-      } pix{static_cast<float>(pix_src.h) * 2,
-            static_cast<float>(pix_src.s) / 100,
-            static_cast<float>(pix_src.v) / 100};
-      float C = static_cast<float>(pix.v) * static_cast<float>(pix.s);
+      seedimg::pixel pix = inp_img->pixel(x, start);
+      float C = static_cast<float>(pix.v) / 100.0f +
+                static_cast<float>(pix.s) / 100.0f;
       float X =
-          C * (1 - std::fabs(
-                       std::fmod(static_cast<float>(pix.h) / 60.0f, 2.0f) - 1));
+          C *
+          (1 -
+           std::fabs(std::fmod(static_cast<float>(pix.h) / 3000.0f, 2.0f) - 1));
 
-      float m = static_cast<float>(pix.v) - C;
+      float m = static_cast<float>(pix.v)/100.0f - C;
 
       float componentsp[4] = {m, m, m};
-      switch (static_cast<int>(pix.h / 60)) {
+      switch (static_cast<int>(pix.h / 30)) {
       case 0: {
         componentsp[0] += C;
         componentsp[1] += X;
@@ -80,7 +75,7 @@ void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
           {{static_cast<std::uint8_t>(componentsp[0] * 255),
             static_cast<std::uint8_t>(componentsp[1] * 255),
             static_cast<std::uint8_t>(componentsp[2] * 255)}},
-          pix_src.a};
+          pix.a};
     }
   }
 }
@@ -92,7 +87,6 @@ void rgb(simg &inp_img, simg &res_img) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     seedimg::utils::hrz_thread(hsv2rgb_worker, inp_img, res_img);
-  } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr) {
   }
 }
 void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }

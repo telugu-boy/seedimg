@@ -20,7 +20,6 @@
 #define SEEDIMG_CORE_H
 
 #include <cinttypes>
-#include <experimental/propagate_const>
 #include <initializer_list>
 #include <memory>
 #include <vector>
@@ -28,9 +27,6 @@
 typedef std::size_t simg_int;
 
 namespace seedimg {
-
-template <class T>
-using pimpl = std::experimental::propagate_const<std::unique_ptr<T>>;
 
 typedef struct point {
   simg_int x;
@@ -50,7 +46,7 @@ bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
 
 point get_rect_dimensions(seedimg::point p1, seedimg::point p2) noexcept;
 
-enum class colourspaces : std::size_t { rgb, hsv, ycbcr };
+enum class colourspaces { rgb, hsv, ycbcr };
 
 typedef struct pixel {
   union {
@@ -86,9 +82,9 @@ public:
   img(simg_int w, simg_int h);
   img(simg_int w, simg_int h, seedimg::pixel *u_data);
   img(seedimg::img const &img_);
-  img(seedimg::img &&other) noexcept;
-  img &operator=(img other) noexcept;
-  img &operator=(img &&other) noexcept;
+  img(seedimg::img &&other);
+  img &operator=(img other);
+  img &operator=(img &&other);
 
   ~img();
 
@@ -115,7 +111,7 @@ public:
 
 protected:
   class img_impl;
-  seedimg::pimpl<img_impl> impl;
+  std::unique_ptr<img_impl> impl;
 };
 
 class uimg : public img {
@@ -124,7 +120,6 @@ public:
   void set_width(simg_int w) noexcept;
   void set_height(simg_int h) noexcept;
   void set_data(seedimg::pixel *data) noexcept;
-  void set_colourspace(seedimg::colourspaces colourspace) noexcept;
 };
 
 } // namespace seedimg

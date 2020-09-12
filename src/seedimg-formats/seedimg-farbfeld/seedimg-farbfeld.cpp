@@ -66,15 +66,24 @@ bool check(const std::string &filename) {
 }
 
 simg from(const std::string &filename) {
-  if (!check(filename))
-    return nullptr;
-
   std::ifstream input(filename);
   struct {
     char sig[8];
     uint8_t width[4];
     uint8_t height[4];
   } rawinfo;
+
+  try {
+    input.read(rawinfo.sig, 8)
+        .read(reinterpret_cast<char *>(rawinfo.width), 4)
+        .read(reinterpret_cast<char *>(rawinfo.height), 4);
+  } catch (std::ios_base::failure) {
+    return nullptr;
+  }
+
+  // siganture match is mandatory else invalid Farbfeld file.
+  if (std::memcmp(rawinfo.sig, "farbfeld", 8) != 0)
+    return nullptr;
 
   auto result = std::make_shared<seedimg::img>(fu32be(rawinfo.width),
                                                fu32be(rawinfo.height));

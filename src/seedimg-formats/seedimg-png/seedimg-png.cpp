@@ -20,7 +20,7 @@
 //
 
 #include <cstring>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -40,7 +40,7 @@ namespace seedimg::modules {
 namespace png {
 bool check(const std::string &filename) noexcept {
   std::error_code ec;
-  std::size_t size = std::filesystem::file_size(filename, ec);
+  std::size_t size = std::experimental::filesystem::file_size(filename, ec);
   if (ec != std::error_code{} || size < 8)
     return false;
 
@@ -69,10 +69,7 @@ simg from(const std::string &filename) {
     return nullptr;
   }
 
-  uint8_t sig[8];
-
-  fread(sig, sizeof(uint8_t), 8, fp);
-  if (!png_check_sig(sig, 8)) {
+  if (!check(filename)) {
     std::cerr << filename << " is not a valid PNG file" << std::endl;
     errcode = -1;
     goto finalise;
@@ -104,7 +101,6 @@ simg from(const std::string &filename) {
   }
 
   png_init_io(png_ptr, fp);
-  png_set_sig_bytes(png_ptr, 8);
   png_read_info(png_ptr, info_ptr);
 
   interlace_passes = png_set_interlace_handling(png_ptr);
