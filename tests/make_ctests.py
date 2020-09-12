@@ -45,7 +45,7 @@ tests_ocl = ["ROTATE_HUE_OCL", "GRAYSCALE_LUM_OCL", "GRAYSCALE_AVG_OCL"]
 enum_mapping_ocl = ["rotate_hue_ocl", "grayscale_lum_ocl", "grayscale_avg_ocl"]
 
 if __name__ == "__main__":
-  dirname = str(pathlib.Path(__file__).parent.absolute()) + '/'
+    dirname = str(pathlib.Path(__file__).parent.absolute()) + '/'
     with open(dirname + "CMakeLists.txt", "w") as f:
         f.write(header)
         for test in tests:
