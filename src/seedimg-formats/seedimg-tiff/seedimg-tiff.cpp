@@ -20,6 +20,7 @@
 //
 
 #include <algorithm>
+#include <cstring>
 #include <fstream>
 #include <vector>
 
@@ -34,16 +35,21 @@ extern "C" {
 namespace seedimg::modules {
 namespace tiff {
 bool check(const std::string &filename) noexcept {
-  bool res;
-  TIFF *img = TIFFOpen(filename.c_str(), "r");
-  if ((res = img))
-    TIFFClose(img);
-  return res;
+  std::ifstream input(filename);
+  std::uint8_t intel[4] = {0x49, 0x49, 0x2A, 0x00};
+  std::uint8_t motorola[4] = {0x4D, 0x4D, 0x00, 0x2A};
+  char sig[4];
+
+  try {
+    input.read(sig, 4);
+  } catch (std::iostream::failure) {
+    return false;
+  }
+  return std::memcmp(sig, intel, 4) == 0 || std::memcmp(sig, motorola, 4) == 0;
 }
 
 bool to(const std::string &filename, const anim &inp_anim) {
-  uint16 out[1];
-  out[0] = EXTRASAMPLE_ASSOCALPHA;
+  uint16 out[1] = {EXTRASAMPLE_ASSOCALPHA};
   TIFF *img = TIFFOpen(filename.c_str(), "w");
   if (img) {
     for (std::size_t i = 0; i < inp_anim.size(); ++i) {

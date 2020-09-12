@@ -21,6 +21,10 @@
 #include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-utils.hpp>
 
+inline float fmodulo(float x, float N) {
+  return std::fmod((std::fmod(x, N) + N), N);
+}
+
 inline bool feq(float a, float b) {
   return std::fabs(a - b) < std::numeric_limits<float>::epsilon();
 }
@@ -46,11 +50,11 @@ void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
       std::uint8_t val = static_cast<std::uint8_t>(cmax * 100.0f);
 
       if (feq(rp, cmax)) {
-        hue = static_cast<std::uint8_t>(60 * std::fmod((gp - bp) / delta, 3));
+        hue = static_cast<std::uint8_t>(30 * fmodulo((gp - bp) / delta, 6));
       } else if (feq(gp, cmax)) {
-        hue = static_cast<std::uint8_t>(60 * ((bp - rp) / delta + 1));
+        hue = static_cast<std::uint8_t>(60 * ((bp - rp) / delta + 2));
       } else if (feq(bp, cmax)) {
-        hue = static_cast<std::uint8_t>(60 * ((rp - gp) / delta + 2));
+        hue = static_cast<std::uint8_t>(60 * ((rp - gp) / delta + 4));
       }
 
       // saturation

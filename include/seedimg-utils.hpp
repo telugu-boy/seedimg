@@ -38,7 +38,7 @@ histogram_result histogram(simg &input);
 
 template <typename T, typename... Args>
 void hrz_thread(T &&func, simg &inp_img, simg &res_img, Args &... args) {
-  auto start_end = inp_img->start_end_rows();
+  auto &&start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   for (std::size_t i = 0; i < workers.size(); i++) {
     workers.at(i) =
@@ -46,13 +46,14 @@ void hrz_thread(T &&func, simg &inp_img, simg &res_img, Args &... args) {
                     start_end.at(i).first, start_end.at(i).second,
                     std::forward<Args>(args)...);
   }
-  for (std::size_t i = 0; i < workers.size(); ++i)
-    workers.at(i).join();
+  for (auto &&worker : workers) {
+    worker.join();
+  }
 }
 
 template <typename T, typename... Args>
 void vrt_thread(T &&func, simg &inp_img, simg &res_img, Args &&... args) {
-  auto start_end = inp_img->start_end_cols();
+  auto &&start_end = inp_img->start_end_cols();
   std::vector<std::thread> workers(start_end.size());
   for (std::size_t i = 0; i < workers.size(); i++) {
     workers.at(i) =
@@ -60,8 +61,9 @@ void vrt_thread(T &&func, simg &inp_img, simg &res_img, Args &&... args) {
                     start_end.at(i).first, start_end.at(i).second,
                     std::forward<Args>(args)...);
   }
-  for (std::size_t i = 0; i < workers.size(); ++i)
-    workers.at(i).join();
+  for (auto &&worker : workers) {
+    worker.join();
+  }
 }
 } // namespace seedimg::utils
 #endif
