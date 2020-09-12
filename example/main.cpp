@@ -16,7 +16,7 @@ seedimg - module based image manipulation library written in modern
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <filesystem>
+#include <experimental/filesystem>
 #include <iostream>
 
 #include <seedimg-autodetect.hpp>
@@ -25,7 +25,7 @@ seedimg - module based image manipulation library written in modern
 
 auto main() -> int {
   using namespace seedimg::filters;
-  std::cout << "Current path is " << std::filesystem::current_path()
+  std::cout << "Current path is " << std::experimental::filesystem::current_path()
             << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
