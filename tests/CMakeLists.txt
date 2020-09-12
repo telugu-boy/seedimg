@@ -20,9 +20,9 @@ set(TESTS_EXE tests)
 add_executable(${TESTS_EXE} test-filters-core.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect)
+    target_link_libraries(tests seedimg-filters-core seedimg-filters-cconv seedimg-filters-ocl seedimg-autodetect)
 else()
-    target_link_libraries(tests seedimg-filters-core seedimg-filters-ocl seedimg-autodetect stdc++fs)
+    target_link_libraries(tests seedimg-filters-core seedimg-filters-cconv seedimg-filters-ocl seedimg-autodetect stdc++fs)
 endif()
 
 target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
