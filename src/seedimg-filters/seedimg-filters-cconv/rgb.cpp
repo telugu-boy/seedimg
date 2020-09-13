@@ -85,8 +85,57 @@ void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
   }
 }
 
-void ycbcr2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
-                      simg_int end) {}
+// https://en.wikipedia.org/wiki/YCbCr
+
+static constexpr float const ycbcr_jpeg_mat[9] = {
+    1.0f, 0.0f, 1.402f, 1.0f, -0.34414f, -0.71414f, 1.0f, 1.772f, 0.0f};
+
+static constexpr float const ycbcr_bt601_mat[9] = {
+    298.082f / 256.0f, 0.0f / 256.0f,      408.583f / 256.0f,
+    298.082f / 256.0f, -100.291f / 256.0f, -208.120f / 256.0f,
+    298.082f / 256.0f, 516.412f / 256.0f,  0.0f / 256.0f};
+
+static constexpr float const ycbcr_bt601_vec[3] = {-222.921f, 135.576f,
+                                                   -276.836f};
+
+void ycbcr_jpeg2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
+                           simg_int end) {
+  for (; start < end; ++start) {
+    for (simg_int x = 0; x < inp_img->width(); ++x) {
+      seedimg::pixel pix = inp_img->pixel(x, start);
+      res_img->pixel(x, start).r = static_cast<std::uint8_t>(
+          ycbcr_jpeg_mat[0] * pix.y +
+          ycbcr_jpeg_mat[1] * (static_cast<int>(pix.cb - 128)) +
+          ycbcr_jpeg_mat[2] * (static_cast<int>(pix.cr - 128)));
+      res_img->pixel(x, start).g = static_cast<std::uint8_t>(
+          ycbcr_jpeg_mat[3] * pix.y +
+          ycbcr_jpeg_mat[4] * (static_cast<int>(pix.cb - 128)) +
+          ycbcr_jpeg_mat[5] * (static_cast<int>(pix.cr - 128)));
+      res_img->pixel(x, start).b = static_cast<std::uint8_t>(
+          ycbcr_jpeg_mat[6] * pix.y +
+          ycbcr_jpeg_mat[7] * (static_cast<int>(pix.cb - 128)) +
+          ycbcr_jpeg_mat[8] * (static_cast<int>(pix.cr - 128)));
+    }
+  }
+}
+
+void ycbcr_bt6012rgb_worker(simg &inp_img, simg &res_img, simg_int start,
+                            simg_int end) {
+  for (; start < end; ++start) {
+    for (simg_int x = 0; x < inp_img->width(); ++x) {
+      seedimg::pixel pix = inp_img->pixel(x, start);
+      res_img->pixel(x, start).r = static_cast<std::uint8_t>(
+          ycbcr_bt601_vec[0] + ycbcr_bt601_mat[0] * pix.y +
+          ycbcr_bt601_mat[1] * pix.cb + ycbcr_bt601_mat[2] * pix.cr);
+      res_img->pixel(x, start).g = static_cast<std::uint8_t>(
+          ycbcr_bt601_vec[1] + ycbcr_bt601_mat[3] * pix.y +
+          ycbcr_bt601_mat[4] * pix.cb + ycbcr_bt601_mat[5] * pix.cr);
+      res_img->pixel(x, start).b = static_cast<std::uint8_t>(
+          ycbcr_bt601_vec[2] + ycbcr_bt601_mat[6] * pix.y +
+          ycbcr_bt601_mat[7] * pix.cb + ycbcr_bt601_mat[8] * pix.cr);
+    }
+  }
+}
 
 namespace seedimg::filters {
 namespace cconv {
@@ -96,8 +145,12 @@ void rgb(simg &inp_img, simg &res_img) {
   } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     seedimg::utils::hrz_thread(hsv2rgb_worker, inp_img, res_img);
   } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg) {
+    seedimg::utils::hrz_thread(ycbcr_jpeg2rgb_worker, inp_img, res_img);
   } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
+    seedimg::utils::hrz_thread(ycbcr_bt6012rgb_worker, inp_img, res_img);
   }
+  std::static_pointer_cast<seedimg::uimg>(res_img)->set_colourspace(
+      seedimg::colourspaces::rgb);
 }
 void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }
 } // namespace cconv

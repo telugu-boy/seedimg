@@ -20,7 +20,7 @@
 
 namespace seedimg::filters {
 void apply_mat(simg &inp_img, simg &res_img, simg_int start, simg_int end,
-               const float mat[9], const int vec[3]) {
+               const float mat[9], const std::array<float, 3> &vec) {
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
       seedimg::pixel pix = inp_img->pixel(x, start);
