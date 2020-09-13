@@ -23,7 +23,7 @@
 #include <seedimg.hpp>
 
 namespace seedimg::utils {
-histogram_result histogram(std::shared_ptr<seedimg::img> &input) {
+histogram_result histogram(simg& input) {
   histogram_result result;
 
   for (simg_int y = 0; y < input->height(); ++y) {
