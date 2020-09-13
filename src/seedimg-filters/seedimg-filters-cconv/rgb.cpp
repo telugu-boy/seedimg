@@ -105,16 +105,16 @@ void ycbcr_jpeg2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
       seedimg::pixel pix = inp_img->pixel(x, start);
       res_img->pixel(x, start).r = static_cast<std::uint8_t>(
           ycbcr_jpeg_mat[0] * pix.y +
-          ycbcr_jpeg_mat[1] * (static_cast<int>(pix.cb - 128)) +
-          ycbcr_jpeg_mat[2] * (static_cast<int>(pix.cr - 128)));
+          ycbcr_jpeg_mat[1] * (static_cast<int>(pix.cr) - 128) +
+          ycbcr_jpeg_mat[2] * (static_cast<int>(pix.cb) - 128));
       res_img->pixel(x, start).g = static_cast<std::uint8_t>(
           ycbcr_jpeg_mat[3] * pix.y +
-          ycbcr_jpeg_mat[4] * (static_cast<int>(pix.cb - 128)) +
-          ycbcr_jpeg_mat[5] * (static_cast<int>(pix.cr - 128)));
+          ycbcr_jpeg_mat[4] * (static_cast<int>(pix.cr) - 128) +
+          ycbcr_jpeg_mat[5] * (static_cast<int>(pix.cb) - 128));
       res_img->pixel(x, start).b = static_cast<std::uint8_t>(
           ycbcr_jpeg_mat[6] * pix.y +
-          ycbcr_jpeg_mat[7] * (static_cast<int>(pix.cb - 128)) +
-          ycbcr_jpeg_mat[8] * (static_cast<int>(pix.cr - 128)));
+          ycbcr_jpeg_mat[7] * (static_cast<int>(pix.cr) - 128) +
+          ycbcr_jpeg_mat[8] * (static_cast<int>(pix.cb) - 128));
     }
   }
 }
