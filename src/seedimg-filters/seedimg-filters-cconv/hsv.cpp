@@ -75,9 +75,10 @@ void hsv(simg &inp_img, simg &res_img) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
     seedimg::utils::hrz_thread(rgb2hsv_worker, inp_img, res_img);
-  } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr) {
+  } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg ||
+             inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
     rgb(inp_img, res_img);
-    hsv(inp_img, res_img);
+    hsv(res_img, res_img);
   }
   std::static_pointer_cast<seedimg::uimg>(res_img)->set_colourspace(
       seedimg::colourspaces::hsv);

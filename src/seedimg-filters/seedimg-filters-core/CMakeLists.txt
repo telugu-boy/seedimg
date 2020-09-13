@@ -25,6 +25,7 @@ add_library(seedimg-filters-core ${LIB_TYPE}
     blend.cpp
     rotate-mirror.cpp
     crop.cpp
+    apply-mat.cpp
 
     saturation.cpp)
 

@@ -38,8 +38,7 @@ public:
            colourspaces space = colourspaces::rgb)
       : colourspace_{space}, width_{w}, height_{h}, data_{u_data} {}
 
-  img_impl(img_impl const &img_)
-      : img_impl(img_.width_, img_.height_) {
+  img_impl(img_impl const &img_) : img_impl(img_.width_, img_.height_) {
     std::copy(img_.data(), img_.data() + img_.width_ * img_.height_,
               this->data());
   }
@@ -122,8 +121,7 @@ public:
       processor_count = 1;
     res.reserve(static_cast<std::size_t>(processor_count));
     simg_int rows_per_thread = this->height() / processor_count;
-    for (simg_int i = 0; i < processor_count * rows_per_thread;
-         i += rows_per_thread)
+    for (simg_int i = 0; i < this->height(); i += rows_per_thread)
       res.push_back({i, i + rows_per_thread});
     res[res.size() - 1].second += this->height() % processor_count;
     return res;
@@ -138,8 +136,7 @@ public:
       processor_count = 1;
     res.reserve(static_cast<std::size_t>(processor_count));
     simg_int cols_per_thread = this->width() / processor_count;
-    for (simg_int i = 0; i < processor_count * cols_per_thread;
-         i += cols_per_thread)
+    for (simg_int i = 0; i < this->width(); i += cols_per_thread)
       res.push_back({i, i + cols_per_thread});
     res[res.size() - 1].second += this->width() % processor_count;
     return res;

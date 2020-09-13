@@ -25,8 +25,8 @@ seedimg - module based image manipulation library written in modern
 
 auto main() -> int {
   using namespace seedimg::filters;
-  std::cout << "Current path is " << std::experimental::filesystem::current_path()
-            << std::endl;
+  std::cout << "Current path is "
+            << std::experimental::filesystem::current_path() << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("cat.png");
@@ -45,9 +45,7 @@ auto main() -> int {
       // h_mirror_i(a);
       // ocl::rotate_hue_i(a, -90);
       // ocl::grayscale_i(a, true);
-      cconv::hsv_i(a);
-      saturation_i(a, 0.75f);
-      cconv::rgb_i(a);
+      cconv::ycbcr_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
