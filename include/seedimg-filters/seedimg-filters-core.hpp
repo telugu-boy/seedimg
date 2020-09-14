@@ -28,7 +28,8 @@
 namespace seedimg::filters {
 
 void apply_mat(simg &inp_img, simg &res_img, simg_int start, simg_int end,
-               const float mat[9], const std::array<int, 3> &vec = {0, 0, 0});
+               const std::array<float, 9> &mat,
+               const std::array<float, 3> &vec = {0, 0, 0});
 
 void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
 void grayscale_i(simg &inp_img, bool luminosity = true);
