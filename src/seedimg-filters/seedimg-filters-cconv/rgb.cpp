@@ -21,9 +21,9 @@
 #include <seedimg-utils.hpp>
 
 // resource headers. this is for the rgb->ycbcr_jpeg
-#include "ycbcr_jpeg_lut.rh"
+#include "from_ycbcr_jpeg_lut.rh"
 // and this is for bt601
-#include "ycbcr_bt601_lut.rh"
+#include "from_ycbcr_bt601_lut.rh"
 
 inline bool feq(float a, float b) {
   return std::fabs(a - b) < std::numeric_limits<float>::epsilon();

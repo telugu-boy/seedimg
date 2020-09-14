@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 #include <cstdio>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <functional>
 #include <iostream>
 #include <unordered_map>
@@ -25,6 +25,7 @@
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
+
 enum class filter_functions {
   GRAYSCALE_LUM,
   GRAYSCALE_AVG,
@@ -47,11 +48,9 @@ enum class filter_functions {
   V_MIRROR,
   H_MIRROR,
   SATURATION,
-#ifdef SEEDIMG_OCL
-  rotate_hue_ocl,
-  grayscale_lum_ocl,
-  grayscale_avg_ocl,
-#endif
+  ROTATE_HUE_OCL,
+  GRAYSCALE_LUM_OCL,
+  GRAYSCALE_AVG_OCL,
 };
 
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
@@ -77,26 +76,20 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"v_mirror", filter_functions::V_MIRROR},
         {"h_mirror", filter_functions::H_MIRROR},
         {"saturation", filter_functions::SATURATION},
-#ifdef SEEDIMG_OCL
-        {"ROTATE_HUE_OCL", filter_functions::rotate_hue_ocl},
-        {"GRAYSCALE_LUM_OCL", filter_functions::grayscale_lum_ocl},
-        {"GRAYSCALE_AVG_OCL", filter_functions::grayscale_avg_ocl},
-#endif
+        {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
+        {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
+        {"grayscale_avg_ocl", filter_functions::GRAYSCALE_AVG_OCL},
 };
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    std::cout << "FAIL";
-    exit(1);
-  }
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
-  // std::experimental::filesystem::create_directories(res_dir + "/png/");
-  std::experimental::filesystem::create_directories(res_dir + "/jpg/");
+  // std::filesystem::create_directories(res_dir + "/png/");
+  std::filesystem::create_directories(res_dir + "/jpg/");
   /*
-  std::experimental::filesystem::create_directories(res_dir + "/webp/");
-  std::experimental::filesystem::create_directories(res_dir + "/tiff/");
-  std::experimental::filesystem::create_directories(res_dir + "/farbfeld/");*/
+  std::filesystem::create_directories(res_dir + "/webp/");
+  std::filesystem::create_directories(res_dir + "/tiff/");
+  std::filesystem::create_directories(res_dir + "/farbfeld/");*/
   auto img = seedimg::load("test_image.png");
   filter_functions filter;
   try {
@@ -176,12 +169,11 @@ int main(int argc, char *argv[]) {
   case filter_functions::SATURATION: {
     seedimg::filters::cconv::hsv_i(img);
     seedimg::filters::saturation_i(img, 2.5);
-  }
-#ifdef SEEDIMG_OCL
+  } break;
+#ifdef SEEDIMG_FILTERS_CCONV_H
   case filter_functions::ROTATE_HUE_OCL:
     seedimg::filters::ocl::rotate_hue_i(img, 180);
     break;
-
   case filter_functions::GRAYSCALE_LUM_OCL:
     seedimg::filters::ocl::grayscale_i(img, true);
     break;
@@ -190,6 +182,7 @@ int main(int argc, char *argv[]) {
     break;
 #endif
   }
+
   seedimg::filters::cconv::rgb_i(img);
   char name_buf[256];
   /*

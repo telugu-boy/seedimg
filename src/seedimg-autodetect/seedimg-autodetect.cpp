@@ -16,7 +16,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <experimental/filesystem>
+#include <filesystem>
 
 #include <seedimg-formats/seedimg-farbfeld.hpp>
 #include <seedimg-formats/seedimg-irdump.hpp>
@@ -45,7 +45,7 @@ enum img_type match_ext(const std::string &ext) noexcept {
 }
 
 std::optional<enum img_type> imgtype(const std::string &filename) noexcept {
-  if (!std::experimental::filesystem::exists(filename))
+  if (!std::filesystem::exists(filename))
     return std::nullopt;
   if (seedimg::modules::png::check(filename))
     return img_type::png;

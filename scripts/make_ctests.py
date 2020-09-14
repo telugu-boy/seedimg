@@ -1,5 +1,3 @@
-import pathlib
-
 header = """#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
@@ -45,25 +43,22 @@ tests = ["grayscale_lum", "grayscale_avg", "invert", "invert_alpha","invert_alph
 
 enum_mapping = ["GRAYSCALE_LUM", "GRAYSCALE_AVG", "INVERT", "INVERT_A", "INVERT_AO", "CROP", "BLUR", "H_BLUR", "V_BLUR", "KERNEL_CONVOLUTION", "ROTATE_HUE", "BRIGHTNESS", "BRIGHTNESS_A", "BLEND", "BLEND_A", "ROTATE_CW", "ROTATE_180", "ROTATE_CCW", "V_MIRROR", "H_MIRROR", "SATURATION"]
 
-tests_ocl = ["ROTATE_HUE_OCL", "GRAYSCALE_LUM_OCL", "GRAYSCALE_AVG_OCL"]
+tests_ocl = ["rotate_hue_ocl", "grayscale_lum_ocl", "grayscale_avg_ocl"]
 
-enum_mapping_ocl = ["rotate_hue_ocl", "grayscale_lum_ocl", "grayscale_avg_ocl"]
+enum_mapping_ocl = ["ROTATE_HUE_OCL", "GRAYSCALE_LUM_OCL", "GRAYSCALE_AVG_OCL"]
 
 if __name__ == "__main__":
-    dirname = str(pathlib.Path(__file__).parent.absolute()) + '/'
-    with open(dirname + "CMakeLists.txt", "w") as f:
+    with open("../tests/CMakeLists.txt", "w") as f:
         f.write(header)
-        for test in tests:
+        for test in tests + tests_ocl:
             f.write(template.format(test, test, test))
             
     #print enum to stdout
     print("enum class filter_functions {")
     for func in enum_mapping:
-        print(f"  {func},")
-    print("#ifdef SEEDIMG_OCL")
+        print(f" {func},")
     for func in enum_mapping_ocl:
         print(f" {func},")
-    print("#endif")
     print("};")
     
     print()
@@ -72,8 +67,8 @@ if __name__ == "__main__":
     print("static const std::unordered_map<std::string, filter_functions> filter_mapping = {")
     for i in range(len(tests)):
         print(f"  {{\"{tests[i]}\", filter_functions::{enum_mapping[i]}}},")
-    print("#ifdef SEEDIMG_OCL")
     for i in range(len(tests_ocl)):
         print(f"  {{\"{tests_ocl[i]}\", filter_functions::{enum_mapping_ocl[i]}}},")
-    print("#endif")
     print("};")
+    
+    print("\nDone.");

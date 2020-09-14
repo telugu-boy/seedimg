@@ -3,7 +3,7 @@ def write_rh(l, typ, names, filename):
     for inner in range(len(l)):
         arr.append(f"static constexpr {typ} const {names[inner]}[] = {{ {', '.join(map(str, l[inner]))} }};")
         
-    with open(filename, "w") as f:
+    with open("../src/seedimg-filters/seedimg-filters-cconv/" + filename, "w") as f:
         for s in arr:
             f.write(s + "\n")
 
@@ -38,9 +38,10 @@ def gen_bt601():
 if __name__ == "__main__":
     write_rh(gen_jpeg(), "int", ["jpeg_ry1", "jpeg_gcb1", "jpeg_bcr1", 
                         "jpeg_ry2", "jpeg_gcb2", "jpeg_bcr2", 
-                        "jpeg_ry3", "jpeg_gcb3", "jpeg_bcr3"], "ycbcr_jpeg_lut.rh")
+                        "jpeg_ry3", "jpeg_gcb3", "jpeg_bcr3"], "from_ycbcr_jpeg_lut.rh")
 
     write_rh(gen_bt601(), "float", ["bt601_ry1", "bt601_gcb1", "bt601_bcr1", 
                         "bt601_ry2", "bt601_gcb2", "bt601_bcr2", 
-                        "bt601_ry3", "bt601_gcb3", "bt601_bcr3"], "ycbcr_bt601_lut.rh")
+                        "bt601_ry3", "bt601_gcb3", "bt601_bcr3"], "from_ycbcr_bt601_lut.rh")
+    print("Done.")
 

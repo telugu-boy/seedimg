@@ -97,3 +97,12 @@ set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 add_test(saturation_test ${TESTS_EXE} saturation)
 set_tests_properties(saturation_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
+add_test(rotate_hue_ocl_test ${TESTS_EXE} rotate_hue_ocl)
+set_tests_properties(rotate_hue_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(grayscale_lum_ocl_test ${TESTS_EXE} grayscale_lum_ocl)
+set_tests_properties(grayscale_lum_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(grayscale_avg_ocl_test ${TESTS_EXE} grayscale_avg_ocl)
+set_tests_properties(grayscale_avg_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+

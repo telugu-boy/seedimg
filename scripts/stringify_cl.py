@@ -2,11 +2,8 @@ import sys
 import pathlib
 
 def stringify(iname, oname):
-  res_str = "";
   with open(iname, "r") as i, open(oname, "w") as o:
-    for l in i:
-      res_str += '"' + l.rstrip() + "\"\n"
-    o.write(res_str)
+    o.write('R"(' + i.read() + ')\"');
     
 if __name__ == "__main__":
     # .cl files are suffixed with _ocl.cl
@@ -16,8 +13,8 @@ if __name__ == "__main__":
         "grayscale_lum",
         "grayscale_avg",
     ]
-    dirname = str(pathlib.Path(__file__).parent.absolute()) + '/'
     for name in names:
-        stringify(dirname + "kernel_sources/"+name+"_ocl.cl", dirname+name+"_kernel.clh")
+        stringify("../src/seedimg-filters/seedimg-filters-ocl/cl_kernels/kernel_sources/"+name+"_ocl.cl",
+        "../src/seedimg-filters/seedimg-filters-ocl/cl_kernels/"+name+"_kernel.clh")
     
-    print("Done stringifying kernels")
+    print("Done.")

@@ -16,17 +16,17 @@ seedimg - module based image manipulation library written in modern
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <experimental/filesystem>
+#include <filesystem>
 #include <iostream>
 
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
-//#include <seedimg-filters/seedimg-filters-ocl.hpp>
+#include <seedimg-filters/seedimg-filters-ocl.hpp>
 
 auto main() -> int {
   using namespace seedimg::filters;
-  std::cout << "Current path is "
-            << std::experimental::filesystem::current_path() << std::endl;
+  std::cout << "Current path is " << std::filesystem::current_path()
+            << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("cat.png");
@@ -43,10 +43,10 @@ auto main() -> int {
       // rotate_hue_i(a, 180);
       // v_mirror_i(a);
       // h_mirror_i(a);
-      // ocl::rotate_hue_i(a, -90);
+      ocl::rotate_hue_i(a, -90);
       // ocl::grayscale_i(a, true);
-      cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_jpeg);
-      cconv::rgb_i(a);
+      // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_jpeg);
+      // cconv::rgb_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

@@ -20,7 +20,7 @@
 //
 
 #include <cstring>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -40,7 +40,7 @@ namespace seedimg::modules {
 namespace png {
 bool check(const std::string &filename) noexcept {
   std::error_code ec;
-  std::size_t size = std::experimental::filesystem::file_size(filename, ec);
+  std::size_t size = std::filesystem::file_size(filename, ec);
   if (ec != std::error_code{} || size < 8)
     return false;
 
