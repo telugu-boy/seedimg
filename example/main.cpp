@@ -43,10 +43,13 @@ auto main() -> int {
       // rotate_hue_i(a, 180);
       // v_mirror_i(a);
       // h_mirror_i(a);
-      ocl::rotate_hue_i(a, -90);
+      // ocl::rotate_hue_i(a, -90);
       // ocl::grayscale_i(a, true);
       // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_jpeg);
       // cconv::rgb_i(a);
+      cconv::hsv_i(a);
+      saturation_i(a, 1.1f);
+      cconv::rgb_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
