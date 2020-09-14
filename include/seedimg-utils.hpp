@@ -36,6 +36,10 @@ typedef struct {
  */
 histogram_result histogram(simg &input);
 
+template <typename T, typename MMT> inline T clamp(int a, MMT min, MMT max) {
+  return a > max ? max : a < min ? min : static_cast<T>(a);
+}
+
 template <typename T, typename... Args>
 void hrz_thread(T &&func, simg &inp_img, simg &res_img, Args &... args) {
   auto &&start_end = inp_img->start_end_rows();

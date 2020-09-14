@@ -19,21 +19,13 @@
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-utils.hpp>
 
-inline std::uint8_t clamp(int a) {
-  if (a > 100)
-    return 100;
-  else if (a < 0)
-    return 0;
-  return static_cast<std::uint8_t>(a);
-}
-
 void saturation_worker(simg &inp_img, simg &res_img, simg_int start,
                        simg_int end, float mul) {
 
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
-      res_img->pixel(x, start).s =
-          clamp(static_cast<int>(inp_img->pixel(x, start).s * mul));
+      res_img->pixel(x, start).s = seedimg::utils::clamp<std::uint8_t>(
+          static_cast<int>(inp_img->pixel(x, start).s * mul), 0, 100);
     }
   }
 }

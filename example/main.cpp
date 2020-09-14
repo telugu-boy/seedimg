@@ -48,7 +48,7 @@ auto main() -> int {
       // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_jpeg);
       // cconv::rgb_i(a);
       cconv::hsv_i(a);
-      saturation_i(a, 1.1f);
+      saturation_i(a, 1.5f);
       cconv::rgb_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
