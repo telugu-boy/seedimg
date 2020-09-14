@@ -19,4 +19,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 add_library(seedimg-filters-cconv ${LIB_TYPE} rgb.cpp hsv.cpp ycbcr.cpp)
 
 target_link_libraries(seedimg-filters-cconv PRIVATE seedimg seedimg-utils pthread)
-target_include_directories(seedimg-filters-cconv PRIVATE seedimg)
+target_include_directories(seedimg-filters-cconv PRIVATE seedimg ${CMAKE_CURRENT_SOURCE_DIR})
