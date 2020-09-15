@@ -57,8 +57,10 @@ if __name__ == "__main__":
     print("enum class filter_functions {")
     for func in enum_mapping:
         print(f" {func},")
+    print("#ifdef SEEDIMG_FILTERS_OCL_H")
     for func in enum_mapping_ocl:
         print(f" {func},")
+    print("#endif")
     print("};")
     
     print()
@@ -67,8 +69,10 @@ if __name__ == "__main__":
     print("static const std::unordered_map<std::string, filter_functions> filter_mapping = {")
     for i in range(len(tests)):
         print(f"  {{\"{tests[i]}\", filter_functions::{enum_mapping[i]}}},")
+    print("#ifdef SEEDIMG_FILTERS_OCL_H")
     for i in range(len(tests_ocl)):
         print(f"  {{\"{tests_ocl[i]}\", filter_functions::{enum_mapping_ocl[i]}}},")
+    print("#endif")
     print("};")
     
     print("\nDone.");
