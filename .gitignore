@@ -360,8 +360,9 @@ CMakeFiles/**
 #dolphin directory config file
 .directory
 
-#test png
-!cat.png
+#test image
+!cat.jpg
+!test_image.jpg
 
 #image library sources
 **/extern-src
