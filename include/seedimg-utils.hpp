@@ -22,6 +22,7 @@
 
 #include <array>
 #include <seedimg.hpp>
+#include <thread>
 
 namespace seedimg::utils {
 typedef struct {
@@ -34,5 +35,39 @@ typedef struct {
  * @return a structure of 4 channels as 256-length arrays.
  */
 histogram_result histogram(simg &input);
+
+template <typename T, typename MMT> inline T clamp(int a, MMT min, MMT max) {
+  return a > max ? max : a < min ? min : static_cast<T>(a);
+}
+
+template <typename T, typename... Args>
+void hrz_thread(T &&func, simg &inp_img, simg &res_img, Args &... args) {
+  auto &&start_end = inp_img->start_end_rows();
+  std::vector<std::thread> workers(start_end.size());
+  for (std::size_t i = 0; i < workers.size(); i++) {
+    workers.at(i) =
+        std::thread(std::forward<T>(func), std::ref(inp_img), std::ref(res_img),
+                    start_end.at(i).first, start_end.at(i).second,
+                    std::forward<Args>(args)...);
+  }
+  for (auto &&worker : workers) {
+    worker.join();
+  }
+}
+
+template <typename T, typename... Args>
+void vrt_thread(T &&func, simg &inp_img, simg &res_img, Args &&... args) {
+  auto &&start_end = inp_img->start_end_cols();
+  std::vector<std::thread> workers(start_end.size());
+  for (std::size_t i = 0; i < workers.size(); i++) {
+    workers.at(i) =
+        std::thread(std::forward<T>(func), std::ref(inp_img), std::ref(res_img),
+                    start_end.at(i).first, start_end.at(i).second,
+                    std::forward<Args>(args)...);
+  }
+  for (auto &&worker : workers) {
+    worker.join();
+  }
+}
 } // namespace seedimg::utils
 #endif

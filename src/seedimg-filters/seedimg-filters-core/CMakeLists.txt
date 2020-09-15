@@ -24,7 +24,9 @@ add_library(seedimg-filters-core ${LIB_TYPE}
     brightness.cpp
     blend.cpp
     rotate-mirror.cpp
-    crop.cpp)
+    crop.cpp
+    apply-mat.cpp
 
-target_link_libraries(seedimg-filters-core PRIVATE seedimg pthread)
-target_include_directories(seedimg-filters-core PRIVATE seedimg)
+    saturation.cpp)
+
+target_link_libraries(seedimg-filters-core PRIVATE seedimg seedimg-filters-cconv pthread)

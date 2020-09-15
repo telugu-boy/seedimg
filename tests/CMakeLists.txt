@@ -1,4 +1,4 @@
-﻿#[[ 
+#[[ 
 seedimg - module based image manipulation library written in modern C++ 
 Copyright (C) 2020 telugu-boy 
  
@@ -19,18 +19,17 @@ set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
 
+target_link_libraries(${TESTS_EXE} seedimg-filters-core seedimg-filters-cconv seedimg-autodetect)
+
 if(OPENCL_ENABLED)
-    set(SEEDIMG_OCL seedimg-filters-ocl)
-    set(CMAKE_CXX_FLAGS "-D SEEDIMG_OCL")
+    target_link_libraries(${TESTS_EXE} seedimg-filters-ocl)
 endif()
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(tests seedimg-filters-core ${SEEDIMG_OCL} seedimg-autodetect)
-else()
-    target_link_libraries(tests seedimg-filters-core ${SEEDIMG_OCL} seedimg-autodetect stdc++fs)
+if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_link_libraries(${TESTS_EXE} stdc++fs)
 endif()
 
-target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
+target_include_directories(${TESTS_EXE} PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
 file(COPY test_image.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
 
 include_directories(../)
@@ -94,6 +93,9 @@ set_tests_properties(v_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(h_mirror_test ${TESTS_EXE} h_mirror)
 set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(saturation_test ${TESTS_EXE} saturation)
+set_tests_properties(saturation_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(rotate_hue_ocl_test ${TESTS_EXE} rotate_hue_ocl)
 set_tests_properties(rotate_hue_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")

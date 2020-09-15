@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 #include <cstdio>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <functional>
 #include <iostream>
 #include <unordered_map>
@@ -47,11 +47,10 @@ enum class filter_functions {
   ROTATE_CCW,
   V_MIRROR,
   H_MIRROR,
-  #ifdef SEEDIMG_OCL
+  SATURATION,
   ROTATE_HUE_OCL,
   GRAYSCALE_LUM_OCL,
   GRAYSCALE_AVG_OCL,
-  #endif
 };
 
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
@@ -76,31 +75,26 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"rotate_ccw", filter_functions::ROTATE_CCW},
         {"v_mirror", filter_functions::V_MIRROR},
         {"h_mirror", filter_functions::H_MIRROR},
-        #ifdef SEEDIMG_OCL
+        {"saturation", filter_functions::SATURATION},
         {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
         {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
         {"grayscale_avg_ocl", filter_functions::GRAYSCALE_AVG_OCL},
-        #endif
 };
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    std::cout << "FAIL";
-    exit(1);
-  }
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
-  // std::experimental::filesystem::create_directories(res_dir + "/png/");
-  std::experimental::filesystem::create_directories(res_dir + "/jpg/");
+  // std::filesystem::create_directories(res_dir + "/png/");
+  std::filesystem::create_directories(res_dir + "/jpg/");
   /*
-  std::experimental::filesystem::create_directories(res_dir + "/webp/");
-  std::experimental::filesystem::create_directories(res_dir + "/tiff/");
-  std::experimental::filesystem::create_directories(res_dir + "/farbfeld/");*/
+  std::filesystem::create_directories(res_dir + "/webp/");
+  std::filesystem::create_directories(res_dir + "/tiff/");
+  std::filesystem::create_directories(res_dir + "/farbfeld/");*/
   auto img = seedimg::load("test_image.png");
   filter_functions filter;
   try {
     filter = filter_mapping.at(argv[1]);
-  } catch(std::exception e) {
+  } catch (std::exception e) {
     std::cout << "Test not found (is OpenCL disabled?)";
     exit(0);
   }
@@ -172,19 +166,24 @@ int main(int argc, char *argv[]) {
   case filter_functions::H_MIRROR:
     seedimg::filters::h_mirror_i(img);
     break;
-  #ifdef SEEDIMG_OCL
+  case filter_functions::SATURATION: {
+    seedimg::filters::cconv::hsv_i(img);
+    seedimg::filters::saturation_i(img, 2.5);
+  } break;
+#ifdef SEEDIMG_FILTERS_CCONV_H
   case filter_functions::ROTATE_HUE_OCL:
     seedimg::filters::ocl::rotate_hue_i(img, 180);
     break;
-
   case filter_functions::GRAYSCALE_LUM_OCL:
     seedimg::filters::ocl::grayscale_i(img, true);
     break;
   case filter_functions::GRAYSCALE_AVG_OCL:
     seedimg::filters::ocl::grayscale_i(img, false);
     break;
-  #endif
+#endif
   }
+
+  seedimg::filters::cconv::rgb_i(img);
   char name_buf[256];
   /*
   std::snprintf(name_buf, 256, "tests_output/filters/png/result-%s.png",

@@ -2,7 +2,7 @@ import os
 import sys
 
 if __name__ == "__main__":
-  for (root, dirs, files) in os.walk('.'):
+  for (root, dirs, files) in os.walk('..'):
     for filename in files:
       filepath = os.path.join(root, filename)
       if filepath.endswith(".cpp") or filepath.endswith(".hpp"):
@@ -17,4 +17,4 @@ if __name__ == "__main__":
         with open(filepath, "w") as f:
           f.write(s)
 
-  print("Done")
+  print("Done.")
