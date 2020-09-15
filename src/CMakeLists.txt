@@ -22,8 +22,10 @@ add_subdirectory(seedimg)
 # image modules
 add_subdirectory(seedimg-formats)
 
-# utils
-add_subdirectory(seedimg-utils)
+# extras
+if(EXTRAS_ENABLED)
+    add_subdirectory(seedimg-extras)
+endif()
 
 # filter modules
 add_subdirectory(seedimg-filters)

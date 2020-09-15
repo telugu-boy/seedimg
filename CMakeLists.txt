@@ -61,6 +61,8 @@ endif()
 
 set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")
 
+set(EXTRAS_ENABLED OFF CACHE BOOL "Enable extras (like histogram)")
+
 
 
 option(BUILD_TESTING "" OFF)

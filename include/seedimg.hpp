@@ -173,6 +173,7 @@ namespace filters {};
 
 /** Some miscallenious utilities. */
 namespace utils {};
+namespace extras {};
 } // namespace seedimg
 
 #endif

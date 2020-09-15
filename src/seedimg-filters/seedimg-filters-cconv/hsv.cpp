@@ -25,9 +25,7 @@ inline float fmodulo(float x, float N) {
   return std::fmod((std::fmod(x, N) + N), N);
 }
 
-inline bool feq(float a, float b) {
-  return std::fabs(a - b) < std::numeric_limits<float>::epsilon();
-}
+inline bool feq(float a, float b) { return std::fabs(a - b) < .0000001f; }
 
 void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
                     simg_int end) {

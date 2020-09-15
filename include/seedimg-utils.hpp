@@ -25,16 +25,6 @@
 #include <thread>
 
 namespace seedimg::utils {
-typedef struct {
-  std::array<std::size_t, 256> r, g, b, a;
-} histogram_result;
-
-/**
- * @brief Calculate how many r, g, b, a components total in an image
- * @param input Input image to do the analysis on.
- * @return a structure of 4 channels as 256-length arrays.
- */
-histogram_result histogram(simg &input);
 
 template <typename T, typename MMT> inline T clamp(int a, MMT min, MMT max) {
   return a > max ? max : a < min ? min : static_cast<T>(a);
