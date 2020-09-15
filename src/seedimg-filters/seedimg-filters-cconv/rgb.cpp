@@ -98,12 +98,15 @@ void ycbcr_jpeg2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
       seedimg::pixel pix = inp_img->pixel(x, start);
-      res_img->pixel(x, start).r = static_cast<std::uint8_t>(
-          jpeg_ry1[pix.y] + jpeg_gcb1[pix.cb] + jpeg_bcr1[pix.cr]);
+      // ry* is all 1. we do not need a lookup because it will all be the same
+      // as pix.y
+      // gcb1 and bcr3 are zero in the matrix.
+      res_img->pixel(x, start).r =
+          static_cast<std::uint8_t>(pix.y + 0 + jpeg_bcr1[pix.cr]);
       res_img->pixel(x, start).g = static_cast<std::uint8_t>(
-          jpeg_ry2[pix.y] + jpeg_gcb2[pix.cb] + jpeg_bcr2[pix.cr]);
-      res_img->pixel(x, start).b = static_cast<std::uint8_t>(
-          jpeg_ry3[pix.y] + jpeg_gcb3[pix.cb] + jpeg_bcr3[pix.cr]);
+          pix.y + jpeg_gcb2[pix.cb] + jpeg_bcr2[pix.cr]);
+      res_img->pixel(x, start).b =
+          static_cast<std::uint8_t>(pix.y + jpeg_gcb3[pix.cb] + 0);
     }
   }
 }
@@ -114,15 +117,14 @@ void ycbcr_bt6012rgb_worker(simg &inp_img, simg &res_img, simg_int start,
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
       seedimg::pixel pix = inp_img->pixel(x, start);
-      res_img->pixel(x, start).r =
-          static_cast<std::uint8_t>(bt601_ry1[pix.y] + bt601_gcb1[pix.cb] +
-                                    bt601_bcr1[pix.cr] - 222.921f);
+      // gcb1 and bcr3 are zero in the matrix. as well.
+      res_img->pixel(x, start).r = static_cast<std::uint8_t>(
+          bt601_ry1[pix.y] + 0 + bt601_bcr1[pix.cr] - 222.921f);
       res_img->pixel(x, start).g =
           static_cast<std::uint8_t>(bt601_ry2[pix.y] + bt601_gcb2[pix.cb] +
                                     bt601_bcr2[pix.cr] + 135.576f);
-      res_img->pixel(x, start).b =
-          static_cast<std::uint8_t>(bt601_ry3[pix.y] + bt601_gcb3[pix.cb] +
-                                    bt601_bcr3[pix.cr] - 276.836f);
+      res_img->pixel(x, start).b = static_cast<std::uint8_t>(
+          bt601_ry3[pix.y] + bt601_gcb3[pix.cb] + 0 - 276.836f);
     }
   }
 }

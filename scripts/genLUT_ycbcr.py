@@ -12,7 +12,9 @@ def write_rh(l, typ, names, filename):
 #it will have the nine lookup tables needed for this operation.
 #which are: the nth row of the jpeg matrix * y, cb, cr of the pixel.
 def gen_jpeg():
-    jpeg_mat = [1.0, 0.0, 1.402, 1.0, -0.34414, -0.71414, 1.0, 1.772, 0.0]
+    jpeg_mat = [1.0, 0.0, 1.402, 
+                1.0, -0.34414, -0.71414, 
+                1.0, 1.772, 0.0]
     results_jpeg = [[] for _ in range(len(jpeg_mat))]
     for i in range(0, len(jpeg_mat), 3):
         for j in range(256):
