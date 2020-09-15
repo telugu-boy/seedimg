@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
     seedimg::filters::cconv::hsv_i(img);
     seedimg::filters::saturation_i(img, 2.5);
   } break;
-#ifdef SEEDIMG_FILTERS_CCONV_H
+#ifdef SEEDIMG_FILTERS_OCL_H
   case filter_functions::ROTATE_HUE_OCL:
     seedimg::filters::ocl::rotate_hue_i(img, 180);
     break;
