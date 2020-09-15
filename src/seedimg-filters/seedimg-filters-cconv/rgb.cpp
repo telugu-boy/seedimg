@@ -25,9 +25,7 @@
 // and this is for bt601
 #include "from_ycbcr_bt601_lut.rh"
 
-inline bool feq(float a, float b) {
-  return std::fabs(a - b) < std::numeric_limits<float>::epsilon();
-}
+inline bool feq(float a, float b) { return std::fabs(a - b) < .0000001f; }
 
 void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
                     simg_int end) {
@@ -48,7 +46,7 @@ void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
 
       float m = static_cast<float>(pix.v) - C;
 
-      float componentsp[4] = {m, m, m};
+      float componentsp[4] = {m, m, m, 0};
       switch (static_cast<int>(pix.h / 60)) {
       case 0: {
         componentsp[0] += C;
@@ -136,13 +134,14 @@ void rgb(simg &inp_img, simg &res_img) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     seedimg::utils::hrz_thread(hsv2rgb_worker, inp_img, res_img);
+    // hsv2rgb_worker(inp_img, res_img, 0, inp_img->height());
   } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg) {
     seedimg::utils::hrz_thread(ycbcr_jpeg2rgb_worker, inp_img, res_img);
   } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
     seedimg::utils::hrz_thread(ycbcr_bt6012rgb_worker, inp_img, res_img);
   }
-  std::static_pointer_cast<seedimg::uimg>(res_img)->set_colourspace(
-      seedimg::colourspaces::rgb);
+  static_cast<seedimg::uimg *>(res_img.get())
+      ->set_colourspace(seedimg::colourspaces::rgb);
 }
 void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }
 } // namespace cconv

@@ -62,7 +62,7 @@ void ycbcr(simg &inp_img, simg &res_img, seedimg::colourspaces type) {
     rgb(inp_img, res_img);
     ycbcr(res_img, res_img, type);
   }
-  std::static_pointer_cast<seedimg::uimg>(res_img)->set_colourspace(type);
+  static_cast<seedimg::uimg *>(res_img.get())->set_colourspace(type);
 }
 void ycbcr_i(simg &inp_img, seedimg::colourspaces type) {
   ycbcr(inp_img, inp_img, type);

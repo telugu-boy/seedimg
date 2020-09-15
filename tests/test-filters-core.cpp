@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
   std::filesystem::create_directories(res_dir + "/webp/");
   std::filesystem::create_directories(res_dir + "/tiff/");
   std::filesystem::create_directories(res_dir + "/farbfeld/");*/
-  auto img = seedimg::load("test_image.png");
+  auto img = seedimg::load("test_image.jpg");
   filter_functions filter;
   try {
     filter = filter_mapping.at(argv[1]);

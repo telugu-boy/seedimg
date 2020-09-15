@@ -51,13 +51,13 @@ seedimg::point get_rect_dimensions(seedimg::point p1,
 }
 
 // create shared ptrs from certain suitable params
-std::shared_ptr<seedimg::img> make(simg_int width, simg_int height) {
-  return std::make_shared<seedimg::img>(width, height);
+std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
+  return std::make_unique<seedimg::img>(width, height);
 }
 
-std::shared_ptr<seedimg::img>
-make(const std::shared_ptr<seedimg::img> &inp_img) {
-  return std::make_shared<seedimg::img>(*inp_img);
+std::unique_ptr<seedimg::img>
+make(const std::unique_ptr<seedimg::img> &inp_img) {
+  return std::make_unique<seedimg::img>(*inp_img);
 }
 
 } // namespace seedimg

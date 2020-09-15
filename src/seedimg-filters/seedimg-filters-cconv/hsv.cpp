@@ -17,7 +17,6 @@
 ************************************************************************/
 
 #include <cmath>
-#include <numeric>
 #include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-utils.hpp>
 
@@ -73,13 +72,14 @@ void hsv(simg &inp_img, simg &res_img) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
     seedimg::utils::hrz_thread(rgb2hsv_worker, inp_img, res_img);
+    // rgb2hsv_worker(inp_img, res_img, 0, inp_img->height());
   } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg ||
              inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
     rgb(inp_img, res_img);
     hsv(res_img, res_img);
   }
-  std::static_pointer_cast<seedimg::uimg>(res_img)->set_colourspace(
-      seedimg::colourspaces::hsv);
+  static_cast<seedimg::uimg *>(res_img.get())
+      ->set_colourspace(seedimg::colourspaces::hsv);
 }
 void hsv_i(simg &inp_img) { hsv(inp_img, inp_img); }
 } // namespace cconv

@@ -29,8 +29,8 @@ auto main() -> int {
             << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("cat.png");
-    auto b = seedimg::make(a->width(), a->height());
+    auto a = seedimg::load("cat.jpg");
+    // auto b = seedimg::make(a->width(), a->height());
     // auto res_img = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
@@ -45,11 +45,10 @@ auto main() -> int {
       // h_mirror_i(a);
       // ocl::rotate_hue_i(a, -90);
       // ocl::grayscale_i(a, true);
-      // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_jpeg);
+      // cconv::ycbcr_i(a);
+      // cconv::hsv_i(a);
+      // saturation_i(a, 3.5f);
       // cconv::rgb_i(a);
-      cconv::hsv_i(a);
-      saturation_i(a, 2.5f);
-      cconv::rgb_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

@@ -106,9 +106,8 @@ simg from(const std::string &filename) {
   interlace_passes = png_set_interlace_handling(png_ptr);
   color_type = png_get_color_type(png_ptr, info_ptr);
   bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-  res_img =
-      std::make_shared<seedimg::img>(png_get_image_width(png_ptr, info_ptr),
-                                     png_get_image_height(png_ptr, info_ptr));
+  res_img = seedimg::make(png_get_image_width(png_ptr, info_ptr),
+                          png_get_image_height(png_ptr, info_ptr));
 
   if (bit_depth == 16)
     png_set_strip_16(png_ptr);

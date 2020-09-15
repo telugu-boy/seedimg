@@ -30,7 +30,7 @@ if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 endif()
 
 target_include_directories(${TESTS_EXE} PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
-file(COPY test_image.png DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
+file(COPY test_image.jpg DESTINATION "${CMAKE_BINARY_DIR}/${TESTS_EXE}/")
 
 include_directories(../)
 

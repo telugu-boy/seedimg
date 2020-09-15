@@ -89,7 +89,7 @@ simg from(const std::string &filename) {
 
   delete[] data;
 
-  return std::make_shared<seedimg::img>(
+  return std::make_unique<seedimg::img>(
       static_cast<simg_int>(width), static_cast<simg_int>(height),
       reinterpret_cast<seedimg::pixel *>(decoded));
 }

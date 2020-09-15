@@ -76,8 +76,7 @@ simg from(const std::string &filename) {
     uint8_t height[4];
   } rawinfo;
 
-  auto result = std::make_shared<seedimg::img>(fu32be(rawinfo.width),
-                                               fu32be(rawinfo.height));
+  auto result = seedimg::make(fu32be(rawinfo.width), fu32be(rawinfo.height));
 
   uint8_t rawpixel[8];
   for (simg_int y = 0; y < result->height(); ++y) {

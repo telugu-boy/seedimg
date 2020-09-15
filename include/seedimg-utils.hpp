@@ -32,7 +32,7 @@ template <typename T, typename MMT> inline T clamp(int a, MMT min, MMT max) {
 
 template <typename T, typename... Args>
 void hrz_thread(T &&func, simg &inp_img, simg &res_img, Args &... args) {
-  auto &&start_end = inp_img->start_end_rows();
+  auto start_end = inp_img->start_end_rows();
   std::vector<std::thread> workers(start_end.size());
   for (std::size_t i = 0; i < workers.size(); i++) {
     workers.at(i) =

@@ -91,8 +91,7 @@ simg seedimg::modules::jpeg::from(const std::string &filename) {
   jpeg_read_header(&jdec, TRUE);
   jpeg_start_decompress(&jdec);
 
-  res_img =
-      std::make_shared<seedimg::img>(jdec.output_width, jdec.output_height);
+  res_img = seedimg::make(jdec.output_width, jdec.output_height);
 
   // libjpeg doesn't allow colorspace conversion while decoding for some weird
   // reason, it's set static to produce an RGB image at the end, thus conversion

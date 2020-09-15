@@ -21,7 +21,6 @@
 
 #include <cinttypes>
 #include <experimental/propagate_const>
-#include <initializer_list>
 #include <memory>
 #include <vector>
 
@@ -129,13 +128,13 @@ public:
 
 } // namespace seedimg
 
-typedef std::shared_ptr<seedimg::img> simg;
-typedef std::shared_ptr<seedimg::uimg> suimg;
+typedef std::unique_ptr<seedimg::img> simg;
+typedef std::unique_ptr<seedimg::uimg> suimg;
 
 namespace seedimg {
-std::shared_ptr<seedimg::img> make(simg_int width, simg_int height);
-std::shared_ptr<seedimg::img>
-make(const std::shared_ptr<seedimg::img> &inp_img);
+std::unique_ptr<seedimg::img> make(simg_int width, simg_int height);
+std::unique_ptr<seedimg::img>
+make(const std::unique_ptr<seedimg::img> &inp_img);
 
 // Animations or for files storing more than one image GIF, TIFF, etc. APNG
 // support might be added as a separate module.
@@ -145,17 +144,17 @@ public:
 
   anim();
   anim(std::size_t size, std::size_t framerate = 30);
-  anim(simg images...);
-  anim(std::initializer_list<simg> images, std::size_t framerate = 0);
+  anim(simg &&imgs...);
   anim(seedimg::anim const &anim_);
   anim(seedimg::anim &&other);
   anim &operator=(anim other);
   anim &operator=(anim &&other);
 
-  simg &operator[](std::size_t i) const;
+  simg &operator[](std::size_t i);
+  const simg &operator[](std::size_t i) const;
 
-  void add(simg img);
-  bool insert(simg img, std::size_t index);
+  void add(simg &&img);
+  bool insert(simg &&img, std::size_t index);
   bool remove(std::size_t index);
   bool trim(std::size_t start, std::size_t end);
 
@@ -165,7 +164,7 @@ public:
 
 protected:
   class anim_impl;
-  std::unique_ptr<anim_impl> impl;
+  pimpl<anim_impl> impl;
 };
 
 namespace modules {};

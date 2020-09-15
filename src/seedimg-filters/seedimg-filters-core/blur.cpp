@@ -201,7 +201,7 @@ void h_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
     }
   }
   if (it % 2 == 0 || it == 1)
-    inp_img = res_img;
+    inp_img.reset(res_img.release());
 }
 void v_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
   if (blur_level == 0)
@@ -217,15 +217,14 @@ void v_blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
     }
   }
   if (it % 2 == 0 || it == 1)
-    inp_img = res_img;
+    inp_img.reset(res_img.release());
 }
 void blur_i(simg &inp_img, unsigned int blur_level, std::uint8_t it) {
   if (blur_level == 0)
     return;
   blur_level =
       clamped_blur_level(blur_level, inp_img->width(), inp_img->height());
-  auto res_img =
-      std::make_shared<seedimg::img>(inp_img->width(), inp_img->height());
+  auto res_img = seedimg::make(inp_img->width(), inp_img->height());
   for (std::uint8_t i = 0; i < it; ++i) {
     box_blur_single(inp_img, res_img, blur_level);
   }

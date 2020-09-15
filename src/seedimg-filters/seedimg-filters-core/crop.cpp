@@ -20,6 +20,7 @@
 #include <cstring>
 #include <exception>
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-utils.hpp>
 #include <seedimg.hpp>
 
 namespace seedimg::filters {
@@ -45,7 +46,7 @@ bool crop(simg &inp_img, simg &res_img, seedimg::point p1, seedimg::point p2) {
 }
 
 bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
-  suimg unmanaged = std::static_pointer_cast<seedimg::uimg>(inp_img);
+  seedimg::uimg *unmanaged = static_cast<seedimg::uimg *>(inp_img.get());
   if (p1 == seedimg::point{0, 0} &&
       p2 == seedimg::point{unmanaged->width(), unmanaged->height()}) {
     return true;

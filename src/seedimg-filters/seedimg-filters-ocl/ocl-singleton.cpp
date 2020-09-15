@@ -57,8 +57,8 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
       ,
   };
 
-  // didn't use emplace back because it's 2 values and slower as they're not
-  // large at all. std::pair<const char*, ::size_t> is the definition of
+  // didn't use emplace back because it's slower as they're not
+  // large. std::pair<const char*, ::size_t> is the definition of
   // cl::Program::Sources.
   for (auto &kernel : kernels)
     sources.push_back({kernel, std::strlen(kernel)});

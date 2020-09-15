@@ -73,8 +73,9 @@ bool to(const std::string &filename, const anim &inp_anim) {
       for (simg_int y = 0; y < inp_anim[i]->height(); ++y) {
         std::copy(inp_anim[i]->row(y), inp_anim[i]->row(y + 1),
                   reinterpret_cast<seedimg::pixel *>(buf));
-        if (TIFFWriteScanline(img, buf, static_cast<uint32>(y), 0) < 0)
-          break;
+        if (TIFFWriteScanline(img, buf, static_cast<uint32>(y), 0) < 0) {
+          return false;
+        }
       }
 
       _TIFFfree(buf);
@@ -82,6 +83,33 @@ bool to(const std::string &filename, const anim &inp_anim) {
     }
   }
   TIFFClose(img);
+  return true;
+}
+
+bool to(const std::string &filename, const simg &inp_img) {
+  uint16 out[1] = {EXTRASAMPLE_ASSOCALPHA};
+  TIFF *img = TIFFOpen(filename.c_str(), "w");
+  TIFFSetField(img, TIFFTAG_SUBFILETYPE, FILETYPE_PAGE);
+  TIFFSetField(img, TIFFTAG_IMAGEWIDTH, inp_img->width());
+  TIFFSetField(img, TIFFTAG_IMAGELENGTH, inp_img->height());
+  TIFFSetField(img, TIFFTAG_BITSPERSAMPLE, 8);
+  TIFFSetField(img, TIFFTAG_SAMPLESPERPIXEL, 4);
+  TIFFSetField(img, TIFFTAG_EXTRASAMPLES, 1, &out);
+
+  TIFFSetField(img, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+  TIFFSetField(img, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+
+  unsigned char *buf = static_cast<unsigned char *>(_TIFFmalloc(
+      static_cast<tmsize_t>(inp_img->width() * sizeof(seedimg::pixel))));
+
+  for (simg_int y = 0; y < inp_img->height(); ++y) {
+    std::copy(inp_img->row(y), inp_img->row(y + 1),
+              reinterpret_cast<seedimg::pixel *>(buf));
+    if (TIFFWriteScanline(img, buf, static_cast<uint32>(y), 0) < 0) {
+      return false;
+    }
+  }
+  _TIFFfree(buf);
   return true;
 }
 
@@ -107,12 +135,11 @@ anim from(const std::string &filename, std::size_t max_frames) {
         std::copy(row, row + w, decompressed->row(h - y - 1));
       }
       delete[] row;
-      res.add(decompressed);
+      res.add(std::move(decompressed));
     } while (TIFFReadDirectory(img) && ++cnt < max_frames);
   }
   TIFFClose(img);
   return res;
 }
-
 } // namespace tiff
 } // namespace seedimg::modules
