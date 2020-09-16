@@ -21,6 +21,13 @@
 #define SEEDIMG_OCL_SINGLETON_H
 
 #include <CL/cl.hpp>
+#include <seedimg.hpp>
+
+void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
+                  cl::Buffer &inp_img_buf);
+
+void read_img_1d(cl::CommandQueue &queue, simg &res_img,
+                 cl::Buffer &res_img_buf);
 
 class ocl_singleton {
 public:

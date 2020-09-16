@@ -3,6 +3,7 @@ add_library(seedimg-filters-ocl ${LIB_TYPE}
     init-ocl-singleton.cpp
     rotate-hue-ocl.cpp
     grayscale-ocl.cpp
+    hsv-ocl.cpp
 )
 
 find_package(OpenCL REQUIRED)

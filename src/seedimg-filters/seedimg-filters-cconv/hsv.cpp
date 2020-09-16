@@ -42,7 +42,7 @@ void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
       float cmin = std::min(rp, std::min(gp, bp));
       float delta = cmax - cmin;
 
-      std::uint8_t hue = static_cast<std::uint8_t>(delta);
+      std::uint8_t hue;
       std::uint8_t sat = 0;
       std::uint8_t val = static_cast<std::uint8_t>(cmax * 100.0f);
 
@@ -50,7 +50,7 @@ void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
         hue = static_cast<std::uint8_t>(30 * fmodulo((gp - bp) / delta, 6));
       } else if (feq(gp, cmax)) {
         hue = static_cast<std::uint8_t>(60 * ((bp - rp) / delta + 2));
-      } else if (feq(bp, cmax)) {
+      } else {
         hue = static_cast<std::uint8_t>(60 * ((rp - gp) / delta + 4));
       }
 

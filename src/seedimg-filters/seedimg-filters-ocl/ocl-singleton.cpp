@@ -19,10 +19,29 @@
 
 #include "ocl-singleton.hpp"
 
-#include <CL/cl.hpp>
 #ifdef SEEDIMG_DEBUG_
 #include <iostream>
 #endif
+
+void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
+                  cl::Buffer &inp_img_buf) {
+  cl_uchar4 *inp = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
+      inp_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
+      sizeof(seedimg::pixel) * inp_img->width() * inp_img->height()));
+  std::memcpy(inp, inp_img->data(),
+              sizeof(seedimg::pixel) * inp_img->width() * inp_img->height());
+  queue.enqueueUnmapMemObject(inp_img_buf, inp);
+}
+
+void read_img_1d(cl::CommandQueue &queue, simg &res_img,
+                 cl::Buffer &res_img_buf) {
+  cl_uchar4 *res = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
+      res_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
+      sizeof(seedimg::pixel) * res_img->width() * res_img->height()));
+  std::memcpy(res_img->data(), res,
+              sizeof(seedimg::pixel) * res_img->width() * res_img->height());
+  queue.enqueueUnmapMemObject(res_img_buf, res);
+}
 
 ocl_singleton &ocl_singleton::instance(std::size_t plat, std::size_t dev) {
   static ocl_singleton singleton(plat, dev);
@@ -49,11 +68,13 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
   context = {device};
 
   static constexpr const char *const kernels[] = {
-#include "cl_kernels/rotate_hue_kernel.clh"
+#include "cl_kernels/filters/rotate_hue_kernel.clh"
       ,
-#include "cl_kernels/grayscale_lum_kernel.clh"
+#include "cl_kernels/filters/grayscale_lum_kernel.clh"
       ,
-#include "cl_kernels/grayscale_avg_kernel.clh"
+#include "cl_kernels/filters/grayscale_avg_kernel.clh"
+      ,
+#include "cl_kernels/cconv/rgb2hsv_kernel.clh"
       ,
   };
 

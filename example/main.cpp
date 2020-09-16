@@ -48,7 +48,8 @@ auto main() -> int {
       // cconv::ycbcr_i(a);
       // cconv::hsv_i(a);
       // saturation_i(a, 3.5f);
-      // cconv::rgb_i(a);
+      ocl::cconv::hsv_i(a);
+      cconv::rgb_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

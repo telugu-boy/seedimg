@@ -32,6 +32,19 @@ void rotate_hue_i(simg &inp_img, int angle);
 void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
 void grayscale_i(simg &inp_img, bool luminosity = true);
 
+namespace cconv {
+void rgb(simg &inp_img, simg &res_img);
+void rgb_i(simg &inp_img);
+
+void hsv(simg &inp_img, simg &res_img);
+void hsv_i(simg &inp_img);
+
+void ycbcr(simg &inp_img, simg &res_img,
+           seedimg::colourspaces type = seedimg::colourspaces::ycbcr_jpeg);
+void ycbcr_i(simg &inp_img,
+             seedimg::colourspaces type = seedimg::colourspaces::ycbcr_jpeg);
+} // namespace cconv
+
 } // namespace ocl
 } // namespace seedimg::filters
 
