@@ -21,6 +21,7 @@
 #include <thread>
 
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-utils.hpp>
 
 void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
                                      simg_int start, simg_int end,
@@ -149,28 +150,14 @@ void vertical_blur_i_single_worker(simg &inp_img, simg &res_img, simg_int start,
 
 void horizontal_blur_single_i(simg &inp_img, simg &res_img,
                               unsigned int blur_level) {
-  auto start_end = inp_img->start_end_rows();
-  std::vector<std::thread> workers(start_end.size());
-  for (std::size_t i = 0; i < workers.size(); i++) {
-    workers.at(i) = std::thread(
-        horizontal_blur_i_single_worker, std::ref(inp_img), std::ref(res_img),
-        start_end.at(i).first, start_end.at(i).second, blur_level);
-  }
-  for (std::size_t i = 0; i < workers.size(); ++i)
-    workers.at(i).join();
+  seedimg::utils::hrz_thread(horizontal_blur_i_single_worker, inp_img, res_img,
+                             blur_level);
 }
 
 void vertical_blur_single_i(simg &inp_img, simg &res_img,
                             unsigned int blur_level) {
-  auto start_end = inp_img->start_end_cols();
-  std::vector<std::thread> workers(start_end.size());
-  for (std::size_t i = 0; i < workers.size(); i++) {
-    workers.at(i) = std::thread(
-        vertical_blur_i_single_worker, std::ref(inp_img), std::ref(res_img),
-        start_end.at(i).first, start_end.at(i).second, blur_level);
-  }
-  for (std::size_t i = 0; i < workers.size(); ++i)
-    workers.at(i).join();
+  seedimg::utils::vrt_thread(vertical_blur_i_single_worker, inp_img, res_img,
+                             blur_level);
 }
 
 void box_blur_single(simg &inp_img, simg &res_img, unsigned int blur_level) {

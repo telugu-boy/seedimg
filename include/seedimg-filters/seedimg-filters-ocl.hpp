@@ -38,11 +38,6 @@ void rgb_i(simg &inp_img);
 
 void hsv(simg &inp_img, simg &res_img);
 void hsv_i(simg &inp_img);
-
-void ycbcr(simg &inp_img, simg &res_img,
-           seedimg::colourspaces type = seedimg::colourspaces::ycbcr_jpeg);
-void ycbcr_i(simg &inp_img,
-             seedimg::colourspaces type = seedimg::colourspaces::ycbcr_jpeg);
 } // namespace cconv
 
 } // namespace ocl
