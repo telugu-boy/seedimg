@@ -27,9 +27,13 @@
 
 namespace seedimg::filters {
 
-void apply_mat(simg &inp_img, simg &res_img, simg_int start, simg_int end,
-               const std::array<float, 9> &mat,
+// filters that exclusively use this functionality will go in apply-mat.cpp to
+// save unnecessary files.
+// Current list: sepia
+void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat,
                const std::array<float, 3> &vec = {0, 0, 0});
+void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat,
+                 const std::array<float, 3> &vec = {0, 0, 0});
 
 void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
 void grayscale_i(simg &inp_img, bool luminosity = true);
@@ -76,6 +80,9 @@ void blend(std::pair<simg &, const std::uint8_t> input,
            std::pair<simg &, const std::uint8_t> other, simg &output);
 void blend_i(std::pair<simg &, const std::uint8_t> input,
              std::pair<simg &, const std::uint8_t> other);
+
+void sepia(simg &inp_img, simg &res_img);
+void sepia_i(simg &inp_img);
 
 // HSV colourspace filters
 void saturation(simg &inp_img, simg &res_img, float mul);

@@ -48,12 +48,7 @@ auto main() -> int {
       // cconv::hsv_i(a);
       // saturation_i(a, 3.5f);
       // cconv::rgb_i(a);
-      for (int i = 0; i < 50; i++) {
-        ocl::cconv::hsv_i(a);
-        ocl::cconv::rgb_i(a);
-        printf("Done %d\n", i);
-      }
-      blur_i(a, 10);
+      sepia_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

@@ -26,7 +26,8 @@
 
 namespace seedimg::utils {
 
-template <typename T, typename MMT> inline T clamp(int a, MMT min, MMT max) {
+template <typename T, typename I, typename MinT, typename MaxT>
+inline T clamp(I a, MinT min, MaxT max) {
   return a > max ? max : a < min ? min : static_cast<T>(a);
 }
 
