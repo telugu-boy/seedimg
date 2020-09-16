@@ -14,6 +14,7 @@ if __name__ == "__main__":
         "filters/grayscale_avg",
         
         "cconv/rgb2hsv",
+        "cconv/hsv2rgb",
     ]
     try:
         os.mkdir("../src/seedimg-filters/seedimg-filters-ocl/cl_kernels/cconv")

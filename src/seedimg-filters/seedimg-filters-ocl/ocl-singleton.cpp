@@ -19,6 +19,7 @@
 
 #include "ocl-singleton.hpp"
 
+#define SEEDIMG_DEBUG_
 #ifdef SEEDIMG_DEBUG_
 #include <iostream>
 #endif
@@ -75,6 +76,8 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
 #include "cl_kernels/filters/grayscale_avg_kernel.clh"
       ,
 #include "cl_kernels/cconv/rgb2hsv_kernel.clh"
+      ,
+#include "cl_kernels/cconv/hsv2rgb_kernel.clh"
       ,
   };
 

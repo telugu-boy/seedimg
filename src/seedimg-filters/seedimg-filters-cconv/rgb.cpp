@@ -25,8 +25,6 @@
 // and this is for bt601
 #include "from_ycbcr_bt601_lut.rh"
 
-inline bool feq(float a, float b) { return std::fabs(a - b) < .0000001f; }
-
 void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
                     simg_int end) {
   for (; start < end; start++) {
@@ -39,12 +37,10 @@ void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
       } pix{static_cast<float>(pix_src.h) * 2,
             static_cast<float>(pix_src.s) / 100,
             static_cast<float>(pix_src.v) / 100};
-      float C = static_cast<float>(pix.v) * static_cast<float>(pix.s);
-      float X =
-          C * (1 - std::fabs(
-                       std::fmod(static_cast<float>(pix.h) / 60.0f, 2.0f) - 1));
+      float C = pix.v * pix.s;
+      float X = C * (1 - std::fabs(std::fmod(pix.h / 60.0f, 2.0f) - 1));
 
-      float m = static_cast<float>(pix.v) - C;
+      float m = pix.v - C;
 
       float componentsp[4] = {m, m, m, 0};
       switch (static_cast<int>(pix.h / 60)) {

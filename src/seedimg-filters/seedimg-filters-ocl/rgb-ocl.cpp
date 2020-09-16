@@ -22,11 +22,11 @@
 
 namespace seedimg::filters::ocl {
 namespace cconv {
-void hsv(simg &inp_img, simg &res_img) {
-  if (inp_img->colourspace() == seedimg::colourspaces::hsv)
+void rgb(simg &inp_img, simg &res_img) {
+  if (inp_img->colourspace() == seedimg::colourspaces::rgb)
     return;
-  else if (inp_img->colourspace() != seedimg::colourspaces::rgb)
-    throw std::invalid_argument("Colourspace is not RGB");
+  else if (inp_img->colourspace() != seedimg::colourspaces::hsv)
+    throw std::invalid_argument("Colourspace is not HSV");
 
   auto context = ocl_singleton::instance().context;
   auto device = ocl_singleton::instance().device;
@@ -46,23 +46,23 @@ void hsv(simg &inp_img, simg &res_img) {
 
   write_img_1d(queue, inp_img, inp_img_buf);
 
-  cl::Kernel rgb2hsv;
-  rgb2hsv = {program, "rgb2hsv"};
+  cl::Kernel hsv2rgb;
+  hsv2rgb = {program, "hsv2rgb"};
 
-  rgb2hsv.setArg(0, inp_img_buf);
-  rgb2hsv.setArg(1, res_img_buf);
-  rgb2hsv.setArg(2, inp_img->width() * inp_img->height());
+  hsv2rgb.setArg(0, inp_img_buf);
+  hsv2rgb.setArg(1, res_img_buf);
+  hsv2rgb.setArg(2, inp_img->width() * inp_img->height());
   queue.enqueueNDRangeKernel(
-      rgb2hsv, cl::NullRange,
+      hsv2rgb, cl::NullRange,
       cl::NDRange(round_up(inp_img->width() * inp_img->height(), 128)),
       cl::NDRange(128));
   queue.finish();
 
   read_img_1d(queue, res_img, res_img_buf);
   static_cast<seedimg::uimg *>(res_img.get())
-      ->set_colourspace(seedimg::colourspaces::hsv);
+      ->set_colourspace(seedimg::colourspaces::rgb);
 }
 
-void hsv_i(simg &inp_img) { hsv(inp_img, inp_img); }
+void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }
 } // namespace cconv
 } // namespace seedimg::filters::ocl

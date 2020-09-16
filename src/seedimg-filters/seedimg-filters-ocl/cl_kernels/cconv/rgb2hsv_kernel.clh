@@ -8,9 +8,9 @@ __kernel void rgb2hsv(__global uchar4* inp_pix, __global uchar4* res_pix, ulong 
           return;
       
       uchar rmax = max(inp_pix[num].x, max(inp_pix[num].y, inp_pix[num].z));
-      float rp = inp_pix[num].x / 255.0f;
-      float gp = inp_pix[num].y / 255.0f;
-      float bp = inp_pix[num].z / 255.0f;
+      float rp = (float)inp_pix[num].x / 255.0f;
+      float gp = (float)inp_pix[num].y / 255.0f;
+      float bp = (float)inp_pix[num].z / 255.0f;
       float cmax = fmax(rp, fmax(gp, bp));
       float cmin = fmin(rp, fmin(gp, bp));
       float delta = cmax - cmin;
