@@ -26,7 +26,7 @@ ExternalProject_Add(zlib-1.2.11
     PREFIX ${CMAKE_BINARY_DIR}/extern/zlib
     BINARY_DIR ${CMAKE_BINARY_DIR}/extern/zlib
     INSTALL_COMMAND ""
-    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF"
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 )
 
 ExternalProject_Get_Property(zlib-1.2.11 install_dir)
@@ -57,7 +57,7 @@ if(NOT PNG_FOUND)
         PREFIX ${CMAKE_BINARY_DIR}/extern/libpng
         BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libpng
         INSTALL_COMMAND ""
-        CMAKE_ARGS LIBPNG_CMAKE_ARGS
+        CMAKE_ARGS ${LIBPNG_CMAKE_ARGS} -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     )
 
     ExternalProject_Get_Property(libpng-1.6.37 install_dir)

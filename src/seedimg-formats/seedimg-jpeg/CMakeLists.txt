@@ -27,7 +27,7 @@ if(NOT JPEG_FOUND)
         PREFIX ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
         BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
         INSTALL_COMMAND ""
-        CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DBUILD_SHARED=OFF
+        CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DBUILD_SHARED=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     )
 
     ExternalProject_Get_Property(libjpeg-turbo-2.0.5 install_dir)
