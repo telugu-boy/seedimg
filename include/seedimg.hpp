@@ -20,7 +20,6 @@
 #define SEEDIMG_CORE_H
 
 #include <cinttypes>
-#include <experimental/propagate_const>
 #include <memory>
 #include <vector>
 
@@ -28,8 +27,7 @@ typedef std::size_t simg_int;
 
 namespace seedimg {
 
-template <class T>
-using pimpl = std::experimental::propagate_const<std::unique_ptr<T>>;
+template <class T> using pimpl = std::unique_ptr<T>;
 
 typedef struct point {
   simg_int x;
