@@ -48,9 +48,13 @@ enum class filter_functions {
   V_MIRROR,
   H_MIRROR,
   SATURATION,
+  SEPIA,
+#ifdef SEEDIMG_FILTERS_OCL_H
   ROTATE_HUE_OCL,
   GRAYSCALE_LUM_OCL,
   GRAYSCALE_AVG_OCL,
+  SEPIA_OCL,
+#endif
 };
 
 static const std::unordered_map<std::string, filter_functions> filter_mapping =
@@ -76,9 +80,13 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"v_mirror", filter_functions::V_MIRROR},
         {"h_mirror", filter_functions::H_MIRROR},
         {"saturation", filter_functions::SATURATION},
+        {"sepia", filter_functions::SEPIA},
+#ifdef SEEDIMG_FILTERS_OCL_H
         {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
         {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
         {"grayscale_avg_ocl", filter_functions::GRAYSCALE_AVG_OCL},
+        {"sepia_ocl", filter_functions::SEPIA_OCL},
+#endif
 };
 
 int main(int argc, char *argv[]) {
@@ -170,6 +178,9 @@ int main(int argc, char *argv[]) {
     seedimg::filters::cconv::hsv_i(img);
     seedimg::filters::saturation_i(img, 2.5);
   } break;
+  case filter_functions::SEPIA:
+    seedimg::filters::sepia_i(img);
+    break;
 #ifdef SEEDIMG_FILTERS_OCL_H
   case filter_functions::ROTATE_HUE_OCL:
     seedimg::filters::ocl::rotate_hue_i(img, 180);
@@ -179,6 +190,9 @@ int main(int argc, char *argv[]) {
     break;
   case filter_functions::GRAYSCALE_AVG_OCL:
     seedimg::filters::ocl::grayscale_i(img, false);
+    break;
+  case filter_functions::SEPIA_OCL:
+    seedimg::filters::ocl::sepia_i(img);
     break;
 #endif
   }

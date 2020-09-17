@@ -1,7 +1,7 @@
 add_library(seedimg-filters-ocl ${LIB_TYPE}
     ocl-singleton.cpp
     init-ocl-singleton.cpp
-    rotate-hue-ocl.cpp
+    apply-mat-ocl.cpp
     grayscale-ocl.cpp
     hsv-ocl.cpp
     rgb-ocl.cpp

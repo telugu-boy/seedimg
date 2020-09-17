@@ -29,7 +29,7 @@ namespace seedimg::filters {
 
 // filters that exclusively use this functionality will go in apply-mat.cpp to
 // save unnecessary files.
-// Current list: sepia
+// Current list: sepia, rotate_hue
 void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat,
                const std::array<float, 3> &vec = {0, 0, 0});
 void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat,
@@ -42,9 +42,6 @@ void invert(simg &inp_img, simg &res_img);
 void invert_a(simg &inp_img, simg &res_img, bool invert_alpha_only = false);
 void invert_i(simg &inp_img);
 void invert_a_i(simg &inp_img, bool invert_alpha_only = false);
-
-void rotate_hue(simg &inp_img, simg &res_img, int angle);
-void rotate_hue_i(simg &inp_img, int angle);
 
 void rotate_cw(simg &inp_img, simg &res_img);
 void rotate_180(simg &inp_img, simg &res_img);
@@ -81,8 +78,12 @@ void blend(std::pair<simg &, const std::uint8_t> input,
 void blend_i(std::pair<simg &, const std::uint8_t> input,
              std::pair<simg &, const std::uint8_t> other);
 
+// apply_mat filters
 void sepia(simg &inp_img, simg &res_img);
 void sepia_i(simg &inp_img);
+
+void rotate_hue(simg &inp_img, simg &res_img, int angle);
+void rotate_hue_i(simg &inp_img, int angle);
 
 // HSV colourspace filters
 void saturation(simg &inp_img, simg &res_img, float mul);

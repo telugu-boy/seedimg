@@ -39,7 +39,7 @@ auto main() -> int {
       // h_blur_i(a, 10);
       // v_blur_i(a, 100, 1);
       // convolution(a, {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}});
-      // rotate_hue_i(a, 180);
+      // rotate_hue_i(a, 90);
       // v_mirror_i(a);
       // h_mirror_i(a);
       // ocl::rotate_hue_i(a, -90);
@@ -48,7 +48,7 @@ auto main() -> int {
       // cconv::hsv_i(a);
       // saturation_i(a, 3.5f);
       // cconv::rgb_i(a);
-      sepia_i(a);
+      // sepia_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

@@ -9,7 +9,7 @@ if __name__ == "__main__":
     # .cl files are suffixed with _ocl.cl
     # resulting files are suffixed with _kernel.clh
     names = [
-        "filters/rotate_hue",
+        "filters/apply_mat",
         "filters/grayscale_lum",
         "filters/grayscale_avg",
         

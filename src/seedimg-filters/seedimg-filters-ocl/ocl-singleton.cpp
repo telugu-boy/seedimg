@@ -32,6 +32,7 @@ void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
   std::memcpy(inp, inp_img->data(),
               sizeof(seedimg::pixel) * inp_img->width() * inp_img->height());
   queue.enqueueUnmapMemObject(inp_img_buf, inp);
+  queue.finish();
 }
 
 void read_img_1d(cl::CommandQueue &queue, simg &res_img,
@@ -42,6 +43,7 @@ void read_img_1d(cl::CommandQueue &queue, simg &res_img,
   std::memcpy(res_img->data(), res,
               sizeof(seedimg::pixel) * res_img->width() * res_img->height());
   queue.enqueueUnmapMemObject(res_img_buf, res);
+  queue.finish();
 }
 
 ocl_singleton &ocl_singleton::instance(std::size_t plat, std::size_t dev) {
@@ -69,7 +71,7 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
   context = {device};
 
   static constexpr const char *const kernels[] = {
-#include "cl_kernels/filters/rotate_hue_kernel.clh"
+#include "cl_kernels/filters/apply_mat_kernel.clh"
       ,
 #include "cl_kernels/filters/grayscale_lum_kernel.clh"
       ,

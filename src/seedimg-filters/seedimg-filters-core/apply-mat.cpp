@@ -16,8 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
+#include <cmath>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-utils.hpp>
+
+const double PI = 4 * std::atan(1);
 
 static constexpr std::array<float, 9> const SEPIA_MAT = {
     .393f, .769f, .189f, .349f, .686f, .168f, .272f, .534f, .131f};
@@ -57,5 +60,25 @@ void sepia(simg &inp_img, simg &res_img) {
   apply_mat(inp_img, res_img, SEPIA_MAT);
 }
 void sepia_i(simg &inp_img) { apply_mat_i(inp_img, SEPIA_MAT); }
+
+void rotate_hue(simg &inp_img, simg &res_img, int angle) {
+  std::array<float, 9> hue_kernel;
+  const float sinr = static_cast<float>(std::sin(angle * PI / 180));
+  const float cosr = static_cast<float>(std::cos(angle * PI / 180));
+  hue_kernel[0] = 0.213f + cosr * 0.787f - sinr * 0.213f;
+  hue_kernel[1] = 0.715f - cosr * 0.715f - sinr * 0.715f;
+  hue_kernel[2] = 0.072f - cosr * 0.072f + sinr * 0.928f;
+  hue_kernel[3] = 0.213f - cosr * 0.213f + sinr * 0.143f;
+  hue_kernel[4] = 0.715f + cosr * 0.285f + sinr * 0.140f;
+  hue_kernel[5] = 0.072f - cosr * 0.072f - sinr * 0.283f;
+  hue_kernel[6] = 0.213f - cosr * 0.213f - sinr * 0.787f;
+  hue_kernel[7] = 0.715f - cosr * 0.715f + sinr * 0.715f;
+  hue_kernel[8] = 0.072f + cosr * 0.928f + sinr * 0.072f;
+  apply_mat(inp_img, res_img, hue_kernel);
+}
+
+void rotate_hue_i(simg &inp_img, int angle) {
+  rotate_hue(inp_img, inp_img, angle);
+}
 
 } // namespace seedimg::filters
