@@ -30,10 +30,12 @@ namespace seedimg::filters {
 // filters that exclusively use this functionality will go in apply-mat.cpp to
 // save unnecessary files.
 // Current list: sepia, rotate_hue
-void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat,
-               const std::array<float, 3> &vec = {0, 0, 0});
-void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat,
-                 const std::array<float, 3> &vec = {0, 0, 0});
+void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 16> &mat,
+               const std::array<float, 4> &vec = {0, 0, 0, 0});
+void apply_mat_i(simg &inp_img, const std::array<float, 16> &mat,
+                 const std::array<float, 4> &vec = {0, 0, 0, 0});
+void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat);
+void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat);
 
 void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
 void grayscale_i(simg &inp_img, bool luminosity = true);

@@ -26,34 +26,65 @@ static constexpr std::array<float, 9> const SEPIA_MAT = {
     .393f, .769f, .189f, .349f, .686f, .168f, .272f, .534f, .131f};
 
 void apply_mat_worker(simg &inp_img, simg &res_img, simg_int start,
-                      simg_int end, const std::array<float, 9> &mat,
-                      const std::array<float, 3> &vec) {
+                      simg_int end, const std::array<float, 16> &mat,
+                      const std::array<float, 4> &vec) {
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
       seedimg::pixel pix = inp_img->pixel(x, start);
       res_img->pixel(x, start).r = seedimg::utils::clamp<std::uint8_t>(
-          vec[0] + mat[0] * pix.r + mat[1] * pix.g + mat[2] * pix.b, 0,
-          seedimg::img::MAX_PIXEL_VALUE);
+          vec[0] + mat[0] * pix.r + mat[1] * pix.g + mat[2] * pix.b +
+              mat[3] * pix.a,
+          0, seedimg::img::MAX_PIXEL_VALUE);
       res_img->pixel(x, start).g = seedimg::utils::clamp<std::uint8_t>(
-          vec[1] + mat[3] * pix.r + mat[4] * pix.g + mat[5] * pix.b, 0,
-          seedimg::img::MAX_PIXEL_VALUE);
+          vec[1] + mat[4] * pix.r + mat[5] * pix.g + mat[6] * pix.b +
+              mat[7] * pix.a,
+          0, seedimg::img::MAX_PIXEL_VALUE);
       res_img->pixel(x, start).b = seedimg::utils::clamp<std::uint8_t>(
-          vec[2] + mat[6] * pix.r + mat[7] * pix.g + mat[8] * pix.b, 0,
-          seedimg::img::MAX_PIXEL_VALUE);
+          vec[2] + mat[8] * pix.r + mat[9] * pix.g + mat[10] * pix.b +
+              mat[11] * pix.a,
+          0, seedimg::img::MAX_PIXEL_VALUE);
+      res_img->pixel(x, start).a = seedimg::utils::clamp<std::uint8_t>(
+          vec[3] + mat[12] * pix.r + mat[13] * pix.g + mat[14] * pix.b +
+              mat[15] * pix.a,
+          0, seedimg::img::MAX_PIXEL_VALUE);
     }
   }
 }
 
 namespace seedimg::filters {
-void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat,
-               const std::array<float, 3> &vec) {
+void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 16> &mat,
+               const std::array<float, 4> &vec) {
   seedimg::utils::hrz_thread(apply_mat_worker, inp_img, res_img, mat, vec);
 }
 
-void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat,
-                 const std::array<float, 3> &vec) {
+void apply_mat_i(simg &inp_img, const std::array<float, 16> &mat,
+                 const std::array<float, 4> &vec) {
   apply_mat(inp_img, inp_img, mat, vec);
 }
+void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat) {
+  apply_mat(inp_img, res_img,
+            {
+                mat[0],
+                mat[1],
+                mat[2],
+                0.0f,
+                mat[3],
+                mat[4],
+                mat[5],
+                0.0f,
+                mat[6],
+                mat[7],
+                mat[8],
+                0.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                1.0f,
+            });
+}
+void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat) {
+  apply_mat(inp_img, inp_img, mat);
+};
 
 // sepia
 void sepia(simg &inp_img, simg &res_img) {
@@ -80,5 +111,4 @@ void rotate_hue(simg &inp_img, simg &res_img, int angle) {
 void rotate_hue_i(simg &inp_img, int angle) {
   rotate_hue(inp_img, inp_img, angle);
 }
-
 } // namespace seedimg::filters
