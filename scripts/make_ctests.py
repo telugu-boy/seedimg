@@ -19,11 +19,12 @@ set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
 
+target_compile_definitions(${TESTS_EXE} -DSEEDIMG_TESTS_OCL)
+
 target_link_libraries(${TESTS_EXE} seedimg-filters-core seedimg-filters-cconv seedimg-autodetect)
 
 if(OPENCL_ENABLED)
     target_link_libraries(${TESTS_EXE} seedimg-filters-ocl)
-    target_compile_definitions(${TESTS_EXE} -DSEEDIMG_TESTS_OCL)
 endif()
 
 if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
