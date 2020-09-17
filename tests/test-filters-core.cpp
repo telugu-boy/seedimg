@@ -24,7 +24,9 @@
 
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#ifdef SEEDIMG_TESTS_OCL
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
+#endif
 
 enum class filter_functions {
   GRAYSCALE_LUM,
