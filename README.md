@@ -1,1 +1,1 @@
-Read the [documentation](../../wiki/Getting-Started) to get equipped for development.
+Read the [documentation](../../wiki/Guide) to get started.
