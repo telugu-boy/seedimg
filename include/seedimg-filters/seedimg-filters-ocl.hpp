@@ -27,12 +27,10 @@ namespace ocl {
 void init_ocl_singleton(std::size_t plat, std::size_t dev);
 
 // same with filters-core. sepia and rotate_hue internally call this function.
-void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 16> &mat,
-               const std::array<float, 4> &vec = {0, 0, 0, 0});
-void apply_mat_i(simg &inp_img, const std::array<float, 16> &mat,
-                 const std::array<float, 4> &vec = {0, 0, 0, 0});
-void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat);
-void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat);
+void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat);
+void apply_mat_i(simg &inp_img, const fsmat &mat);
+void apply_mat(simg &inp_img, simg &res_img, const smat &mat);
+void apply_mat_i(simg &inp_img, const smat &mat);
 
 void rotate_hue(simg &inp_img, simg &res_img, int angle);
 void rotate_hue_i(simg &inp_img, int angle);

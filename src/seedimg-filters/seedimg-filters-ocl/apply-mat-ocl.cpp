@@ -23,26 +23,20 @@
 #include "ocl-singleton.hpp"
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 
-const double PI = 4 * std::atan(1);
+// static constexpr smat const SEPIA_MAT = {
+//    .393f, .349f, .272f, .769f, .686f, .534f, .189f, .168f, .131f};
 
-static constexpr std::array<float, 9> const SEPIA_MAT = {
-    .393f, .769f, .189f, .349f, .686f, .168f, .272f, .534f, .131f,
-};
-
-namespace seedimg::filters::ocl {
-void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 16> &mat,
-               const std::array<float, 4> &vec) {
+namespace seedimg::filters {
+namespace ocl {
+void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat) {
   auto context = ocl_singleton::instance().context;
   auto device = ocl_singleton::instance().device;
   auto sources = ocl_singleton::instance().sources;
   auto program = ocl_singleton::instance().program;
 
   cl_float16 matvec;
-  cl_float4 vecvec;
   for (std::size_t i = 0; i < 16; i++)
     matvec.s[i] = mat[i];
-  for (std::size_t i = 0; i < 4; i++)
-    vecvec.s[i] = vec[i];
 
   cl::Buffer inp_img_buf{context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
                          sizeof(seedimg::pixel) * inp_img->width() *
@@ -60,10 +54,9 @@ void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 16> &mat,
   cl::Kernel apply_mat_ocl(program, "apply_mat");
 
   apply_mat_ocl.setArg(0, matvec);
-  apply_mat_ocl.setArg(1, vecvec);
-  apply_mat_ocl.setArg(2, inp_img_buf);
-  apply_mat_ocl.setArg(3, res_img_buf);
-  apply_mat_ocl.setArg(4, inp_img->width() * inp_img->height());
+  apply_mat_ocl.setArg(1, inp_img_buf);
+  apply_mat_ocl.setArg(2, res_img_buf);
+  apply_mat_ocl.setArg(3, inp_img->width() * inp_img->height());
   queue.enqueueNDRangeKernel(
       apply_mat_ocl, cl::NullRange,
       cl::NDRange(round_up(inp_img->width() * inp_img->height(), 128)),
@@ -73,60 +66,29 @@ void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 16> &mat,
   read_img_1d(queue, res_img, res_img_buf);
 }
 
-void apply_mat_i(simg &inp_img, const std::array<float, 16> &mat,
-                 const std::array<float, 4> &vec) {
-  apply_mat(inp_img, inp_img, mat, vec);
+void apply_mat_i(simg &inp_img, const fsmat &mat) {
+  apply_mat(inp_img, inp_img, mat);
 }
 
 // stupid autoformatter keeps ruining my perfect alignment
-void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat) {
-  apply_mat(inp_img, res_img,
-            {
-                mat[0],
-                mat[1],
-                mat[2],
-                0.0f,
-                mat[3],
-                mat[4],
-                mat[5],
-                0.0f,
-                mat[6],
-                mat[7],
-                mat[8],
-                0.0f,
-                0.0f,
-                0.0f,
-                0.0f,
-                1.0f,
-            });
+void apply_mat(simg &inp_img, simg &res_img, const smat &mat) {
+  apply_mat(inp_img, res_img, to_fsmat(mat));
 }
-void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat) {
+void apply_mat_i(simg &inp_img, const smat &mat) {
   apply_mat(inp_img, inp_img, mat);
-};
+}
 
 void sepia(simg &inp_img, simg &res_img) {
   apply_mat(inp_img, res_img, SEPIA_MAT);
 }
-void sepia_i(simg &inp_img) { apply_mat_i(inp_img, SEPIA_MAT); }
+void sepia_i(simg &inp_img) { sepia(inp_img, inp_img); }
 
 void rotate_hue(simg &inp_img, simg &res_img, int angle) {
-  std::array<float, 9> hue_kernel;
-  const float sinr = static_cast<float>(std::sin(angle * PI / 180));
-  const float cosr = static_cast<float>(std::cos(angle * PI / 180));
-  hue_kernel[0] = 0.213f + cosr * 0.787f - sinr * 0.213f;
-  hue_kernel[1] = 0.715f - cosr * 0.715f - sinr * 0.715f;
-  hue_kernel[2] = 0.072f - cosr * 0.072f + sinr * 0.928f;
-  hue_kernel[3] = 0.213f - cosr * 0.213f + sinr * 0.143f;
-  hue_kernel[4] = 0.715f + cosr * 0.285f + sinr * 0.140f;
-  hue_kernel[5] = 0.072f - cosr * 0.072f - sinr * 0.283f;
-  hue_kernel[6] = 0.213f - cosr * 0.213f - sinr * 0.787f;
-  hue_kernel[7] = 0.715f - cosr * 0.715f + sinr * 0.715f;
-  hue_kernel[8] = 0.072f + cosr * 0.928f + sinr * 0.072f;
-  apply_mat(inp_img, res_img, hue_kernel);
+  apply_mat(inp_img, res_img, generate_hue_mat(angle));
 }
 
 void rotate_hue_i(simg &inp_img, int angle) {
   rotate_hue(inp_img, inp_img, angle);
 }
-
-} // namespace seedimg::filters::ocl
+} // namespace ocl
+} // namespace seedimg::filters

@@ -21,21 +21,76 @@
 
 #define SEEDIMG_CROP_I_FRIEND
 
+#include "seedimg-filters-cconv.hpp"
+#include <cmath>
 #include <seedimg.hpp>
 
-#include "seedimg-filters-cconv.hpp"
+const double PI = 4 * std::atan(1);
+// Seedimg MATrix
+typedef std::array<float, 9> smat;
+// Full size Seedimg MATrix
+typedef std::array<float, 16> fsmat;
 
 namespace seedimg::filters {
 
+static constexpr smat const SEPIA_MAT = {.393f, .349f, .272f, .769f, .686f,
+                                         .534f, .189f, .168f, .131f};
+
+inline fsmat compose_mats(const std::vector<fsmat> &mats) {
+  fsmat res = mats[0];
+  for (std::size_t i = 1; i < mats.size(); i++) {
+    for (std::size_t j = 0; j < 4; j++) {
+      for (std::size_t k = 0; k < 4; k++) {
+        res[j * 4 + k] = res[j * 4] * mats[i][0 + j] +
+                         res[j * 4 + 1] * mats[i][4 + j] +
+                         res[j * 4 + 2] * mats[i][8 + j] + mats[i][12 + j];
+      }
+    }
+  }
+  return res;
+}
+
+inline smat compose_mats(const std::vector<smat> &mats) {
+  smat res = mats[0];
+  for (std::size_t i = 1; i < mats.size(); i++) {
+    for (std::size_t j = 0; j < 3; j++) {
+      for (std::size_t k = 0; k < 3; k++) {
+        res[j * 3 + k] = res[j * 3] * mats[i][0 + j] +
+                         res[j * 3 + 1] * mats[i][3 + j] +
+                         res[j * 3 + 2] * mats[i][9 + j];
+      }
+    }
+  }
+  return res;
+}
+
+inline fsmat to_fsmat(const smat &mat) {
+  return {
+      mat[0], mat[1], mat[2], 0.0f, mat[3], mat[4], mat[5], 0.0f,
+      mat[6], mat[7], mat[8], 0.0f, 0.0f,   0.0f,   0.0f,   1.0f,
+  };
+}
+
+inline smat generate_hue_mat(int angle) {
+  const float sinr = static_cast<float>(std::sin(angle * PI / 180));
+  const float cosr = static_cast<float>(std::cos(angle * PI / 180));
+  return {0.213f + cosr * 0.787f - sinr * 0.213f,
+          0.213f - cosr * 0.213f + sinr * 0.143f,
+          0.213f - cosr * 0.213f - sinr * 0.787f,
+          0.715f - cosr * 0.715f - sinr * 0.715f,
+          0.715f + cosr * 0.285f + sinr * 0.140f,
+          0.715f - cosr * 0.715f + sinr * 0.715f,
+          0.072f - cosr * 0.072f + sinr * 0.928f,
+          0.072f - cosr * 0.072f - sinr * 0.283f,
+          0.072f + cosr * 0.928f + sinr * 0.072f};
+}
 // filters that exclusively use this functionality will go in apply-mat.cpp to
 // save unnecessary files.
 // Current list: sepia, rotate_hue
-void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 16> &mat,
-               const std::array<float, 4> &vec = {0, 0, 0, 0});
-void apply_mat_i(simg &inp_img, const std::array<float, 16> &mat,
-                 const std::array<float, 4> &vec = {0, 0, 0, 0});
-void apply_mat(simg &inp_img, simg &res_img, const std::array<float, 9> &mat);
-void apply_mat_i(simg &inp_img, const std::array<float, 9> &mat);
+void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat);
+void apply_mat_i(simg &inp_img, const fsmat &mat);
+void apply_mat(simg &inp_img, simg &res_img, const smat &mat);
+void apply_mat_i(simg &inp_img, const smat &mat);
 
 void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
 void grayscale_i(simg &inp_img, bool luminosity = true);
