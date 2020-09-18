@@ -36,6 +36,22 @@ namespace seedimg::filters {
 static constexpr smat const SEPIA_MAT = {.393f, .349f, .272f, .769f, .686f,
                                          .534f, .189f, .168f, .131f};
 
+inline fsmat scalar_mat_mul(const fsmat &mat, float sc) {
+  fsmat res;
+  for (std::size_t i = 0; i < 16; i++) {
+    res[i] = mat[i] * sc;
+  }
+  return res;
+}
+
+inline smat scalar_mat_mul(const smat &mat, float sc) {
+  smat res;
+  for (std::size_t i = 0; i < 9; i++) {
+    res[i] = mat[i] * sc;
+  }
+  return res;
+}
+
 inline fsmat compose_mats(const std::vector<fsmat> &mats) {
   fsmat res = mats[0];
   for (std::size_t i = 1; i < mats.size(); i++) {
