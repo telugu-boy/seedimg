@@ -57,7 +57,7 @@ inline smat compose_mats(const std::vector<smat> &mats) {
       for (std::size_t k = 0; k < 3; k++) {
         res[j * 3 + k] = res[j * 3] * mats[i][0 + j] +
                          res[j * 3 + 1] * mats[i][3 + j] +
-                         res[j * 3 + 2] * mats[i][9 + j];
+                         res[j * 3 + 2] * mats[i][6 + j];
       }
     }
   }
