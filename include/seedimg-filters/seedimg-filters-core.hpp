@@ -136,7 +136,7 @@ group_dots_lut(std::index_sequence<Amt...>, const T &mat) {
 }
 } // namespace
 // need to add 1 to MAX_PIXEL_VALUE because 256 values can be represented
-template <typename T, std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
+template <typename T = smat, std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
           std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
 constexpr auto gen_lut(const T &mat) {
   return group_dots_lut<T, MaxPV>(std::make_index_sequence<Amt>{}, mat);
