@@ -121,24 +121,16 @@ namespace ocl {}
 } // namespace seedimg::filters
 
 namespace seedimg::utils {
-namespace {
-template <std::size_t... I>
-static constexpr auto
-gen_dot_arr(std::index_sequence<I...>, float const elem) {
-  return std::array{elem * I...};
-}
-template <typename T, std::size_t MaxPV, std::size_t... Amt>
-static constexpr auto
-group_dots_lut(std::index_sequence<Amt...>, const T &mat) {
-  constexpr auto len = std::make_index_sequence<MaxPV>{};
-  return std::array{gen_dot_arr(len, mat[Amt])...};
-}
-} // namespace
-// need to add 1 to MAX_PIXEL_VALUE because 256 values can be represented
 template <typename T = smat, std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
           std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
 constexpr auto gen_lut(const T &mat) {
-  return group_dots_lut<T, MaxPV>(std::make_index_sequence<Amt>{}, mat);
+  std::array<std::array<float, MaxPV>, Amt> res{};
+  for(std::size_t elem = 0; elem < Amt; ++elem){
+    for(std::size_t i = 0; i < MaxPV; ++i){
+      res[elem][i] = i * mat[elem];
+    }
+  }
+  return res;
 }
 }
 
