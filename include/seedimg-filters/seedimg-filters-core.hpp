@@ -42,12 +42,6 @@ namespace seedimg::filters {
 static constexpr smat const SEPIA_MAT = {.393f, .349f, .272f, .769f, .686f,
                                          .534f, .189f, .168f, .131f};
 
-// matrix manipulation related functions, used for building
-// matrices, mostly for the apply_mat filter.
-constexpr fsmat scalar_mat_mul(const fsmat &mat, float sc);
-constexpr smat scalar_mat_mul(const smat &mat, float sc);
-
-constexpr fsmat to_fsmat(const smat &mat);
 smat generate_hue_mat(float angle);
 
 // filters that exclusively use this functionality will go in apply-mat.cpp to
@@ -162,6 +156,32 @@ template <typename T> constexpr smat compose_smats(const T &mats) {
   }
   return res;
 }
+
+// matrix manipulation related functions, used for building
+// matrices, mostly for the apply_mat filter.
+constexpr fsmat scalar_mat_mul(const fsmat &mat, float sc) {
+  fsmat res{};
+  for (std::size_t i = 0; i < 16; i++) {
+    res[i] = mat[i] * sc;
+  }
+  return res;
+}
+
+constexpr smat scalar_mat_mul(const smat &mat, float sc) {
+  smat res{};
+  for (std::size_t i = 0; i < 9; i++) {
+    res[i] = mat[i] * sc;
+  }
+  return res;
+}
+
+constexpr fsmat to_fsmat(const smat &mat) {
+  return fsmat{
+      mat[0], mat[1], mat[2], 0.0f, mat[3], mat[4], mat[5], 0.0f,
+      mat[6], mat[7], mat[8], 0.0f, 0.0f,   0.0f,   0.0f,   1.0f,
+  };
+}
+    
 } // namespace seedimg::filters
 
 #endif
