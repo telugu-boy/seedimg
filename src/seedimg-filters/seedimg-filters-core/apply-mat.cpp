@@ -38,6 +38,25 @@ void apply_mat_worker(simg &inp_img, simg &res_img, simg_int start,
   }
 }
 
+void apply_mat_lut_worker(simg &inp_img, simg &res_img, simg_int start,
+                          simg_int end,
+                          const seedimg::slut<seedimg::smat> &lut) {
+  for (; start < end; ++start) {
+    for (simg_int x = 0; x < inp_img->width(); ++x) {
+      seedimg::pixel pix = inp_img->pixel(x, start);
+      res_img->pixel(x, start).r = seedimg::utils::clamp<std::uint8_t>(
+          lut[0][pix.r] + lut[3][pix.g] + lut[6][pix.b], 0,
+          seedimg::img::MAX_PIXEL_VALUE);
+      res_img->pixel(x, start).g = seedimg::utils::clamp<std::uint8_t>(
+          lut[1][pix.r] + lut[4][pix.g] + lut[7][pix.b], 0,
+          seedimg::img::MAX_PIXEL_VALUE);
+      res_img->pixel(x, start).b = seedimg::utils::clamp<std::uint8_t>(
+          lut[2][pix.r] + lut[5][pix.g] + lut[8][pix.b], 0,
+          seedimg::img::MAX_PIXEL_VALUE);
+    }
+  }
+}
+
 namespace seedimg::filters {
 fsmat scalar_mat_mul(const fsmat &mat, float sc) {
   fsmat res;
@@ -88,7 +107,15 @@ void apply_mat(simg &inp_img, simg &res_img, const smat &mat) {
 }
 void apply_mat_i(simg &inp_img, const smat &mat) {
   apply_mat(inp_img, inp_img, mat);
-};
+}
+
+void apply_mat_lut(simg &inp_img, simg &res_img,
+                   const seedimg::slut<seedimg::smat> &lut) {
+  seedimg::utils::hrz_thread(apply_mat_lut_worker, inp_img, res_img, lut);
+}
+void apply_mat_lut_i(simg &inp_img, const seedimg::slut<seedimg::smat> &lut) {
+  apply_mat_lut(inp_img, inp_img, lut);
+}
 
 // sepia
 void sepia(simg &inp_img, simg &res_img) {

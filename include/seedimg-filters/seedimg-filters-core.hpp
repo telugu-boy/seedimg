@@ -31,6 +31,10 @@ namespace seedimg {
 typedef std::array<float, 9> smat;
 // Full size Seedimg MATrix
 typedef std::array<float, 16> fsmat;
+// Seedimg LookUp Table
+template <typename T>
+using slut = std::array<std::array<float, seedimg::img::MAX_PIXEL_VALUE + 1>,
+                        sizeof(T) / sizeof(typename T::value_type)>;
 } // namespace seedimg
 
 namespace seedimg::filters {
@@ -53,6 +57,10 @@ void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat);
 void apply_mat_i(simg &inp_img, const fsmat &mat);
 void apply_mat(simg &inp_img, simg &res_img, const smat &mat);
 void apply_mat_i(simg &inp_img, const smat &mat);
+
+void apply_mat_lut(simg &inp_img, simg &res_img,
+                   const seedimg::slut<seedimg::smat> &lut);
+void apply_mat_lut_i(simg &inp_img, const seedimg::slut<seedimg::smat> &lut);
 
 void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
 void grayscale_i(simg &inp_img, bool luminosity = true);
@@ -112,32 +120,7 @@ namespace cconv {};
 namespace ocl {}
 } // namespace seedimg::filters
 
-namespace seedimg::utils {
-namespace {
-template <std::size_t... I>
-static constexpr inline std::array<float, sizeof...(I)>
-gen_dot_arr(std::index_sequence<I...>, float const elem) {
-  return std::array<float, sizeof...(I)>{elem * I...};
-}
-template <typename T, std::size_t MaxPV, std::size_t... Amt>
-static constexpr inline std::array<std::array<typename T::value_type, MaxPV>,
-                                   sizeof...(Amt)>
-group_dots_lut(std::index_sequence<Amt...>, const T &mat) {
-  constexpr auto len = std::make_index_sequence<MaxPV>{};
-  return {gen_dot_arr(len, mat[Amt])...};
-}
-} // namespace
-// need to add 1 to MAX_PIXEL_VALUE because 256 values can be represented
-template <typename T = smat,
-          std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
-          std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
-constexpr auto gen_lut(const T &mat) {
-  return group_dots_lut<T, MaxPV>(std::make_index_sequence<Amt>{}, mat);
-}
-} // namespace seedimg::utils
-
 namespace seedimg::filters {
-
 template <typename T> constexpr fsmat compose_fsmats(const T &mats) {
   fsmat res = mats[0];
   for (std::size_t i = 1; i < mats.size(); i++) {
