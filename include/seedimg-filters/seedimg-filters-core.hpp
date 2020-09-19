@@ -116,6 +116,20 @@ void rotate_hue_i(simg &inp_img, int angle);
 void saturation(simg &inp_img, simg &res_img, float mul);
 void saturation_i(simg &inp_img, float mul);
 
+/**
+ * @brief Scales up/down the input image as of dimensions of the output.
+ * Uses a simple, nearest-neighbour scaling which is computationally
+ * fast and trivial to implement but yields low quality.
+ *
+ * @note Future plans are to implement bi-linear and bi-cubic algorithms,
+ * or may possibly implement lanczos resampler for "ideal reconstruction".
+ *
+ * @param input Image to scale.
+ * @param output Destination to output.
+ */
+void resize(simg& input, simg& output);
+// void resize_i(simg&, seedimg::point);  // TODO
+
 namespace cconv {};
 namespace ocl {}
 } // namespace seedimg::filters

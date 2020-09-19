@@ -19,7 +19,7 @@ set(APP_EXE example)
 
 add_executable(${APP_EXE} main.cpp)
 
-file(COPY cat.jpg DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
+file(COPY cat.webp DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
 
 target_link_libraries(${APP_EXE}
     seedimg-filters-core

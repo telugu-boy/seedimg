@@ -25,12 +25,11 @@ seedimg - module based image manipulation library written in modern
 
 auto main() -> int {
   using namespace seedimg::filters;
-  std::cout << "Current path is " << std::filesystem::current_path()
-            << std::endl;
+//  std::cout << "Current path is " << std::filesystem::current_path()
+//            << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("cat.jpg");
-    auto b = seedimg::make(a->width(), a->height());
+    auto a = seedimg::load("cat.webp");
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);
@@ -48,14 +47,36 @@ auto main() -> int {
       // cconv::hsv_i(a);
       // saturation_i(a, 3.5f);
       // cconv::rgb_i(a);
-      constexpr auto sepia_lut = seedimg::utils::gen_lut(SEPIA_MAT);
-      /*auto comp =
-         scalar_mat_mul(compose_smats(std::array{SEPIA_MAT,
-         SEPIA_MAT}), 2.0f);*/
-      // apply_mat_i(a, SEPIA_MAT);
-      apply_mat_lut_i(a, sepia_lut);
       // ocl::sepia_i(a);
-      seedimg::save("biol.jpg", a);
+
+      auto b = seedimg::make(a->width()/8,
+                             a->height()/8);
+      resize(a, b);
+      resize(b, a);
+
+      // channel remapping.
+      // R -> B
+      // G -> G
+      // B -> R
+      /*
+      apply_mat_i(a, smat{
+        0, 0, 1,
+        0, 1, 0,
+        1, 0, 0
+      });
+      seedimg::save("boil1.webp", a);*/
+
+      // averaging.
+//      apply_mat_i(b, smat{
+//        0.2125f, 0.7154f, 0.0721f,
+//        0.2125f, 0.7154f, 0.0721f,
+//        0.2125f, 0.7154f, 0.0721f,
+//      });
+//      scanline(b, b, 16);
+//      seedimg::save("biol2.webp", b);
+//      resize(a, b);
+      seedimg::save("boil.webp", a);
+
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;
