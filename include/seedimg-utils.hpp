@@ -31,27 +31,6 @@ inline T clamp(I a, MinT min, MaxT max) {
   return a > max ? max : a < min ? min : static_cast<T>(a);
 }
 
-namespace {
-template <std::size_t... I>
-static constexpr inline std::array<float, sizeof...(I)>
-gen_dot_arr(std::index_sequence<I...>, float const elem) {
-  return std::array<float, sizeof...(I)>{elem * I...};
-}
-template <typename T, std::size_t MaxPV, std::size_t... Amt>
-static constexpr inline std::array<std::array<typename T::value_type, MaxPV>,
-                                   sizeof...(Amt)>
-group_dots_lut(std::index_sequence<Amt...>, const T &mat) {
-  constexpr auto len = std::make_index_sequence<MaxPV>{};
-  return {gen_dot_arr(len, mat[Amt])...};
-}
-} // namespace
-// need to add 1 to MAX_PIXEL_VALUE because 256 values can be represented
-template <typename T, std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
-          std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
-constexpr auto gen_lut(const T &mat) {
-  return group_dots_lut<T, MaxPV>(std::make_index_sequence<Amt>{}, mat);
-}
-
 template <typename T, typename... Args>
 void hrz_thread(T &&func, simg &inp_img, simg &res_img, Args &... args) {
   auto start_end = inp_img->start_end_rows();
