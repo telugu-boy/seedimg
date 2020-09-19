@@ -25,11 +25,13 @@
 #include <cmath>
 #include <seedimg.hpp>
 
-const double PI = 4 * std::atan(1);
+const float PI = 4 * std::atan(1.0f);
+namespace seedimg {
 // Seedimg MATrix
 typedef std::array<float, 9> smat;
 // Full size Seedimg MATrix
 typedef std::array<float, 16> fsmat;
+} // namespace seedimg
 
 namespace seedimg::filters {
 
@@ -39,14 +41,10 @@ static constexpr smat const SEPIA_MAT = {.393f, .349f, .272f, .769f, .686f,
 // matrix manipulation related functions, used for building
 // matrices, mostly for the apply_mat filter.
 fsmat scalar_mat_mul(const fsmat &mat, float sc);
-smat  scalar_mat_mul(const smat  &mat, float sc);
-
-fsmat compose_mats(const std::vector<fsmat> &mats);
-smat  compose_mats(const std::vector<smat>  &mats);
+smat scalar_mat_mul(const smat &mat, float sc);
 
 fsmat to_fsmat(const smat &mat);
-smat generate_hue_mat(int angle);
-
+smat generate_hue_mat(float angle);
 
 // filters that exclusively use this functionality will go in apply-mat.cpp to
 // save unnecessary files.
@@ -112,6 +110,61 @@ void saturation_i(simg &inp_img, float mul);
 
 namespace cconv {};
 namespace ocl {}
+} // namespace seedimg::filters
+
+namespace seedimg::utils {
+namespace {
+template <std::size_t... I>
+static constexpr inline std::array<float, sizeof...(I)>
+gen_dot_arr(std::index_sequence<I...>, float const elem) {
+  return std::array<float, sizeof...(I)>{elem * I...};
+}
+template <typename T, std::size_t MaxPV, std::size_t... Amt>
+static constexpr inline std::array<std::array<typename T::value_type, MaxPV>,
+                                   sizeof...(Amt)>
+group_dots_lut(std::index_sequence<Amt...>, const T &mat) {
+  constexpr auto len = std::make_index_sequence<MaxPV>{};
+  return {gen_dot_arr(len, mat[Amt])...};
+}
+} // namespace
+// need to add 1 to MAX_PIXEL_VALUE because 256 values can be represented
+template <typename T = smat,
+          std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
+          std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
+constexpr auto gen_lut(const T &mat) {
+  return group_dots_lut<T, MaxPV>(std::make_index_sequence<Amt>{}, mat);
+}
+} // namespace seedimg::utils
+
+namespace seedimg::filters {
+
+template <typename T> constexpr fsmat compose_fsmats(const T &mats) {
+  fsmat res = mats[0];
+  for (std::size_t i = 1; i < mats.size(); i++) {
+    for (std::size_t j = 0; j < 4; j++) {
+      for (std::size_t k = 0; k < 4; k++) {
+        res[j * 4 + k] = res[j * 4] * mats[i][0 + j] +
+                         res[j * 4 + 1] * mats[i][4 + j] +
+                         res[j * 4 + 2] * mats[i][8 + j] + mats[i][12 + j];
+      }
+    }
+  }
+  return res;
+}
+
+template <typename T> constexpr smat compose_smats(const T &mats) {
+  smat res = mats[0];
+  for (std::size_t i = 1; i < mats.size(); i++) {
+    for (std::size_t j = 0; j < 3; j++) {
+      for (std::size_t k = 0; k < 3; k++) {
+        res[j * 3 + k] = res[j * 3] * mats[i][0 + j] +
+                         res[j * 3 + 1] * mats[i][3 + j] +
+                         res[j * 3 + 2] * mats[i][6 + j];
+      }
+    }
+  }
+  return res;
+}
 } // namespace seedimg::filters
 
 #endif

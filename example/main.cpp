@@ -48,11 +48,9 @@ auto main() -> int {
       // cconv::hsv_i(a);
       // saturation_i(a, 3.5f);
       // cconv::rgb_i(a);
-      auto comp = scalar_mat_mul(compose_mats({
-                                     SEPIA_MAT,
-                                     SEPIA_MAT,
-                                 }),
-                                 2.0f);
+      constexpr auto sepia_lut = seedimg::utils::gen_lut(SEPIA_MAT);
+      auto comp =
+          scalar_mat_mul(compose_smats(std::array{SEPIA_MAT, SEPIA_MAT}), 2.0f);
       apply_mat_i(a, comp);
       // ocl::sepia_i(a);
       seedimg::save("biol.jpg", a);
