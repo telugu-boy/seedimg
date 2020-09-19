@@ -58,7 +58,7 @@ void apply_mat_lut_worker(simg &inp_img, simg &res_img, simg_int start,
 }
 
 namespace seedimg::filters {
-fsmat scalar_mat_mul(const fsmat &mat, float sc) {
+constexpr fsmat scalar_mat_mul(const fsmat &mat, float sc) {
   fsmat res;
   for (std::size_t i = 0; i < 16; i++) {
     res[i] = mat[i] * sc;
@@ -66,7 +66,7 @@ fsmat scalar_mat_mul(const fsmat &mat, float sc) {
   return res;
 }
 
-smat scalar_mat_mul(const smat &mat, float sc) {
+constexpr smat scalar_mat_mul(const smat &mat, float sc) {
   smat res;
   for (std::size_t i = 0; i < 9; i++) {
     res[i] = mat[i] * sc;
@@ -74,7 +74,7 @@ smat scalar_mat_mul(const smat &mat, float sc) {
   return res;
 }
 
-fsmat to_fsmat(const smat &mat) {
+constexpr fsmat to_fsmat(const smat &mat) {
   return {
       mat[0], mat[1], mat[2], 0.0f, mat[3], mat[4], mat[5], 0.0f,
       mat[6], mat[7], mat[8], 0.0f, 0.0f,   0.0f,   0.0f,   1.0f,
