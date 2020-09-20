@@ -54,27 +54,6 @@ auto main() -> int {
       resize(a, b);
       resize(b, a);
 
-      // channel remapping.
-      // R -> B
-      // G -> G
-      // B -> R
-      /*
-      apply_mat_i(a, smat{
-        0, 0, 1,
-        0, 1, 0,
-        1, 0, 0
-      });
-      seedimg::save("boil1.webp", a);*/
-
-      // averaging.
-//      apply_mat_i(b, smat{
-//        0.2125f, 0.7154f, 0.0721f,
-//        0.2125f, 0.7154f, 0.0721f,
-//        0.2125f, 0.7154f, 0.0721f,
-//      });
-//      scanline(b, b, 16);
-//      seedimg::save("biol2.webp", b);
-//      resize(a, b);
       seedimg::save("boil.webp", a);
 
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
