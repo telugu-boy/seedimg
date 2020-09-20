@@ -36,5 +36,12 @@ typedef struct {
  */
 histogram_result histogram(simg &input);
 
+/**
+ * @brief Make comb-like patterns.
+ * 
+ * 
+ * 
+ */
+void scanline(simg& input, simg& output, simg_int rows, float intensity = -0.1);
 #endif
 }

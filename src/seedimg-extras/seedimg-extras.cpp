@@ -20,6 +20,7 @@
 #include <array>
 
 #include <seedimg-extras.hpp>
+#include <seedimg-utils.hpp>
 #include <seedimg.hpp>
 
 namespace seedimg::extras {
@@ -38,5 +39,30 @@ histogram_result histogram(simg &input) {
   }
 
   return result;
+}
+
+void scanline(simg& input, simg& output, simg_int rows, float intensity) {
+    if(rows == 0) return;
+
+    // if to alter group of scanlines or not.
+    bool alter = false;
+
+    for(simg_int y = 0; y < input->height(); ++y) {
+        // once hit the boundary invert its state.
+        if(y % rows == 0)
+            alter = !alter;
+
+        if(alter) {
+            for(simg_int x = 0; x < input->width(); ++x) {
+                auto& p = input->pixel(x, y);
+
+                output->pixel(x, y) = seedimg::pixel{
+                    {{seedimg::utils::clamp<std::uint8_t>(p.r + p.r*intensity, 0, 255),
+                      seedimg::utils::clamp<std::uint8_t>(p.g + p.g*intensity, 0, 255),
+                      seedimg::utils::clamp<std::uint8_t>(p.b + p.b*intensity, 0, 255)}},
+                    p.a};
+            }
+        }
+    }
 }
 } // namespace seedimg::extras
