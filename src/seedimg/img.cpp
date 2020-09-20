@@ -162,7 +162,7 @@ private:
 };
 
 // PIMPL stubs
-img::img() : impl{} {}
+img::img() : impl{new img_impl{}} {}
 
 img::img(simg_int w, simg_int h) : impl{new img_impl{w, h}} {}
 

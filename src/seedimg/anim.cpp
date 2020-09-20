@@ -23,7 +23,7 @@ class anim::anim_impl {
 public:
   std::size_t framerate;
 
-  anim_impl() { framerate = 0; }
+  anim_impl() : framerate{0}, data{} {}
 
   anim_impl(std::size_t size, std::size_t framerate) {
     this->framerate = framerate;
@@ -83,7 +83,7 @@ private:
   std::vector<simg> data;
 };
 
-anim::anim() : impl{} {};
+anim::anim() : impl{new anim_impl{}} {};
 
 anim::anim(std::size_t size, std::size_t framerate)
     : impl{new anim_impl{size, framerate}} {}

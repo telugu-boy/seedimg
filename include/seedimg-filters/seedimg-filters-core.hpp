@@ -115,18 +115,19 @@ namespace ocl {}
 } // namespace seedimg::filters
 
 namespace seedimg::utils {
-template <typename T = smat, std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
+template <typename T = smat,
+          std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
           std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
 constexpr auto gen_lut(const T &mat) {
   std::array<std::array<float, MaxPV>, Amt> res{};
-  for(std::size_t elem = 0; elem < Amt; ++elem){
-    for(std::size_t i = 0; i < MaxPV; ++i){
+  for (std::size_t elem = 0; elem < Amt; ++elem) {
+    for (std::size_t i = 0; i < MaxPV; ++i) {
       res[elem][i] = i * mat[elem];
     }
   }
   return res;
 }
-}
+} // namespace seedimg::utils
 
 namespace seedimg::filters {
 template <typename T> constexpr fsmat compose_fsmats(const T &mats) {
@@ -181,7 +182,7 @@ constexpr fsmat to_fsmat(const smat &mat) {
       mat[6], mat[7], mat[8], 0.0f, 0.0f,   0.0f,   0.0f,   1.0f,
   };
 }
-    
+
 } // namespace seedimg::filters
 
 #endif
