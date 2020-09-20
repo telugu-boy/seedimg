@@ -54,7 +54,6 @@ enum class filter_functions {
 #ifdef SEEDIMG_FILTERS_OCL_H
   ROTATE_HUE_OCL,
   GRAYSCALE_LUM_OCL,
-  GRAYSCALE_AVG_OCL,
   SEPIA_OCL,
 #endif
 };
@@ -86,7 +85,6 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
 #ifdef SEEDIMG_FILTERS_OCL_H
         {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
         {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
-        {"grayscale_avg_ocl", filter_functions::GRAYSCALE_AVG_OCL},
         {"sepia_ocl", filter_functions::SEPIA_OCL},
 #endif
 };
@@ -188,10 +186,7 @@ int main(int argc, char *argv[]) {
     seedimg::filters::ocl::rotate_hue_i(img, 180);
     break;
   case filter_functions::GRAYSCALE_LUM_OCL:
-    seedimg::filters::ocl::grayscale_i(img, true);
-    break;
-  case filter_functions::GRAYSCALE_AVG_OCL:
-    seedimg::filters::ocl::grayscale_i(img, false);
+    seedimg::filters::ocl::grayscale_i(img);
     break;
   case filter_functions::SEPIA_OCL:
     seedimg::filters::ocl::sepia_i(img);

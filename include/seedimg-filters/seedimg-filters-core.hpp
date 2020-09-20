@@ -39,10 +39,11 @@ using slut = std::array<std::array<float, seedimg::img::MAX_PIXEL_VALUE + 1>,
 
 namespace seedimg::filters {
 
-static constexpr smat const SEPIA_MAT = {.393f, .349f, .272f, .769f, .686f,
-                                         .534f, .189f, .168f, .131f};
-
-smat generate_hue_mat(float angle);
+static constexpr smat const SEPIA_MAT = {0.393f, 0.349f, 0.272f, 0.769f, 0.686f,
+                                         0.534f, 0.189f, 0.168f, 0.131f};
+static constexpr smat const GRAYSCALE_LUM_MAT = {0.2126f, 0.2126f, 0.2126f,
+                                                 0.7152f, 0.7152f, 0.7152f,
+                                                 0.0722f, 0.0722f, 0.0722f};
 
 // filters that exclusively use this functionality will go in apply-mat.cpp to
 // save unnecessary files.
@@ -130,6 +131,20 @@ constexpr auto gen_lut(const T &mat) {
 } // namespace seedimg::utils
 
 namespace seedimg::filters {
+inline smat generate_hue_mat(float angle) {
+  const float sinr = static_cast<float>(std::sin(angle * PI / 180));
+  const float cosr = static_cast<float>(std::cos(angle * PI / 180));
+  return {0.213f + cosr * 0.787f - sinr * 0.213f,
+          0.213f - cosr * 0.213f + sinr * 0.143f,
+          0.213f - cosr * 0.213f - sinr * 0.787f,
+          0.715f - cosr * 0.715f - sinr * 0.715f,
+          0.715f + cosr * 0.285f + sinr * 0.140f,
+          0.715f - cosr * 0.715f + sinr * 0.715f,
+          0.072f - cosr * 0.072f + sinr * 0.928f,
+          0.072f - cosr * 0.072f - sinr * 0.283f,
+          0.072f + cosr * 0.928f + sinr * 0.072f};
+}
+
 template <typename T> constexpr fsmat compose_fsmats(const T &mats) {
   fsmat res = mats[0];
   for (std::size_t i = 1; i < mats.size(); i++) {

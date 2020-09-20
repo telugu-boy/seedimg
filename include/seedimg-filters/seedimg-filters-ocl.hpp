@@ -19,6 +19,9 @@
 #ifndef SEEDIMG_FILTERS_OCL_H
 #define SEEDIMG_FILTERS_OCL_H
 
+namespace cl {
+class Buffer;
+}
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg.hpp>
 
@@ -27,26 +30,34 @@ namespace ocl {
 void init_ocl_singleton(std::size_t plat, std::size_t dev);
 
 // same with filters-core. sepia and rotate_hue internally call this function.
-void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat);
-void apply_mat_i(simg &inp_img, const fsmat &mat);
-void apply_mat(simg &inp_img, simg &res_img, const smat &mat);
-void apply_mat_i(simg &inp_img, const smat &mat);
+void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat,
+               cl::Buffer *inp_buf = nullptr, cl::Buffer *res_buf = nullptr);
+void apply_mat_i(simg &inp_img, const fsmat &mat,
+                 cl::Buffer *inp_buf = nullptr);
+void apply_mat(simg &inp_img, simg &res_img, const smat &mat,
+               cl::Buffer *inp_buf = nullptr, cl::Buffer *res_buf = nullptr);
+void apply_mat_i(simg &inp_img, const smat &mat, cl::Buffer *inp_buf = nullptr);
 
-void rotate_hue(simg &inp_img, simg &res_img, int angle);
-void rotate_hue_i(simg &inp_img, int angle);
+void rotate_hue(simg &inp_img, simg &res_img, float angle,
+                cl::Buffer *inp_buf = nullptr, cl::Buffer *res_buf = nullptr);
+void rotate_hue_i(simg &inp_img, float angle, cl::Buffer *inp_buf = nullptr);
 
-void sepia(simg &inp_img, simg &res_img);
-void sepia_i(simg &inp_img);
+void sepia(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
+           cl::Buffer *res_buf = nullptr);
+void sepia_i(simg &inp_img, cl::Buffer *inp_buf = nullptr);
 
-void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
-void grayscale_i(simg &inp_img, bool luminosity = true);
+void grayscale(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
+               cl::Buffer *res_buf = nullptr);
+void grayscale_i(simg &inp_img, cl::Buffer *inp_buf = nullptr);
 
 namespace cconv {
-void rgb(simg &inp_img, simg &res_img);
-void rgb_i(simg &inp_img);
+void rgb(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
+         cl::Buffer *res_buf = nullptr);
+void rgb_i(simg &inp_img, cl::Buffer *inp_buf = nullptr);
 
-void hsv(simg &inp_img, simg &res_img);
-void hsv_i(simg &inp_img);
+void hsv(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
+         cl::Buffer *res_buf = nullptr);
+void hsv_i(simg &inp_img, cl::Buffer *inp_buf = nullptr);
 } // namespace cconv
 
 } // namespace ocl

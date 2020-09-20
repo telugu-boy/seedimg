@@ -44,9 +44,9 @@ tests = ["grayscale_lum", "grayscale_avg", "invert", "invert_alpha","invert_alph
 
 enum_mapping = ["GRAYSCALE_LUM", "GRAYSCALE_AVG", "INVERT", "INVERT_A", "INVERT_AO", "CROP", "BLUR", "H_BLUR", "V_BLUR", "KERNEL_CONVOLUTION", "ROTATE_HUE", "BRIGHTNESS", "BRIGHTNESS_A", "BLEND", "BLEND_A", "ROTATE_CW", "ROTATE_180", "ROTATE_CCW", "V_MIRROR", "H_MIRROR", "SATURATION", "SEPIA"]
 
-tests_ocl = ["rotate_hue_ocl", "grayscale_lum_ocl", "grayscale_avg_ocl", "sepia_ocl"]
+tests_ocl = ["rotate_hue_ocl", "grayscale_lum_ocl", "sepia_ocl"]
 
-enum_mapping_ocl = ["ROTATE_HUE_OCL", "GRAYSCALE_LUM_OCL", "GRAYSCALE_AVG_OCL", "SEPIA_OCL"]
+enum_mapping_ocl = ["ROTATE_HUE_OCL", "GRAYSCALE_LUM_OCL", "SEPIA_OCL"]
 
 if __name__ == "__main__":
     with open("../tests/CMakeLists.txt", "w") as f:

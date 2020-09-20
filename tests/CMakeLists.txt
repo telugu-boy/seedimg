@@ -107,9 +107,6 @@ set_tests_properties(rotate_hue_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUC
 add_test(grayscale_lum_ocl_test ${TESTS_EXE} grayscale_lum_ocl)
 set_tests_properties(grayscale_lum_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-add_test(grayscale_avg_ocl_test ${TESTS_EXE} grayscale_avg_ocl)
-set_tests_properties(grayscale_avg_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
-
 add_test(sepia_ocl_test ${TESTS_EXE} sepia_ocl)
 set_tests_properties(sepia_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 

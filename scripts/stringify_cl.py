@@ -10,8 +10,6 @@ if __name__ == "__main__":
     # resulting files are suffixed with _kernel.clh
     names = [
         "filters/apply_mat",
-        "filters/grayscale_lum",
-        "filters/grayscale_avg",
         
         "cconv/rgb2hsv",
         "cconv/hsv2rgb",

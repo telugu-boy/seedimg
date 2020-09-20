@@ -26,8 +26,8 @@
 
 namespace seedimg::utils {
 
-template <typename T, typename I, typename MinT, typename MaxT>
-inline T clamp(I a, MinT min, MaxT max) {
+template <typename I, typename MinT, typename MaxT, typename T = std::uint8_t>
+constexpr T clamp(I a, MinT min, MaxT max) {
   return a > max ? max : a < min ? min : static_cast<T>(a);
 }
 

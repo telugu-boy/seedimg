@@ -58,20 +58,6 @@ void apply_mat_lut_worker(simg &inp_img, simg &res_img, simg_int start,
 }
 
 namespace seedimg::filters {
-smat generate_hue_mat(float angle) {
-  const float sinr = static_cast<float>(std::sin(angle * PI / 180));
-  const float cosr = static_cast<float>(std::cos(angle * PI / 180));
-  return {0.213f + cosr * 0.787f - sinr * 0.213f,
-          0.213f - cosr * 0.213f + sinr * 0.143f,
-          0.213f - cosr * 0.213f - sinr * 0.787f,
-          0.715f - cosr * 0.715f - sinr * 0.715f,
-          0.715f + cosr * 0.285f + sinr * 0.140f,
-          0.715f - cosr * 0.715f + sinr * 0.715f,
-          0.072f - cosr * 0.072f + sinr * 0.928f,
-          0.072f - cosr * 0.072f - sinr * 0.283f,
-          0.072f + cosr * 0.928f + sinr * 0.072f};
-}
-
 void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat) {
   seedimg::utils::hrz_thread(apply_mat_worker, inp_img, res_img, mat);
 }
