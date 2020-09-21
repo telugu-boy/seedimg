@@ -21,7 +21,7 @@ seedimg - module based image manipulation library written in modern
 
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
-#include <seedimg-filters/seedimg-filters-ocl.hpp>
+//#include <seedimg-filters/seedimg-filters-ocl.hpp>
 #include <seedimg-formats/seedimg-tiff.hpp>
 
 auto main() -> int {
