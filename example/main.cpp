@@ -53,7 +53,7 @@ auto main() -> int {
       constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
       // apply_mat_i(a, SEPIA_MAT);
       apply_mat_lut_i(a, sepia_lut);
-      seedimg::save("biol.jpg", b);
+      seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;
