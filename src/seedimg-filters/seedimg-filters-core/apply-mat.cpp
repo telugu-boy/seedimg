@@ -25,13 +25,13 @@ void apply_mat_worker(simg &inp_img, simg &res_img, simg_int start,
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
       seedimg::pixel pix = inp_img->pixel(x, start);
-      res_img->pixel(x, start).r = seedimg::utils::clamp<std::uint8_t>(
+      res_img->pixel(x, start).r = seedimg::utils::clamp(
           mat[0] * pix.r + mat[4] * pix.g + mat[8] * pix.b + mat[12], 0,
           seedimg::img::MAX_PIXEL_VALUE);
-      res_img->pixel(x, start).g = seedimg::utils::clamp<std::uint8_t>(
+      res_img->pixel(x, start).g = seedimg::utils::clamp(
           mat[1] * pix.r + mat[5] * pix.g + mat[9] * pix.b + mat[13], 0,
           seedimg::img::MAX_PIXEL_VALUE);
-      res_img->pixel(x, start).b = seedimg::utils::clamp<std::uint8_t>(
+      res_img->pixel(x, start).b = seedimg::utils::clamp(
           mat[2] * pix.r + mat[6] * pix.g + mat[10] * pix.b + mat[14], 0,
           seedimg::img::MAX_PIXEL_VALUE);
     }
@@ -44,15 +44,15 @@ void apply_mat_lut_worker(simg &inp_img, simg &res_img, simg_int start,
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
       seedimg::pixel pix = inp_img->pixel(x, start);
-      res_img->pixel(x, start).r = seedimg::utils::clamp<std::uint8_t>(
-          lut[0][pix.r] + lut[3][pix.g] + lut[6][pix.b], 0,
-          seedimg::img::MAX_PIXEL_VALUE);
-      res_img->pixel(x, start).g = seedimg::utils::clamp<std::uint8_t>(
-          lut[1][pix.r] + lut[4][pix.g] + lut[7][pix.b], 0,
-          seedimg::img::MAX_PIXEL_VALUE);
-      res_img->pixel(x, start).b = seedimg::utils::clamp<std::uint8_t>(
-          lut[2][pix.r] + lut[5][pix.g] + lut[8][pix.b], 0,
-          seedimg::img::MAX_PIXEL_VALUE);
+      res_img->pixel(x, start).r =
+          seedimg::utils::clamp(lut[0][pix.r] + lut[3][pix.g] + lut[6][pix.b],
+                                0, seedimg::img::MAX_PIXEL_VALUE);
+      res_img->pixel(x, start).g =
+          seedimg::utils::clamp(lut[1][pix.r] + lut[4][pix.g] + lut[7][pix.b],
+                                0, seedimg::img::MAX_PIXEL_VALUE);
+      res_img->pixel(x, start).b =
+          seedimg::utils::clamp(lut[2][pix.r] + lut[5][pix.g] + lut[8][pix.b],
+                                0, seedimg::img::MAX_PIXEL_VALUE);
     }
   }
 }

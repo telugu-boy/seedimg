@@ -24,5 +24,10 @@ namespace ocl {
 void init_ocl_singleton(std::size_t plat, std::size_t dev) {
   ocl_singleton::instance(plat, dev);
 }
+cl::Context &get_context() { return ocl_singleton::instance().context; }
+cl::CommandQueue &get_queue() { return ocl_singleton::instance().queue; }
+cl::Kernel &get_kernel(const std::string &kernel_name) {
+  return ocl_singleton::instance().kernels.at(kernel_name);
+}
 } // namespace ocl
 } // namespace seedimg::filters

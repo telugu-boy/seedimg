@@ -16,11 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#include <cmath>
-
-#include <CL/cl.hpp>
-
-#include "ocl-singleton.hpp"
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 
 // static constexpr smat const SEPIA_MAT = {
@@ -30,66 +25,14 @@ namespace seedimg::filters {
 namespace ocl {
 void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat,
                cl::Buffer *inp_buf, cl::Buffer *res_buf) {
-  const auto &context = ocl_singleton::instance().context;
-  const auto &device = ocl_singleton::instance().device;
-  const auto &program = ocl_singleton::instance().program;
 
   cl_float16 matvec;
   for (std::size_t i = 0; i < 16; i++)
     matvec.s[i] = mat[i];
 
-  /*
-  cl::Buffer inp_img_buf;
-
-  if (inp_buf == nullptr) {
-    inp_img_buf = {context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
-                   sizeof(seedimg::pixel) * inp_img->width() *
-                       inp_img->height(),
-                   inp_img->data()};
-  } else {
-    inp_img_buf = *inp_buf;
-  }
-  // cl::Buffer &res_img_buf = inp_img_buf;
-  cl::Buffer res_img_buf{context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
-                         sizeof(seedimg::pixel) * res_img->width() *
-                             res_img->height(),
-                         res_img->data()};
-  if (inp_img != res_img) {
-    if (res_img == nullptr) {
-      res_img_buf = {context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
-                     sizeof(seedimg::pixel) * res_img->width() *
-                         res_img->height()};
-    } else {
-      res_img_buf = *res_buf;
-    }
-  }*/
-
-  cl::Buffer inp_img_buf{context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
-                         sizeof(seedimg::pixel) * inp_img->width() *
-                             inp_img->height(),
-                         inp_img->data()};
-  cl::Buffer res_img_buf{context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
-                         sizeof(seedimg::pixel) * res_img->width() *
-                             res_img->height(),
-                         res_img->data()};
-
-  cl::CommandQueue queue(context, device);
-
-  write_img_1d(queue, inp_img, inp_img_buf);
-
-  cl::Kernel apply_mat_ocl(program, "apply_mat");
-
-  apply_mat_ocl.setArg(0, matvec);
-  apply_mat_ocl.setArg(1, inp_img_buf);
-  apply_mat_ocl.setArg(2, res_img_buf);
-  apply_mat_ocl.setArg(3, inp_img->width() * inp_img->height());
-  queue.enqueueNDRangeKernel(
-      apply_mat_ocl, cl::NullRange,
-      cl::NDRange(round_up(inp_img->width() * inp_img->height(), 128)),
-      cl::NDRange(128));
-  queue.finish();
-
-  read_img_1d(queue, res_img, res_img_buf);
+  exec_ocl_callback(inp_img, res_img, inp_buf, res_buf, "apply_mat",
+                    default_exec_callback, inp_img->width() * inp_img->height(),
+                    matvec);
 }
 
 void apply_mat_i(simg &inp_img, const fsmat &mat, cl::Buffer *inp_buf,

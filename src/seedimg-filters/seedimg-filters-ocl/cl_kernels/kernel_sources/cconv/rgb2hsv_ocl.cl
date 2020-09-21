@@ -2,7 +2,7 @@ inline float fmodulo(float x, float N) {
   return fmod((fmod(x, N) + N), N);
 }
 
-__kernel void rgb2hsv(__global uchar4* inp_pix, __global uchar4* res_pix, ulong amt_pixels) {
+__kernel void rgb2hsv(ulong amt_pixels, __global uchar4* inp_pix, __global uchar4* res_pix) {
       int num = get_global_id(0);
       if(num >= amt_pixels)
           return;

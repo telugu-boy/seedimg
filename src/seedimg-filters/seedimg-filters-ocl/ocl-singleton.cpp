@@ -18,11 +18,23 @@
 ************************************************************************/
 
 #include "ocl-singleton.hpp"
+#include <seedimg-filters/seedimg-filters-ocl.hpp>
+#include <seedimg-utils.hpp>
 
-#define SEEDIMG_DEBUG_
-#ifdef SEEDIMG_DEBUG_
+#ifndef NDEBUG
 #include <iostream>
 #endif
+
+namespace seedimg::filters {
+namespace ocl {
+void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
+                      std::size_t amt, ...) {
+  queue.enqueueNDRangeKernel(
+      kern, cl::NullRange,
+      cl::NDRange(seedimg::utils::round_up<std::size_t>(amt, 128)),
+      cl::NDRange(128));
+  queue.finish();
+}
 
 void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
                   cl::Buffer &inp_img_buf) {
@@ -45,6 +57,8 @@ void read_img_1d(cl::CommandQueue &queue, simg &res_img,
   queue.enqueueUnmapMemObject(res_img_buf, res);
   queue.finish();
 }
+} // namespace ocl
+} // namespace seedimg::filters
 
 ocl_singleton &ocl_singleton::instance(std::size_t plat, std::size_t dev) {
   static ocl_singleton singleton(plat, dev);
@@ -58,7 +72,7 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
     throw std::runtime_error("No platforms found");
   }
   platform = all_platforms[plat];
-#ifdef SEEDIMG_DEBUG_
+#ifndef NDEBUG
   std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>()
             << std::endl;
 #endif
@@ -70,7 +84,9 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
   device = all_devices[dev];
   context = {device};
 
-  static constexpr const char *const kernels[] = {
+  queue = {context, device};
+
+  static constexpr const char *const kernels_src[] = {
 #include "cl_kernels/filters/apply_mat_kernel.clh"
       ,
 #include "cl_kernels/cconv/rgb2hsv_kernel.clh"
@@ -79,10 +95,13 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
       ,
   };
 
+  static constexpr const char *const kernels_names[]{"apply_mat", "rgb2hsv",
+                                                     "hsv2rgb"};
+
   // didn't use emplace back because it's slower as they're not
   // large. std::pair<const char*, ::size_t> is the definition of
   // cl::Program::Sources.
-  for (auto &kernel : kernels)
+  for (auto &kernel : kernels_src)
     sources.push_back({kernel, std::strlen(kernel)});
 
   program = {context, sources};
@@ -90,5 +109,9 @@ ocl_singleton::ocl_singleton(std::size_t plat, std::size_t dev) {
     throw std::runtime_error(
         "Error building: " +
         program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device));
+  }
+
+  for (auto &name : kernels_names) {
+    kernels[name] = {program, name};
   }
 }

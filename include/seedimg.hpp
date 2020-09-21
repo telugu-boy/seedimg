@@ -40,8 +40,6 @@ typedef struct point {
   }
 } point;
 
-simg_int round_up(simg_int inp, simg_int mul) noexcept;
-
 bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
                 seedimg::point point) noexcept;
 

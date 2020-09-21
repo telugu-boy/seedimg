@@ -22,12 +22,7 @@
 
 #include <CL/cl.hpp>
 #include <seedimg.hpp>
-
-void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
-                  cl::Buffer &inp_img_buf);
-
-void read_img_1d(cl::CommandQueue &queue, simg &res_img,
-                 cl::Buffer &res_img_buf);
+#include <unordered_map>
 
 class ocl_singleton {
 public:
@@ -38,6 +33,9 @@ public:
   cl::Device device;
   cl::Program::Sources sources;
   cl::Program program;
+  cl::CommandQueue queue;
+
+  std::unordered_map<std::string, cl::Kernel> kernels;
 
   static ocl_singleton &instance(std::size_t plat = 0, std::size_t dev = 0);
 

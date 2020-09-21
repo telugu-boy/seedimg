@@ -26,6 +26,18 @@
 
 namespace seedimg::utils {
 
+template <typename T = std::size_t>
+constexpr T round_up(T inp, T mul) noexcept {
+  if (mul == 0)
+    return inp;
+
+  T remainder = inp % mul;
+  if (remainder == 0)
+    return inp;
+
+  return inp + mul - remainder;
+}
+
 template <typename I, typename MinT, typename MaxT, typename T = std::uint8_t>
 constexpr T clamp(I a, MinT min, MaxT max) {
   return a > max ? max : a < min ? min : static_cast<T>(a);

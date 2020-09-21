@@ -29,49 +29,9 @@ void rgb(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
   else if (inp_img->colourspace() != seedimg::colourspaces::hsv)
     throw std::invalid_argument("Colourspace is not HSV");
 
-  const auto &context = ocl_singleton::instance().context;
-  const auto &device = ocl_singleton::instance().device;
-  const auto &program = ocl_singleton::instance().program;
+  exec_ocl_callback(inp_img, res_img, inp_buf, res_buf, "hsv2rgb",
+                    default_exec_callback, inp_img->width() * inp_img->height());
 
-  // create buffers on device (allocate space on GPU)
-  cl::Buffer inp_img_buf;
-  if (inp_buf == nullptr) {
-    inp_img_buf = {context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-                   sizeof(seedimg::pixel) * inp_img->width() *
-                       inp_img->height(),
-                   inp_img->data()};
-  } else {
-    inp_img_buf = *inp_buf;
-  }
-  cl::Buffer &res_img_buf = inp_img_buf;
-  if (inp_img != res_img) {
-    if (res_img == nullptr) {
-      res_img_buf = {context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
-                     sizeof(seedimg::pixel) * res_img->width() *
-                         res_img->height()};
-    } else {
-      res_img_buf = *res_buf;
-    }
-  }
-
-  // create a queue (a queue of commands that the GPU will execute)
-  cl::CommandQueue queue(context, device);
-
-  write_img_1d(queue, inp_img, inp_img_buf);
-
-  cl::Kernel hsv2rgb;
-  hsv2rgb = {program, "hsv2rgb"};
-
-  hsv2rgb.setArg(0, inp_img_buf);
-  hsv2rgb.setArg(1, res_img_buf);
-  hsv2rgb.setArg(2, inp_img->width() * inp_img->height());
-  queue.enqueueNDRangeKernel(
-      hsv2rgb, cl::NullRange,
-      cl::NDRange(round_up(inp_img->width() * inp_img->height(), 128)),
-      cl::NDRange(128));
-  queue.finish();
-
-  read_img_1d(queue, res_img, res_img_buf);
   static_cast<seedimg::uimg *>(res_img.get())
       ->set_colourspace(seedimg::colourspaces::rgb);
 }

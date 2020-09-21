@@ -1,4 +1,4 @@
-R"(__kernel void hsv2rgb(__global uchar4* inp_pix, __global uchar4* res_pix, ulong amt_pixels) {
+R"(__kernel void hsv2rgb(ulong amt_pixels, __global uchar4* inp_pix, __global uchar4* res_pix) {
     int num = get_global_id(0);
     if(num >= amt_pixels)
         return;

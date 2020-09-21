@@ -4,7 +4,7 @@ R"(inline uchar clmp_(float i){
            (0.0f < i && i < 255.0f) * i;
 }
 
-__kernel void apply_mat(float16 matvec, __global uchar4* inp_pix, __global uchar4* res_pix, ulong amt_pixels) {
+__kernel void apply_mat(ulong amt_pixels, float16 matvec, __global uchar4* inp_pix, __global uchar4* res_pix) {
       int num = get_global_id(0);
       if(num >= amt_pixels)
           return;

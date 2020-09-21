@@ -24,17 +24,6 @@
 
 namespace seedimg {
 
-simg_int round_up(simg_int inp, simg_int mul) noexcept {
-  if (mul == 0)
-    return inp;
-
-  simg_int remainder = inp % mul;
-  if (remainder == 0)
-    return inp;
-
-  return inp + mul - remainder;
-}
-
 bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
                 seedimg::point point) noexcept {
   return xy1.x <= point.x && point.x <= xy2.x && xy1.y <= point.y &&

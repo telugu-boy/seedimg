@@ -52,9 +52,7 @@ auto main() -> int {
       constexpr auto comp = compose_smats(std::array{SEPIA_MAT, SEPIA_MAT});
       constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
       // apply_mat_i(a, SEPIA_MAT);
-      // apply_mat_lut_i(a, sepia_lut);
-      ocl::sepia_i(a);
-      // ocl::cconv::hsv(a, b);
+      apply_mat_lut_i(a, sepia_lut);
       seedimg::save("biol.jpg", b);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
