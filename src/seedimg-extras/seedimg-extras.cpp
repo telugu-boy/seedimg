@@ -23,6 +23,9 @@
 #include <seedimg-utils.hpp>
 #include <seedimg.hpp>
 
+#include <cmath>
+#include <iostream>
+
 namespace seedimg::extras {
 histogram_result histogram(simg &input) {
   histogram_result result;
@@ -65,4 +68,36 @@ void scanline(simg& input, simg& output, simg_int rows, float intensity) {
         }
     }
 }
+
+//void resize_bilin(simg& input, simg& output) {
+//    float w_delta =   static_cast<float>(input->width() - 1)
+//                    / static_cast<float>(output->width() - 1);
+
+//    float h_delta =   static_cast<float>(input->height() - 1)
+//                    / static_cast<float>(output->height() - 1);
+
+//    for(simg_int y = 0; y < output->height(); ++y) {
+//        for(simg_int x = 0; x < output->width(); ++x) {
+//            float w_int, h_int,
+//                  w_frac = modff(static_cast<float>(x * w_delta), &w_int),
+//                  h_frac = modff(static_cast<float>(y * h_delta), &h_int);
+
+//            auto w_j = static_cast<simg_int>(w_frac > 0 ? w_int + 1 : w_int),
+//                 h_j = static_cast<simg_int>(h_frac > 0 ? h_int + 1 : h_int);
+
+//#define PIX(ch) ( \
+//    (1-w_frac) * (1-h_frac) * input->pixel( \
+//            static_cast<std::size_t>(w_int), \
+//            static_cast<std::size_t>(h_int)).ch + \
+//    w_frac * h_frac * input->pixel(w_j, h_j).ch)
+
+//            output->pixel(x, y) = {
+//                {{static_cast<std::uint8_t>(PIX(r)),
+//                  static_cast<std::uint8_t>(PIX(g)),
+//                  static_cast<std::uint8_t>(PIX(b))}},
+//                  static_cast<std::uint8_t>(PIX(a)),
+//            };
+//        }
+//    }
+//}
 } // namespace seedimg::extras
