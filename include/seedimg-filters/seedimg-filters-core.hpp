@@ -121,14 +121,26 @@ void saturation_i(simg &inp_img, float mul);
  * Uses a simple, nearest-neighbour scaling which is computationally
  * fast and trivial to implement but yields low quality.
  *
- * @note Future plans are to implement bi-linear and bi-cubic algorithms,
- * or may possibly implement lanczos resampler for "ideal reconstruction".
+ * @note Future plans are to bi-cubic algorithms, or may possibly
+ * implement lanczos resampler for "ideal reconstruction".
  *
  * @param input Image to scale.
  * @param output Destination to output.
  */
 void resize(simg& input, simg& output);
 // void resize_i(simg&, seedimg::point);  // TODO
+
+/**
+ * @brief Bi-linear interpolation to resize images to desired dimensions.
+ *
+ * First, 1D linear interpolation is applied on all the rows of input.
+ * Then all the rows are assembled. Interpolation is applied on all the
+ * columns of the assembled output.
+ *
+ * @param input Image to scale.
+ * @param output Destination to output.
+ */
+void resize_bilin(simg& input, simg& output);
 
 namespace cconv {};
 namespace ocl {}

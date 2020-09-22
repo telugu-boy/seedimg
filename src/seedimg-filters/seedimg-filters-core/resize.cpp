@@ -18,6 +18,7 @@
 ************************************************************************/
 
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-utils.hpp>
 
 namespace seedimg::filters {
 void resize(simg& input, simg& output) {
@@ -36,6 +37,55 @@ void resize(simg& input, simg& output) {
                 static_cast<simg_int>(static_cast<float>(x)/output->width()  * input->width()),
                 static_cast<simg_int>(static_cast<float>(y)/output->height() * input->height()));
         }
+    }
+}
+
+template<class IOIter>
+void interpolate_1d(
+        IOIter input, IOIter output,
+        float delta, simg_int outsize)
+{
+    for(simg_int i = 0; i < outsize; ++i) {
+        float intgr,
+              frac = modff(static_cast<float>(i*delta), &intgr);
+
+        auto inp = input[static_cast<simg_int>(intgr)];
+        output[i] = {
+            {{static_cast<std::uint8_t>((1-frac)*inp.r + frac*inp.r),
+              static_cast<std::uint8_t>((1-frac)*inp.g + frac*inp.g),
+              static_cast<std::uint8_t>((1-frac)*inp.b + frac*inp.b)}},
+              static_cast<std::uint8_t>((1-frac)*inp.a + frac*inp.a),
+        };
+    }
+}
+
+void resize_bilin(simg& input, simg& output) {
+    float w_delta =   static_cast<float>(input->width() - 1)
+                    / static_cast<float>(output->width() - 1);
+
+    float h_delta =   static_cast<float>(input->height() - 1)
+                    / static_cast<float>(output->height() - 1);
+
+    // copy data to output, if size was identical.
+    if(input->width()  == output->width() ||
+       input->height() == output->height())
+        std::copy(input->data(),
+                  input->data() + input->width() * input->height(),
+                  output->data());
+
+    // TODO: make this algorithm to not have to internally allocate like this.
+    // this will hold row-passed data to be column passed.
+    simg tmp_img = seedimg::make(output->width(), input->height());
+    seedimg::utils::column_iterator cols_tmp(tmp_img), cols_out(output);
+
+    for(simg_int r = 0; r < input->height(); ++r)  // row pass.
+        interpolate_1d(input->row(r), tmp_img->row(r), w_delta, output->width());
+
+    for(simg_int c = 0; c < output->width(); ++c) {  // column pass.
+        cols_tmp.set_column(c);
+        cols_out.set_column(c);
+
+        interpolate_1d(cols_tmp, cols_out, h_delta, output->height());
     }
 }
 }
