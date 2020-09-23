@@ -28,4 +28,4 @@ add_library(seedimg-filters-core ${LIB_TYPE}
 
     saturation.cpp)
 
-target_link_libraries(seedimg-filters-core PRIVATE seedimg seedimg-filters-cconv pthread)
+target_link_libraries(seedimg-filters-core PRIVATE seedimg pthread)

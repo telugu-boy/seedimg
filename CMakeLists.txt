@@ -55,8 +55,8 @@ endif()
 set(FILTERS_ENABLED ON CACHE BOOL "Enable image operations")
 set(CCONV_ENABLED ON CACHE BOOL "Enable colourspace conversion")
 
-if(FILTERS_ENABLED AND NOT CCONV_ENABLED)
-    message("CCONV_ENABLED must be set to ON for image operations.")
+if(CCONV_ENABLED AND NOT FILTERS_ENABLED)
+    message("FILTERS_ENABLED must be set to ON for colourspace conversions. View wiki for details.")
 endif()
 
 set(OPENCL_ENABLED OFF CACHE BOOL "Enable OpenCL filters")

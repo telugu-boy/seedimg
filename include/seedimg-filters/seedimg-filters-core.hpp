@@ -21,7 +21,6 @@
 
 #define SEEDIMG_CROP_I_FRIEND
 
-#include "seedimg-filters-cconv.hpp"
 #include <cmath>
 #include <seedimg.hpp>
 
@@ -31,6 +30,8 @@ namespace seedimg {
 typedef std::array<float, 9> smat;
 // Full size Seedimg MATrix
 typedef std::array<float, 16> fsmat;
+// LookUp Table (additonal) Vector
+typedef std::array<float, 3> lutvec;
 // Seedimg LookUp Table
 template <typename T>
 using slut = std::array<std::array<float, seedimg::img::MAX_PIXEL_VALUE + 1>,
@@ -54,8 +55,10 @@ void apply_mat(simg &inp_img, simg &res_img, const smat &mat);
 void apply_mat_i(simg &inp_img, const smat &mat);
 
 void apply_mat_lut(simg &inp_img, simg &res_img,
-                   const seedimg::slut<seedimg::smat> &lut);
-void apply_mat_lut_i(simg &inp_img, const seedimg::slut<seedimg::smat> &lut);
+                   const seedimg::slut<seedimg::smat> &lut,
+                   const lutvec &vec = {0, 0, 0});
+void apply_mat_lut_i(simg &inp_img, const seedimg::slut<seedimg::smat> &lut,
+                     const lutvec &vec = {0, 0, 0});
 
 void grayscale(simg &inp_img, simg &res_img, bool luminosity = true);
 void grayscale_i(simg &inp_img, bool luminosity = true);

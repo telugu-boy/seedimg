@@ -22,6 +22,7 @@ seedimg - module based image manipulation library written in modern
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 //#include <seedimg-filters/seedimg-filters-ocl.hpp>
+#include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-formats/seedimg-tiff.hpp>
 
 auto main() -> int {
@@ -52,7 +53,9 @@ auto main() -> int {
       constexpr auto comp = compose_smats(std::array{SEPIA_MAT, SEPIA_MAT});
       constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
       // apply_mat_i(a, SEPIA_MAT);
-      apply_mat_lut_i(a, sepia_lut);
+      // apply_mat_lut_i(a, sepia_lut);
+      cconv::ycbcr_i(a);
+      // cconv::rgb_i(a);
       seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
