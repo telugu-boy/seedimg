@@ -25,11 +25,20 @@
 
 #include <seedimg.hpp>
 
-enum class img_type { unknown = 0, png, jpeg, webp, farbfeld, tiff, irdump };
+enum class seedimg_img_type {
+  unknown = 0,
+  png,
+  jpeg,
+  webp,
+  farbfeld,
+  tiff,
+  irdump
+};
 
-enum img_type match_ext(const std::string &ext) noexcept;
+enum seedimg_img_type seedimg_match_ext(const std::string &ext) noexcept;
 
-std::optional<enum img_type> imgtype(const std::string &filename) noexcept;
+std::optional<enum seedimg_img_type>
+seedimg_imgtype(const std::string &filename) noexcept;
 
 namespace seedimg {
 simg load(const std::string &filename);
