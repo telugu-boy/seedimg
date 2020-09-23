@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
 
-set(LIBPNG_CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DPNG_SHARED=FALSE -DBUILD_TESTING=OFF -DPNG_TESTS=OFF)
+set(LIBPNG_CMAKE_ARGS ${CL_ARGS}
+    -DCMAKE_BUILD_TYPE=Release
+    -DPNG_SHARED=FALSE
+    -DBUILD_TESTING=OFF
+    -DPNG_TESTS=OFF
+    -DCMAKE_PROJECT_libpng_INCLUDE=${CMAKE_CURRENT_SOURCE_DIR}/add_zlib_include_dir.cmake
+)
 
 find_package(ZLIB)
 if(NOT ZLIB_FOUND)
@@ -74,7 +80,7 @@ if(NOT PNG_FOUND)
 
     set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}png${suffix})
 
-    add_dependencies(libpng libpng-1.6.37)
+    add_dependencies(libpng libpng-1.6.37 zlib-1.2.11)
 endif()
 
 
