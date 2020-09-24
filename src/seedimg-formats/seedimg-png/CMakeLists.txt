@@ -63,6 +63,7 @@ if(NOT PNG_FOUND)
         PREFIX ${CMAKE_BINARY_DIR}/extern/libpng
         BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libpng
         INSTALL_COMMAND ""
+        DEPENDS zlib-1.2.11
         CMAKE_ARGS ${LIBPNG_CMAKE_ARGS} -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     )
 
