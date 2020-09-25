@@ -19,24 +19,24 @@
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-utils.hpp>
 
-static constexpr seedimg::smat const ycbcr_jpeg_mat = {
+static constexpr seedimg::smat const ycbcr_jpeg_rgb_mat = {
     0.299f,     -0.168736f, 0.5f, 0.587f,    -0.331264f,
     -0.418688f, 0.114f,     0.5f, -0.081312f};
 
-static constexpr seedimg::lutvec const ycbcr_jpeg_vec = {0, 128, 128};
+static constexpr seedimg::lutvec const ycbcr_jpeg_rgb_vec = {0, 128, 128};
 
-static constexpr seedimg::slut<seedimg::smat> const ycbcr_jpeg_lut =
-    seedimg::utils::gen_lut(ycbcr_jpeg_mat);
+static constexpr seedimg::slut<seedimg::smat> const ycbcr_jpeg_rgb_lut =
+    seedimg::utils::gen_lut(ycbcr_jpeg_rgb_mat);
 
-static constexpr seedimg::smat const ycbcr_bt601_mat = {
+static constexpr seedimg::smat const ycbcr_bt601_rgb_mat = {
     65.738f / 256.0f,  -37.945f / 256.0f, 112.439f / 256.0f,
     129.057f / 256.0f, -74.494f / 256.0f, -94.154f / 256.0f,
     25.064f / 256.0f,  112.439f / 256.0f, -18.285f / 256.0f};
 
-static constexpr seedimg::lutvec const ycbcr_bt601_vec = {16, 128, 128};
+static constexpr seedimg::lutvec const ycbcr_bt601_rgb_vec = {16, 128, 128};
 
-static constexpr seedimg::slut<seedimg::smat> const ycbcr_bt601_lut =
-    seedimg::utils::gen_lut(ycbcr_bt601_mat);
+static constexpr seedimg::slut<seedimg::smat> const ycbcr_bt601_rgb_lut =
+    seedimg::utils::gen_lut(ycbcr_bt601_rgb_mat);
 
 namespace seedimg::filters {
 namespace cconv {
@@ -46,11 +46,11 @@ void ycbcr(simg &inp_img, simg &res_img, seedimg::colourspaces type) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
     if (type == seedimg::colourspaces::ycbcr_jpeg) {
-      seedimg::filters::apply_mat_lut(inp_img, res_img, ycbcr_jpeg_lut,
-                                      ycbcr_jpeg_vec);
+      seedimg::filters::apply_mat_lut(inp_img, res_img, ycbcr_jpeg_rgb_lut,
+                                      ycbcr_jpeg_rgb_vec);
     } else if (type == seedimg::colourspaces::ycbcr_bt601) {
-      seedimg::filters::apply_mat_lut(inp_img, res_img, ycbcr_bt601_lut,
-                                      ycbcr_bt601_vec);
+      seedimg::filters::apply_mat_lut(inp_img, res_img, ycbcr_bt601_rgb_lut,
+                                      ycbcr_bt601_rgb_vec);
     }
   } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     rgb(inp_img, res_img);

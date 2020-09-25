@@ -22,28 +22,20 @@
 #include <seedimg-utils.hpp>
 
 // resource headers. this is for the rgb->ycbcr_jpeg
+// bt601 does not need this header because it doesn't depend on a loop value
+// offset in the LUT generation code.
 #include "from_ycbcr_jpeg_lut.rh"
-// and this is for bt601
-#include "from_ycbcr_bt601_lut.rh"
 
-static constexpr seedimg::smat const ycbcr_jpeg_mat = {
-    0.299f,     -0.168736f, 0.5f, 0.587f,    -0.331264f,
-    -0.418688f, 0.114f,     0.5f, -0.081312f};
+static constexpr seedimg::smat const rgb_ycbcr_bt601_mat = {
+    298.082f / 256.0f, 298.082f / 256.0f,  298.082f / 256.0f,
+    0.0f / 256.0f,     -100.291f / 256.0f, 516.412f / 256.0f,
+    408.583f / 256.0f, -208.120f / 256.0f, 0.0f / 256.0f};
 
-static constexpr seedimg::lutvec const ycbcr_jpeg_vec = {0, 128, 128};
+static constexpr seedimg::lutvec const rgb_ycbcr_bt601_vec = {
+    -222.921f, 135.576f, -276.836f};
 
-static constexpr seedimg::slut<seedimg::smat> const ycbcr_jpeg_lut =
-    seedimg::utils::gen_lut(ycbcr_jpeg_mat);
-
-static constexpr seedimg::smat const ycbcr_bt601_mat = {
-    65.738f / 256.0f,  -37.945f / 256.0f, 112.439f / 256.0f,
-    129.057f / 256.0f, -74.494f / 256.0f, -94.154f / 256.0f,
-    25.064f / 256.0f,  112.439f / 256.0f, -18.285f / 256.0f};
-
-static constexpr seedimg::lutvec const ycbcr_bt601_vec = {16, 128, 128};
-
-static constexpr seedimg::slut<seedimg::smat> const ycbcr_bt601_lut =
-    seedimg::utils::gen_lut(ycbcr_bt601_mat);
+static constexpr seedimg::slut<seedimg::smat> const rgb_ycbcr_bt601_lut =
+    seedimg::utils::gen_lut(rgb_ycbcr_bt601_mat);
 
 void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
                     simg_int end) {
@@ -125,24 +117,6 @@ void ycbcr_jpeg2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
   }
 }
 
-// same with this function.
-void ycbcr_bt6012rgb_worker(simg &inp_img, simg &res_img, simg_int start,
-                            simg_int end) {
-  for (; start < end; ++start) {
-    for (simg_int x = 0; x < inp_img->width(); ++x) {
-      seedimg::pixel pix = inp_img->pixel(x, start);
-      // gcb1 and bcr3 are zero in the matrix. as well.
-      res_img->pixel(x, start).r = static_cast<std::uint8_t>(
-          bt601_ry1[pix.y] + 0 + bt601_bcr1[pix.cr] - 222.921f);
-      res_img->pixel(x, start).g =
-          static_cast<std::uint8_t>(bt601_ry2[pix.y] + bt601_gcb2[pix.cb] +
-                                    bt601_bcr2[pix.cr] + 135.576f);
-      res_img->pixel(x, start).b = static_cast<std::uint8_t>(
-          bt601_ry3[pix.y] + bt601_gcb3[pix.cb] + 0 - 276.836f);
-    }
-  }
-}
-
 namespace seedimg::filters {
 namespace cconv {
 void rgb(simg &inp_img, simg &res_img) {
@@ -154,7 +128,8 @@ void rgb(simg &inp_img, simg &res_img) {
   } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg) {
     seedimg::utils::hrz_thread(ycbcr_jpeg2rgb_worker, inp_img, res_img);
   } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
-    seedimg::utils::hrz_thread(ycbcr_bt6012rgb_worker, inp_img, res_img);
+    seedimg::filters::apply_mat_lut(inp_img, res_img, rgb_ycbcr_bt601_lut,
+                                    rgb_ycbcr_bt601_vec);
   }
   static_cast<seedimg::uimg *>(res_img.get())
       ->set_colourspace(seedimg::colourspaces::rgb);
