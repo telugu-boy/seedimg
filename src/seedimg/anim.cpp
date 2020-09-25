@@ -79,6 +79,9 @@ public:
 
   std::size_t size() const noexcept { return data.size(); }
 
+  simg* begin() const noexcept { return const_cast<simg*>(data.data()); }
+  simg* end() const noexcept { return const_cast<simg*>(data.data() + size()); }
+
 private:
   std::vector<simg> data;
 };
@@ -116,6 +119,9 @@ bool anim::trim(std::size_t start, std::size_t end) {
 }
 
 std::size_t anim::size() const noexcept { return impl->size(); }
+
+simg* anim::begin() const noexcept { return impl->begin(); }
+simg* anim::end() const noexcept { return impl->end(); }
 
 anim::~anim() = default;
 } // namespace seedimg
