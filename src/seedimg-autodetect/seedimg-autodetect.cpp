@@ -71,14 +71,17 @@ simg load(const std::string &filename) {
     return seedimg::modules::png::from(filename);
   case seedimg_img_type::jpeg:
     return seedimg::modules::jpeg::from(filename);
-  case seedimg_img_type::webp:
-    return seedimg::modules::webp::from(filename);
+  case seedimg_img_type::webp: {
+      auto imgs = seedimg::modules::webp::from(filename, 1);
+      return imgs.size() == 1 ? std::move(imgs[0]) : nullptr;
+  }
   case seedimg_img_type::farbfeld:
     return seedimg::modules::farbfeld::from(filename);
   case seedimg_img_type::tiff: {
     // this will return the first one only. use the full function to get the
     // entire vector.
-    return std::move(seedimg::modules::tiff::from(filename, 1)[0]);
+    auto imgs = seedimg::modules::tiff::from(filename, 1);
+    return imgs.size() == 1 ? std::move(imgs[0]) : nullptr;
   }
   default:
     return nullptr;

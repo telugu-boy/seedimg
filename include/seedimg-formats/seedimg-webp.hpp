@@ -25,10 +25,47 @@
 
 namespace seedimg::modules {
 namespace webp {
+/**
+ * @brief check Check if a valid WebP file or not.
+ * @param filename path to (possibly) webp file.
+ * @return true if valid webp file,
+ *         false if file doesn't exist or invalid.
+ */
 bool check(const std::string &filename) noexcept;
-bool to(const std::string &filename, const simg &inp_img,
-        float quality = 100.0);
-simg from(const std::string &filename);
+
+/**
+ * @brief Decodes a (possibly) animated WebP file.
+ * @param filename location to read from.
+ * @param max_frames maximum amount of frames to decode (0 = all).
+ * @return an empty array on error/file being empty.
+ */
+anim from(const std::string& filename, std::size_t max_frames = 0);
+
+/**
+ * @brief Encodes a (possibly) animated WebP file.
+ * @param filename location to write to.
+ * @param images animated sequence to write in.
+ * @param quality quality of RGB + alpha channels,
+ *                first = RGB, second = alpha.
+ * @param lossless whether to use the lossless mode.
+ * @param loop infinitely loop or not (GIF semantics).
+ */
+bool to(
+    const std::string& filename, anim& images,
+    std::pair<std::uint8_t, std::uint8_t> quality = {100, 100},
+    bool lossless = false,
+    bool loop = false);
+
+/**
+ * @brief Encodes a WebP file.
+ * @param filename location to write to.
+ * @param images image to encode.
+ * @param quality quality of compression.
+ * @param lossless whether to use the lossless mode.
+ */
+bool to(const std::string& filename, const simg& img,
+        std::uint8_t quality = 100,
+        bool lossless = false);
 } // namespace webp
 } // namespace seedimg::modules
 
