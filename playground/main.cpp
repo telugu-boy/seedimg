@@ -24,7 +24,6 @@ seedimg - module based image manipulation library written in modern
 //#include <seedimg-filters/seedimg-filters-ocl.hpp>
 #include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-formats/seedimg-tiff.hpp>
-#include <seedimg-filters/seedimg-filters-filterchain.hpp>
 
 auto main() -> int {
   using namespace seedimg::filters;
@@ -32,10 +31,9 @@ auto main() -> int {
             << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
-    // auto a = seedimg::load("cat.jpg");
-    auto a = seedimg::modules::tiff::from("bibe.tiff");
-    // auto b = seedimg::make(a->width(), a->height());
-    if (a.size() >= 1) {
+    auto a = seedimg::load("cat.jpg");
+    auto b = seedimg::make(a->width(), a->height());
+    if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);
       // invert_i(a);
@@ -52,17 +50,16 @@ auto main() -> int {
       // cconv::hsv_i(a);
       // saturation_i(a, 3.5f);
       // cconv::rgb_i(a);
-      // constexpr auto comp = compose_smats(std::array{SEPIA_MAT, SEPIA_MAT});
-      // constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
+      constexpr auto comp = compose_smats(std::array{SEPIA_MAT, SEPIA_MAT});
+      constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
       // apply_mat_i(a, SEPIA_MAT);
       // apply_mat_lut_i(a, sepia_lut);
       // cconv::ycbcr_i(a);
       // cconv::rgb_i(a);
-      // seedimg::save("biol.jpg", a);
+      cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
+      cconv::rgb_i(a);
+      seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
-
-      for(const auto& b: a)
-        std::cout << b->width() << 'x' << b->height() << std::endl;
     } else {
       std::cerr << "failed" << std::endl;
     }
