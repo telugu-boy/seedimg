@@ -33,9 +33,9 @@ auto main() -> int {
   {
     // ocl::init_ocl_singleton(1, 0);
     // auto a = seedimg::load("cat.jpg");
-    auto a = std::move(seedimg::modules::tiff::from("sdfsdf.jpg")[0]);
-    auto b = seedimg::make(a->width(), a->height());
-    if (a != nullptr) {
+    auto a = seedimg::modules::tiff::from("bibe.tiff");
+    // auto b = seedimg::make(a->width(), a->height());
+    if (a.size() >= 1) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);
       // invert_i(a);
@@ -56,22 +56,13 @@ auto main() -> int {
       // constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
       // apply_mat_i(a, SEPIA_MAT);
       // apply_mat_lut_i(a, sepia_lut);
-
-      filterchain()
-              .add(grayscale, false)
-              .add(invert)
-              .eval(a, b);
-
-      filterchain_i()
-              .add(grayscale_i, false)
-              .add(blur_i, 1, 4)
-              .eval(a);
-
       // cconv::ycbcr_i(a);
       // cconv::rgb_i(a);
-      seedimg::save("boil_io.jpg", b);
-      seedimg::save("biol_inplace.jpg", a);
+      // seedimg::save("biol.jpg", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
+
+      for(const auto& b: a)
+        std::cout << b->width() << 'x' << b->height() << std::endl;
     } else {
       std::cerr << "failed" << std::endl;
     }
