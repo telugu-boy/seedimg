@@ -114,4 +114,4 @@ if (${BUILD_TESTING})
 endif()
 
 # dependent project
-add_subdirectory(example)
+add_subdirectory(playground)
