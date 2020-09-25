@@ -45,7 +45,7 @@ std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
 }
 
 std::unique_ptr<seedimg::img> make(simg_int width, simg_int height,
-                                   std::uint8_t *data) {
+                                   seedimg::pixel *data) {
   return std::make_unique<seedimg::img>(width, height, data);
 }
 
