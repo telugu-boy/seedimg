@@ -159,6 +159,9 @@ public:
 
   std::size_t size() const noexcept;
 
+  simg* begin() const noexcept;
+  simg* end() const noexcept;
+
   ~anim();
 
 protected:

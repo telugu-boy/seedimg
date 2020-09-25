@@ -90,7 +90,7 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
 #endif
 };
 
-int main(int argc, char *argv[]) {
+int main(int, char *argv[]) {
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
   // std::filesystem::create_directories(res_dir + "/png/");
