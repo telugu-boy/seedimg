@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <vector>
 
@@ -114,6 +115,8 @@ bool to(const std::string &filename, const simg &inp_img) {
 }
 
 anim from(const std::string &filename, std::size_t max_frames) {
+  if (!std::filesystem::exists(filename))
+    return {};
   anim res{};
   std::size_t cnt = 0;
   TIFF *img = TIFFOpen(filename.c_str(), "r");

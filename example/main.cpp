@@ -31,7 +31,8 @@ auto main() -> int {
             << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("cat.jpg");
+    // auto a = seedimg::load("cat.jpg");
+    auto a = std::move(seedimg::modules::tiff::from("sdfsdf.jpg")[0]);
     auto b = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
