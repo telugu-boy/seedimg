@@ -129,6 +129,9 @@ typedef std::unique_ptr<seedimg::uimg> suimg;
 
 namespace seedimg {
 std::unique_ptr<seedimg::img> make(simg_int width, simg_int height);
+std::unique_ptr<seedimg::img> make(simg_int width, simg_int height,
+                                   std::uint8_t *data);
+std::unique_ptr<seedimg::img> make(seedimg::img &&inp_img);
 std::unique_ptr<seedimg::img>
 make(const std::unique_ptr<seedimg::img> &inp_img);
 
