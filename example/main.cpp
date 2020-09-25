@@ -24,17 +24,21 @@ seedimg - module based image manipulation library written in modern
 //#include <seedimg-filters/seedimg-filters-ocl.hpp>
 #include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-formats/seedimg-tiff.hpp>
+#include <seedimg-formats/seedimg-webp.hpp>
 #include <seedimg-filters/seedimg-filters-filterchain.hpp>
 
 auto main() -> int {
   using namespace seedimg::filters;
+  using namespace seedimg::modules;
+
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
     // auto a = seedimg::load("cat.jpg");
-    auto a = seedimg::modules::tiff::from("bibe.tiff");
+    // auto a = seedimg::modules::tiff::from("bibe.webp");
     // auto b = seedimg::make(a->width(), a->height());
+    auto a = webp::from("bibe.webp");
     if (a.size() >= 1) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);
