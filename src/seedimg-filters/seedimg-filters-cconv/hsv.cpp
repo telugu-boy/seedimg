@@ -21,7 +21,7 @@
 #include <seedimg-utils.hpp>
 
 inline float fmodulo(float x, float N) {
-  return std::fmod((std::fmod(x, N) + N), N);
+  return std::fmod(x, N) + (std::fmod(x, N) < 0) * N;
 }
 
 inline bool feq(float a, float b) { return std::fabs(a - b) < .0000001f; }

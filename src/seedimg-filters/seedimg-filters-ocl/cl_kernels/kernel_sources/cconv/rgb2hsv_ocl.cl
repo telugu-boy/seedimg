@@ -1,5 +1,5 @@
 inline float fmodulo(float x, float N) {
-  return fmod((fmod(x, N) + N), N);
+  return fmod(x, N) + (fmod(x, N) < 0) * N;
 }
 
 __kernel void rgb2hsv(ulong amt_pixels, __global uchar4* inp_pix, __global uchar4* res_pix) {
