@@ -103,7 +103,7 @@ int main(int, char *argv[]) {
   filter_functions filter;
   try {
     filter = filter_mapping.at(argv[1]);
-  } catch (const std::exception &e) {
+  } catch (const std::exception &) {
     std::cout << "Test not found (is OpenCL disabled?)";
     exit(0);
   }
