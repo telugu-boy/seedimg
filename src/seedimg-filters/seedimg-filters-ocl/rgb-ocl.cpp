@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <CL/cl.hpp>
 
 #include "ocl-singleton.hpp"
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
@@ -30,7 +29,8 @@ void rgb(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
     throw std::invalid_argument("Colourspace is not HSV");
 
   exec_ocl_callback(inp_img, res_img, inp_buf, res_buf, "hsv2rgb",
-                    default_exec_callback, inp_img->width() * inp_img->height());
+                    default_exec_callback,
+                    inp_img->width() * inp_img->height());
 
   static_cast<seedimg::uimg *>(res_img.get())
       ->set_colourspace(seedimg::colourspaces::rgb);

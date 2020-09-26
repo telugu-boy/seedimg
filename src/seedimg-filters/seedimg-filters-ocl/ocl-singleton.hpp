@@ -20,7 +20,10 @@
 #ifndef SEEDIMG_OCL_SINGLETON_H
 #define SEEDIMG_OCL_SINGLETON_H
 
+#define CL_TARGET_OPENCL_VERSION 100
+
 #include <CL/cl.hpp>
+
 #include <seedimg.hpp>
 #include <unordered_map>
 
