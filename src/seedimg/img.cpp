@@ -171,7 +171,7 @@ img::img(simg_int w, simg_int h, seedimg::pixel *u_data)
 
 img::img(seedimg::img const &img_) : impl{new img_impl{*img_.impl}} {}
 
-img::img(seedimg::img &&other) noexcept : impl{new img_impl{*other.impl}} {}
+img::img(seedimg::img &&other) noexcept : impl{std::move(other.impl)} {}
 
 img &img::operator=(img other) noexcept {
   *this->impl = *other.impl;

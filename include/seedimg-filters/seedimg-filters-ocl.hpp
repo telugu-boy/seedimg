@@ -31,7 +31,7 @@ namespace ocl {
 // this is the default callback function is recommended to be executed when no
 // customization is needed. Definition of exec_ocl_callback is at end of file.
 void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
-                      std::size_t amt, ...);
+                           std::size_t amt, ...);
 
 void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
                   cl::Buffer &inp_img_buf);
@@ -110,7 +110,7 @@ void exec_ocl_callback(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
   // sets the last two parameters as input and res. so, ALL kernels' last
   // arguments must be pointers to input image data and output.
   kern.setArg(i++, *inp_img_buf);
-  kern.setArg(i++, *res_img_buf);
+  kern.setArg(i, *res_img_buf);
 
   // and then calls the callback with whatever parameters were passed.
   std::invoke(callback, queue, kern, std::forward<Args>(kernel_args)...);
