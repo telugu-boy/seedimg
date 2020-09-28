@@ -1,6 +1,6 @@
 /**********************************************************************
 seedimg - module based image manipulation library written in modern
-            C++ Copyright(C) 2020 telugu-boy
+            C++ Copyright(C) 2020 telugu-boy, tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -50,17 +50,17 @@ auto main() -> int {
       // cconv::hsv_i(a);
       // saturation_i(a, 3.5f);
       // cconv::rgb_i(a);
-      int y = 0;
-      int x = 0;
-      y = -++--++--++--++--++--++--++--++--++--++--x;
-      constexpr auto comp = compose_smats(std::array{SEPIA_MAT, SEPIA_MAT});
-      constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
+      // constexpr auto comp = compose_smats(std::array{SEPIA_MAT, SEPIA_MAT});
+      // constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
       // apply_mat_i(a, SEPIA_MAT);
-      apply_mat_lut_i(a, sepia_lut);
+      // apply_mat_lut_i(a, sepia_lut);
       // cconv::ycbcr_i(a);
       // cconv::rgb_i(a);
-      ocl::cconv::hsv_i(a);
-      seedimg::save("biol.jpg", a);
+      // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
+      // cconv::rgb_i(a);
+
+      seedimg::filters::contrast(a, b, 50.0f);
+      seedimg::save("boil.webp", b);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;
