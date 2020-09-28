@@ -72,5 +72,22 @@ void vrt_thread(T &&func, simg &inp_img, simg &res_img, Args &&... args) {
     worker.join();
   }
 }
-} // namespace seedimg::utils
+
+template<typename T>
+T map_range(T x, T a, T b, T c, T d) {
+    return c + ((x - a) * (d - c)) / (b - a);
+}
+
+template<typename IIter, typename OIter, typename T>
+void map_range_iter(IIter start, IIter end, OIter output,
+                    T a, T b, T c, T d) {
+    auto inelem  = start;
+    auto outelem = output;
+
+    while(inelem != end) {
+        *outelem = map_range(*inelem, a, b, c, d);
+        ++inelem; ++outelem;
+    }
+}
+}// namespace seedimg::utils
 #endif
