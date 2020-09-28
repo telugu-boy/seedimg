@@ -115,6 +115,9 @@ void rotate_hue_i(simg &inp_img, int angle);
 void saturation(simg &inp_img, simg &res_img, float mul);
 void saturation_i(simg &inp_img, float mul);
 
+void contrast  (simg& input, simg& output, float intensity = 100.0, bool alpha = false);
+void contrast_i(simg& image,               float intensity = 100.0, bool alpha = false);
+
 namespace cconv {};
 namespace ocl {}
 } // namespace seedimg::filters
