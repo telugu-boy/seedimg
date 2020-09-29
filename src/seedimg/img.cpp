@@ -178,7 +178,7 @@ img &img::operator=(img other) noexcept {
   return *this;
 }
 img &img::operator=(img &&other) noexcept {
-  *this->impl = *other.impl;
+  this->impl = std::move(other.impl);
   return *this;
 }
 
