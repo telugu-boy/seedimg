@@ -58,7 +58,6 @@ auto main() -> int {
       // cconv::rgb_i(a);
       // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
       // cconv::rgb_i(a);
-
       seedimg::filters::contrast(a, b, 50.0f);
       seedimg::save("boil.webp", b);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
