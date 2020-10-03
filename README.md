@@ -1,1 +1,1 @@
-Read the [documentation](../../wiki/Guide) to get started.
+Read the [documentation](../../wiki) to get started.
