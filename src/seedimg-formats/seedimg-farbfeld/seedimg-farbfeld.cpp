@@ -21,20 +21,21 @@
 #include <fstream>
 #include <seedimg-formats/seedimg-farbfeld.hpp>
 
-static inline std::uint16_t fu16be(uint8_t *cb) {
+// from unsigned 16 big endian
+static inline std::uint16_t from_u16_big_endian(uint8_t *cb) {
   return static_cast<std::uint16_t>(cb[1] << 8) |
          static_cast<std::uint16_t>(cb[0]);
 }
-static inline void tu16be(std::uint16_t n, std::uint8_t *out) {
+static inline void to_u16_big_endian(std::uint16_t n, std::uint8_t *out) {
   out[0] = n >> 8 & 0xff;
   out[1] = n & 0xff;
 }
-static inline simg_int fu32be(uint8_t *cb) {
+static inline simg_int from_u32_big_endien(uint8_t *cb) {
   return static_cast<simg_int>(cb[0] << 24) |
          static_cast<simg_int>(cb[1] << 16) |
          static_cast<simg_int>(cb[2] << 8) | static_cast<simg_int>(cb[3]);
 }
-static inline void tu32be(simg_int n, std::uint8_t *out) {
+static inline void to_u32_big_endian(simg_int n, std::uint8_t *out) {
   out[0] = (n >> 24) & 0xff;
   out[1] = (n >> 16) & 0xff;
   out[2] = (n >> 8) & 0xff;
@@ -42,11 +43,11 @@ static inline void tu32be(simg_int n, std::uint8_t *out) {
 }
 
 // https://stackoverflow.com/a/41762509/10978642
-static inline std::uint8_t b16_8(std::uint16_t n) { return n >> 8; }
+static inline std::uint8_t trunc_8b(std::uint16_t n) { return n >> 8; }
 // https://stackoverflow.com/a/6436100/10978642
 // NOTE: simple bitshifting could've solved but would
 //       be quite noisy, so an addition put.
-static inline std::uint16_t b8_16(std::uint8_t n) {
+static inline std::uint16_t dup_8_to_16b(std::uint8_t n) {
   return static_cast<std::uint16_t>(n << 8) + static_cast<std::uint16_t>(n);
 }
 
@@ -76,7 +77,8 @@ simg from(const std::string &filename) {
     uint8_t height[4];
   } rawinfo;
 
-  auto result = seedimg::make(fu32be(rawinfo.width), fu32be(rawinfo.height));
+  auto result = seedimg::make(from_u32_big_endien(rawinfo.width),
+                              from_u32_big_endien(rawinfo.height));
 
   uint8_t rawpixel[8];
   for (simg_int y = 0; y < result->height(); ++y) {
@@ -87,10 +89,10 @@ simg from(const std::string &filename) {
         return nullptr;
       }
 
-      result->pixel(x, y) = {
-          {{b16_8(fu16be(rawpixel)), b16_8(fu16be((rawpixel + 2))),
-            b16_8(fu16be((rawpixel + 4)))}},
-          b16_8(fu16be((rawpixel + 6)))};
+      result->pixel(x, y) = {{trunc_8b(from_u16_big_endian(rawpixel))},
+                             {trunc_8b(from_u16_big_endian((rawpixel + 2)))},
+                             {trunc_8b(from_u16_big_endian((rawpixel + 4)))},
+                             trunc_8b(from_u16_big_endian((rawpixel + 6)))};
     }
   }
 
@@ -102,8 +104,8 @@ bool to(const std::string &filename, const simg &inp_img) {
 
   std::uint8_t width_ser[4];
   std::uint8_t height_ser[4];
-  tu32be(inp_img->width(), width_ser);
-  tu32be(inp_img->height(), height_ser);
+  to_u32_big_endian(inp_img->width(), width_ser);
+  to_u32_big_endian(inp_img->height(), height_ser);
   try {
     output.write("farbfeld", 8)
         .write(reinterpret_cast<char *>(width_ser), 4)
@@ -117,10 +119,10 @@ bool to(const std::string &filename, const simg &inp_img) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
       auto px = inp_img->pixel(x, y);
 
-      tu16be(b8_16(px.r), rawpixel);
-      tu16be(b8_16(px.g), rawpixel + 2);
-      tu16be(b8_16(px.b), rawpixel + 4);
-      tu16be(b8_16(px.a), rawpixel + 6);
+      to_u16_big_endian(dup_8_to_16b(px.r), rawpixel);
+      to_u16_big_endian(dup_8_to_16b(px.g), rawpixel + 2);
+      to_u16_big_endian(dup_8_to_16b(px.b), rawpixel + 4);
+      to_u16_big_endian(dup_8_to_16b(px.a), rawpixel + 6);
 
       try {
         output.write(reinterpret_cast<char *>(rawpixel), 8);

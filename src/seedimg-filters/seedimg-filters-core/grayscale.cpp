@@ -37,9 +37,9 @@ void grayscale_worker_luminosity(simg &inp_img, simg &res_img,
            0.0722f *
                (pix.b / static_cast<float>(seedimg::img::MAX_PIXEL_VALUE))) *
           seedimg::img::MAX_PIXEL_VALUE);
-      res_img->pixel(x, start_row) = {{{linear, linear, linear}}, pix.a};
+      res_img->pixel(x, start_row) = {{linear}, {linear}, {linear}, pix.a};
     }
-  }
+  };
 }
 
 void grayscale_worker_average(simg &inp_img, simg &res_img, simg_int start_row,
@@ -49,7 +49,7 @@ void grayscale_worker_average(simg &inp_img, simg &res_img, simg_int start_row,
     for (simg_int x = 0; x < w; ++x) {
       seedimg::pixel &pix = inp_img->pixel(x, start_row);
       uint8_t avg = (pix.r + pix.g + pix.b) / 3;
-      res_img->pixel(x, start_row) = {{{avg, avg, avg}}, pix.a};
+      res_img->pixel(x, start_row) = {{avg}, {avg}, {avg}, pix.a};
     }
   }
 }

@@ -16,42 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
 
-# It is MANDATORY to build in-source, until we can run a `cmake .` in the downloaded folder
-# regardless whether or not cmake is in PATH. This is because jconfig is generated at config time.
-
 find_package(JPEG)
 if(NOT JPEG_FOUND)
-    ExternalProject_Add(libjpeg-turbo-2.0.5
-        URL https://sourceforge.net/projects/libjpeg-turbo/files/2.0.5/libjpeg-turbo-2.0.5.tar.gz/download
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/libjpeg-turbo-src
-        PREFIX ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
-        BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libjpeg-turbo
-        INSTALL_COMMAND ""
-        CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DBUILD_SHARED=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+    FetchContent_Declare(
+        libjpeg-turbo
+        GIT_REPOSITORY https://github.com/libjpeg-turbo/libjpeg-turbo.git
+        GIT_TAG 2.0.5
     )
 
-    ExternalProject_Get_Property(libjpeg-turbo-2.0.5 install_dir)
-    ExternalProject_Get_Property(libjpeg-turbo-2.0.5 SOURCE_DIR)
-
-    add_library(libjpeg-turbo STATIC IMPORTED)
-
-    set(JPEG_LIBRARY libjpeg-turbo)
-    set(JPEG_INCLUDE_DIR ${SOURCE_DIR})
-
-    set(JPEG_LIBRARIES libjpeg-turbo)
-    set(JPEG_INCLUDE_DIRS ${SOURCE_DIR})
-    set(JPEG_CONF_INCLUDE_DIR ${install_dir})
-
-    if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-        set_property(TARGET libjpeg-turbo PROPERTY IMPORTED_LOCATION ${install_dir}/turbojpeg-static.lib)
-    else()
-        set_property(TARGET libjpeg-turbo PROPERTY IMPORTED_LOCATION ${install_dir}/libturbojpeg.a)
+    FetchContent_GetProperties(libjpeg-turbo)
+    if(NOT libjpeg-turbo_POPULATED)
+      FetchContent_Populate(libjpeg-turbo)
     endif()
 
+    cmake_policy(SET CMP0054 OLD)
 
-    add_dependencies(libjpeg-turbo libjpeg-turbo-2.0.5)
+    set(ENABLE_STATIC ON)
+    set(ENABLE_SHARED OFF)
+    add_subdirectory(${libjpeg-turbo_SOURCE_DIR} ${libjpeg-turbo_BINARY_DIR})
+    set_property(TARGET turbojpeg-static PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set(JPEG_LIBRARIES turbojpeg-static)
+    set(JPEG_INCLUDE_DIRS ${libjpeg-turbo_SOURCE_DIR} ${libjpeg-turbo_BINARY_DIR})
 endif()
-
 
 
 add_library(seedimg-jpeg ${LIB_TYPE} seedimg-jpeg.cpp)
@@ -62,4 +48,4 @@ else()
     target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES} seedimg stdc++fs)
 endif()
 
-target_include_directories(seedimg-jpeg PRIVATE ${JPEG_INCLUDE_DIRS} ${JPEG_CONF_INCLUDE_DIR})
+target_include_directories(seedimg-jpeg PRIVATE ${JPEG_INCLUDE_DIRS})

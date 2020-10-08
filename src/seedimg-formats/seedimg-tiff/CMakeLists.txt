@@ -19,40 +19,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 find_package(TIFF)
 if(NOT TIFF_FOUND)
-    ExternalProject_Add(libtiff-4.1.0
+    FetchContent_Declare(
+        libtiff
         URL https://download.osgeo.org/libtiff/tiff-4.1.0.zip
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/libtiff-src
-        PREFIX ${CMAKE_BINARY_DIR}/extern/libtiff
-        BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libtiff
-        INSTALL_COMMAND ""
-        CMAKE_ARGS ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-
-        -Dzlib=OFF
-        -Dpixarlog=OFF
-        -Djpeg=OFF
-        -Dold-jpeg=OFF
-        -Djbig=OFF
-        -Dlzma=OFF
-        -Dzstd=OFF
-        -Dwebp=OFF
-        -Djpeg12=OFF
     )
 
-    ExternalProject_Get_Property(libtiff-4.1.0 install_dir)
-    ExternalProject_Get_Property(libtiff-4.1.0 SOURCE_DIR)
+    FetchContent_GetProperties(libtiff)
+    if(NOT libtiff_POPULATED)
+      FetchContent_Populate(libtiff)
+    endif()
 
-    add_library(libtiff STATIC IMPORTED)
+    set(BUILD_SHARED_LIBS OFF)
 
-    set(TIFF_LIBRARY libtiff)
-    set(TIFF_INCLUDE_DIR ${SOURCE_DIR}/libtiff)
+    #set(zlib OFF)
+    #set(pixarlog OFF)
+    #set(jpeg OFF)
+    #set(old-jpeg OFF)
+    #set(jbig OFF)
+    #set(lzma OFF)
+    #set(zstd OFF)
+    #set(webp OFF)
+    #set(jpeg12 OFF)
 
-    set(TIFF_LIBRARIES libtiff)
-    set(TIFF_INCLUDE_DIRS ${SOURCE_DIR}/libtiff)
-    set(TIFF_CONF_INCLUDE_DIR ${install_dir}/libtiff)
-
-    set_property(TARGET libtiff PROPERTY IMPORTED_LOCATION ${install_dir}/libtiff/${prefix}tiff${suffix})
-
-    add_dependencies(libtiff libtiff-4.1.0 pthread)
+    cmake_policy(SET CMP0072 OLD)
+    cmake_policy(SET CMP0048 OLD)
+    add_subdirectory(${libtiff_SOURCE_DIR} ${libtiff_BINARY_DIR})
+    set_property(TARGET tiff PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set(TIFF_LIBRARIES tiff)
+    set(TIFF_INCLUDE_DIRS ${libtiff_SOURCE_DIR}/libtiff ${libtiff_BINARY_DIR})
 endif()
 
 
@@ -67,4 +61,4 @@ else()
     target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} pthread seedimg stdc++fs)
 endif()
 
-target_include_directories(seedimg-tiff PRIVATE ${TIFF_INCLUDE_DIRS} ${TIFF_CONF_INCLUDE_DIR})
+target_include_directories(seedimg-tiff PRIVATE ${TIFF_INCLUDE_DIRS})

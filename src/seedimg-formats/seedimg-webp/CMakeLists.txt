@@ -17,46 +17,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}")
-find_package(WebP)
 
+find_package(WebP)
 if(NOT WebP_FOUND)
-    ExternalProject_Add(libwebp-1.1.0
+    FetchContent_Declare(
+        libwebp
         URL https://github.com/webmproject/libwebp/archive/v1.1.0.zip
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/libwebp-src
-        BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libwebp
-        INSTALL_COMMAND ""
-        CMAKE_ARGS  ${CL_ARGS} -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-        -DWEBP_BUILD_GIF2WEBP=OFF
-        -DWEBP_BUILD_IMG2WEBP=OFF
-        -DWEBP_BUILD_VWEBP=OFF
-        -DWEBP_BUILD_WEBPINFO=OFF
-        -DWEBP_BUILD_WEBPMUX=OFF
-        -DWEBP_BUILD_EXTRAS=OFF
-        -DWEBP_BUILD_WEBP_JS=OFF
-        PREFIX ${CMAKE_BINARY_DIR}/extern/libwebp
     )
 
-    ExternalProject_Get_Property(libwebp-1.1.0 install_dir)
-    ExternalProject_Get_Property(libwebp-1.1.0 SOURCE_DIR)
+    FetchContent_GetProperties(libwebp)
+    if(NOT libwebp_POPULATED)
+      FetchContent_Populate(libwebp)
+    endif()
 
-    add_library(libwebp STATIC IMPORTED)
-    add_library(libwebpdemux STATIC IMPORTED)
-    add_library(libwebpdecoder STATIC IMPORTED)
+    set(BUILD_SHARED_LIBS OFF)
 
-    set(WebP_LIBRARY libwebp libwebpdemux libwebpdecoder pthread)
-    set(WebP_INCLUDE_DIR ${SOURCE_DIR}/src)
+    set(WEBP_BUILD_GIF2WEBP OFF)
+    set(WEBP_BUILD_IMG2WEBP OFF)
+    set(WEBP_BUILD_VWEBP OFF)
+    set(WEBP_BUILD_WEBPINFO OFF)
+    set(WEBP_BUILD_WEBPMUX OFF)
+    set(WEBP_BUILD_EXTRAS OFF)
+    set(WEBP_BUILD_WEBP_JS OFF)
 
-    set(WebP_LIBRARIES libwebp libwebpdemux libwebpdecoder pthread)
-    set(WebP_INCLUDE_DIRS ${SOURCE_DIR}/src)
-
-    set_property(TARGET libwebp PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}webp${suffix})
-    set_property(TARGET libwebpdemux PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}webpdemux${suffix})
-    set_property(TARGET libwebpdecoder PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}webpdecoder${suffix})
-
-
-    add_dependencies(libwebp libwebp-1.1.0 pthread)
-    add_dependencies(libwebpdemux libwebp-1.1.0 pthread)
-    add_dependencies(libwebpdecoder libwebp-1.1.0 pthread)
+    #cmake_policy(SET CMP0072 OLD)
+    #cmake_policy(SET CMP0048 OLD)
+    add_subdirectory(${libwebp_SOURCE_DIR} ${libwebp_BINARY_DIR})
+    set_property(TARGET webp PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set(WEBP_LIBRARIES webp)
+    set(WEBP_INCLUDE_DIRS ${libwebp_SOURCE_DIR}/src/webp ${libwebp_BINARY_DIR})
 endif()
 
 

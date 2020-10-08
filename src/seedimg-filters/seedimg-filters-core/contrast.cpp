@@ -21,44 +21,49 @@ Copyright (C) 2020 tripulse
 #include <seedimg-utils.hpp>
 
 namespace seedimg::filters {
-void contrast(simg& input, simg& output, float intensity, bool alpha) {
-    intensity = seedimg::utils::clamp(intensity, 0, 100);
+void contrast(simg &input, simg &output, float intensity, bool alpha) {
+  intensity = seedimg::utils::clamp(intensity, 0, 100);
 
-    float minv = 127.0f - intensity / 100.0f * 127.0f,
-          maxv = 127.0f + intensity / 100.0f * 127.0f;
+  float minv = 127.0f - intensity / 100.0f * 127.0f,
+        maxv = 127.0f + intensity / 100.0f * 127.0f;
 
-    using namespace seedimg::utils;
+  using namespace seedimg::utils;
 
-    if(alpha) {
-        for(simg_int y = 0; y < input->height(); ++y) {
-            for(simg_int x = 0; x < input->width(); ++x) {
-                const auto& p = input->pixel(x, y);
+  if (alpha) {
+    for (simg_int y = 0; y < input->height(); ++y) {
+      for (simg_int x = 0; x < input->width(); ++x) {
+        const auto &p = input->pixel(x, y);
 
-                output->pixel(x, y) = {
-                    {{static_cast<std::uint8_t>(map_range<float>(p.r, 0, 255, minv, maxv)),
-                      static_cast<std::uint8_t>(map_range<float>(p.g, 0, 255, minv, maxv)),
-                      static_cast<std::uint8_t>(map_range<float>(p.b, 0, 255, minv, maxv))}},
-                      static_cast<std::uint8_t>(map_range<float>(p.a, 0, 255, minv, maxv))
-                };
-            }
-        }
-    } else {
-        for(simg_int y = 0; y < input->height(); ++y) {
-            for(simg_int x = 0; x < input->width(); ++x) {
-                const auto& p = input->pixel(x, y);
-
-                output->pixel(x, y) = {
-                    {{static_cast<std::uint8_t>(map_range<float>(p.r, 0, 255, minv, maxv)),
-                      static_cast<std::uint8_t>(map_range<float>(p.g, 0, 255, minv, maxv)),
-                      static_cast<std::uint8_t>(map_range<float>(p.b, 0, 255, minv, maxv))}},
-                      p.a  // preserve alpha?
-                };
-            }
-        }
+        output->pixel(x, y) = {{static_cast<std::uint8_t>(
+                                   map_range<float>(p.r, 0, 255, minv, maxv))},
+                               {static_cast<std::uint8_t>(
+                                   map_range<float>(p.g, 0, 255, minv, maxv))},
+                               {static_cast<std::uint8_t>(
+                                   map_range<float>(p.b, 0, 255, minv, maxv))},
+                               static_cast<std::uint8_t>(
+                                   map_range<float>(p.a, 0, 255, minv, maxv))};
+      }
     }
+  } else {
+    for (simg_int y = 0; y < input->height(); ++y) {
+      for (simg_int x = 0; x < input->width(); ++x) {
+        const auto &p = input->pixel(x, y);
+
+        output->pixel(x, y) = {
+            {static_cast<std::uint8_t>(
+                map_range<float>(p.r, 0, 255, minv, maxv))},
+            {static_cast<std::uint8_t>(
+                map_range<float>(p.g, 0, 255, minv, maxv))},
+            {static_cast<std::uint8_t>(
+                map_range<float>(p.b, 0, 255, minv, maxv))},
+            p.a // preserve alpha?
+        };
+      }
+    }
+  }
 }
 
-void contrast_i(simg& input, float intensity, bool alpha) {
-    contrast(input, input, intensity, alpha);
+void contrast_i(simg &input, float intensity, bool alpha) {
+  contrast(input, input, intensity, alpha);
 }
-}
+} // namespace seedimg::filters

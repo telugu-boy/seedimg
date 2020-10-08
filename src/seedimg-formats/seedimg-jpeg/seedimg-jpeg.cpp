@@ -103,9 +103,10 @@ simg seedimg::modules::jpeg::from(const std::string &filename) {
       return nullptr;
 
     for (simg_int x = 0; x < res_img->width(); ++x) {
-      res_img->pixel(x, y) = {
-          {{rowbuffer[3 * x], rowbuffer[3 * x + 1], rowbuffer[3 * x + 2]}},
-          0xFF};
+      res_img->pixel(x, y) = {{rowbuffer[3 * x]},
+                              {rowbuffer[3 * x + 1]},
+                              {rowbuffer[3 * x + 2]},
+                              0xFF};
     }
   }
 

@@ -25,6 +25,7 @@ seedimg - module based image manipulation library written in modern
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 #include <seedimg-formats/seedimg-tiff.hpp>
 
+#include <climits>
 auto main() -> int {
   using namespace seedimg::filters;
   std::cout << "Current path is " << std::filesystem::current_path()
@@ -58,8 +59,7 @@ auto main() -> int {
       // cconv::rgb_i(a);
       // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
       // cconv::rgb_i(a);
-      seedimg::filters::contrast(a, b, 50.0f);
-      seedimg::save("boil.webp", b);
+      seedimg::save("boil.webp", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {
       std::cerr << "failed" << std::endl;

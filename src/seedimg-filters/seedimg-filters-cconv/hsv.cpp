@@ -58,8 +58,8 @@ void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
       if (!feq(cmax, 0)) {
         sat = static_cast<std::uint8_t>((delta / cmax) * 100.0f);
       }
-      res_img->pixel(x, start) = {{{hue, sat, val}},
-                                  inp_img->pixel(x, start).a};
+      res_img->pixel(x,
+                     start) = {{hue}, {sat}, {val}, inp_img->pixel(x, start).a};
     }
   }
 }

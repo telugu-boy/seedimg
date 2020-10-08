@@ -15,7 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.11)
 
 get_cmake_property(vars CACHE_VARIABLES)
 foreach(var ${vars})
@@ -25,11 +25,12 @@ foreach(var ${vars})
     endif()
 endforeach()
 
-project(seedimg LANGUAGES CXX VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
+project(seedimg LANGUAGES CXX ASM VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(FetchContent)
 include(CTest)
 include(ExternalProject)
 include(CheckCXXCompilerFlag)

@@ -48,22 +48,22 @@ point get_rect_dimensions(seedimg::point p1, seedimg::point p2) noexcept;
 enum class colourspaces : std::size_t { rgb, hsv, ycbcr_jpeg, ycbcr_bt601 };
 
 typedef struct pixel {
+  // instead of an anonymous struct of unions.
+  // unnamed unions are standard
   union {
-    struct {
-      std::uint8_t r;
-      std::uint8_t g;
-      std::uint8_t b;
-    };
-    struct {
-      std::uint8_t h;
-      std::uint8_t s;
-      std::uint8_t v;
-    };
-    struct {
-      std::uint8_t y;
-      std::uint8_t cb;
-      std::uint8_t cr;
-    };
+    std::uint8_t r;
+    std::uint8_t h;
+    std::uint8_t y;
+  };
+  union {
+    std::uint8_t g;
+    std::uint8_t s;
+    std::uint8_t cb;
+  };
+  union {
+    std::uint8_t b;
+    std::uint8_t v;
+    std::uint8_t cr;
   };
   std::uint8_t a;
   inline bool operator==(const pixel &other) const noexcept {

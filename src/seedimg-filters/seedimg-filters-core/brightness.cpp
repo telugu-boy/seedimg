@@ -29,12 +29,12 @@ void brightness_worker(simg &input, simg &output, simg_int start_row,
       auto &pix = input->pixel(x, start_row);
 
       output->pixel(x, start_row) = {
-          {{static_cast<std::uint8_t>(pix.r * intensity /
-                                      seedimg::img::MAX_PIXEL_VALUE),
-            static_cast<std::uint8_t>(pix.g * intensity /
-                                      seedimg::img::MAX_PIXEL_VALUE),
-            static_cast<std::uint8_t>(pix.b * intensity /
-                                      seedimg::img::MAX_PIXEL_VALUE)}},
+          {static_cast<std::uint8_t>(pix.r * intensity /
+                                     seedimg::img::MAX_PIXEL_VALUE)},
+          {static_cast<std::uint8_t>(pix.g * intensity /
+                                     seedimg::img::MAX_PIXEL_VALUE)},
+          {static_cast<std::uint8_t>(pix.b * intensity /
+                                     seedimg::img::MAX_PIXEL_VALUE)},
           pix.a};
     }
   }
@@ -47,12 +47,12 @@ void brightness_alpha_worker(simg &input, simg &output, simg_int start_row,
       auto &pix = input->pixel(x, start_row);
 
       output->pixel(x, start_row) = {
-          {{static_cast<std::uint8_t>(pix.r * intensity /
-                                      seedimg::img::MAX_PIXEL_VALUE),
-            static_cast<std::uint8_t>(pix.g * intensity /
-                                      seedimg::img::MAX_PIXEL_VALUE),
-            static_cast<std::uint8_t>(pix.b * intensity /
-                                      seedimg::img::MAX_PIXEL_VALUE)}},
+          {static_cast<std::uint8_t>(pix.r * intensity /
+                                     seedimg::img::MAX_PIXEL_VALUE)},
+          {static_cast<std::uint8_t>(pix.g * intensity /
+                                     seedimg::img::MAX_PIXEL_VALUE)},
+          {static_cast<std::uint8_t>(pix.b * intensity /
+                                     seedimg::img::MAX_PIXEL_VALUE)},
           static_cast<std::uint8_t>(pix.a * intensity /
                                     seedimg::img::MAX_PIXEL_VALUE)};
     }

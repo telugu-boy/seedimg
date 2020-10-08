@@ -88,9 +88,9 @@ void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
       } break;
       }
       res_img->pixel(x, start) = {
-          {{static_cast<std::uint8_t>(componentsp[0] * 255),
-            static_cast<std::uint8_t>(componentsp[1] * 255),
-            static_cast<std::uint8_t>(componentsp[2] * 255)}},
+          {static_cast<std::uint8_t>(componentsp[0] * 255)},
+          {static_cast<std::uint8_t>(componentsp[1] * 255)},
+          {static_cast<std::uint8_t>(componentsp[2] * 255)},
           pix_src.a};
     }
   }

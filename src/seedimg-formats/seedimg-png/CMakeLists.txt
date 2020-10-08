@@ -16,72 +16,46 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
 
-set(LIBPNG_CMAKE_ARGS ${CL_ARGS}
-    -DCMAKE_BUILD_TYPE=Release
-    -DPNG_SHARED=FALSE
-    -DBUILD_TESTING=OFF
-    -DPNG_TESTS=OFF
-    -DCMAKE_PROJECT_libpng_INCLUDE=${CMAKE_CURRENT_SOURCE_DIR}/add_zlib_include_dir.cmake
-)
-
 find_package(ZLIB)
 if(NOT ZLIB_FOUND)
-ExternalProject_Add(zlib-1.2.11
-    URL https://zlib.net/zlib-1.2.11.tar.xz
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/zlib-src
-    PREFIX ${CMAKE_BINARY_DIR}/extern/zlib
-    BINARY_DIR ${CMAKE_BINARY_DIR}/extern/zlib
-    INSTALL_COMMAND ""
-    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-)
+    FetchContent_Declare(
+        zlib
+        URL https://zlib.net/zlib-1.2.11.tar.xz
+    )
 
-ExternalProject_Get_Property(zlib-1.2.11 install_dir)
-ExternalProject_Get_Property(zlib-1.2.11 SOURCE_DIR)
+    FetchContent_GetProperties(zlib)
+    if(NOT zlib_POPULATED)
+      FetchContent_Populate(zlib)
+    endif()
 
-add_library(zlib STATIC IMPORTED)
-
-set(ZLIB_LIBRARY zlib)
-set(ZLIB_INCLUDE_DIR ${SOURCE_DIR})
-
-set(ZLIB_LIBRARIES zlib)
-set(ZLIB_INCLUDE_DIRS ${SOURCE_DIR})
-
-set_property(TARGET zlib PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}z${suffix})
-
-add_dependencies(zlib zlib-1.2.11)
-
-list(APPEND LIBPNG_CMAKE_ARGS -DPNG_BUILD_ZLIB=ON)
-
+    add_subdirectory(${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+    set_property(TARGET zlibstatic PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set(ZLIB_LIBRARIES zlibstatic)
+    set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+    set(PNG_BUILD_ZLIB ON)
 endif()
 
 
 find_package(PNG)
 if(NOT PNG_FOUND)
-    ExternalProject_Add(libpng-1.6.37
+    FetchContent_Declare(
+        libpng
         URL https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/libpng-1.6.37.tar.xz/download
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern-src/libpng-src
-        PREFIX ${CMAKE_BINARY_DIR}/extern/libpng
-        BINARY_DIR ${CMAKE_BINARY_DIR}/extern/libpng
-        INSTALL_COMMAND ""
-        DEPENDS zlib-1.2.11
-        CMAKE_ARGS ${LIBPNG_CMAKE_ARGS} -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     )
 
-    ExternalProject_Get_Property(libpng-1.6.37 install_dir)
-    ExternalProject_Get_Property(libpng-1.6.37 SOURCE_DIR)
+    FetchContent_GetProperties(libpng)
+    if(NOT libpng_POPULATED)
+      FetchContent_Populate(libpng)
+    endif()
 
-    add_library(libpng STATIC IMPORTED)
+    set(PNG_SHARED OFF)
+    set(PNG_TESTS OFF)
 
-    set(PNG_LIBRARY libpng)
-    set(PNG_INCLUDE_DIR ${SOURCE_DIR})
-
-    set(PNG_LIBRARIES libpng)
-    set(PNG_INCLUDE_DIRS ${SOURCE_DIR})
-    set(PNG_CONF_INCLUDE_DIR ${install_dir})
-
-    set_property(TARGET libpng PROPERTY IMPORTED_LOCATION ${install_dir}/${prefix}png${suffix})
-
-    add_dependencies(libpng libpng-1.6.37 zlib-1.2.11)
+    add_subdirectory(${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
+    set_property(TARGET png_static
+        PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set(PNG_LIBRARIES png_static)
+    set(PNG_INCLUDE_DIRS ${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
 endif()
 
 
@@ -90,9 +64,9 @@ endif()
 add_library(seedimg-png ${LIB_TYPE} seedimg-png.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} seedimg)
+    target_link_libraries(seedimg-png PRIVATE ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} seedimg)
 else()
-    target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} seedimg stdc++fs)
+    target_link_libraries(seedimg-png PRIVATE ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} seedimg stdc++fs)
 endif()
 
-target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIRS} ${PNG_CONF_INCLUDE_DIR})
+target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIRS})
