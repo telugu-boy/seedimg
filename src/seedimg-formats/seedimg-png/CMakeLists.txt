@@ -54,6 +54,7 @@ if(NOT PNG_FOUND)
     add_subdirectory(${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
     set_property(TARGET png_static
         PROPERTY POSITION_INDEPENDENT_CODE ON)
+    target_include_directories(png_static ${ZLIB_INCLUDE_DIRS})
     set(PNG_LIBRARIES png_static)
     set(PNG_INCLUDE_DIRS ${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
 endif()
