@@ -19,7 +19,11 @@
 #ifndef SEEDIMG_FILTERS_OCL_H
 #define SEEDIMG_FILTERS_OCL_H
 
-#include <CL/cl.hpp>
+#ifndef CL_HPP_MINIMUM_OPENCL_VERSION
+#define CL_HPP_MINIMUM_OPENCL_VERSION 100
+#endif
+
+#include <CL/cl2.hpp>
 
 #include <seedimg-filters/seedimg-filters-core.hpp>
 
