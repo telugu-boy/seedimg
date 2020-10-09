@@ -25,10 +25,12 @@
 #include <iostream>
 #endif
 
+#include <stdexcept>
+
 namespace seedimg::filters {
 namespace ocl {
 void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
-                      std::size_t amt, ...) {
+                           std::size_t amt, ...) {
   queue.enqueueNDRangeKernel(
       kern, cl::NullRange,
       cl::NDRange(seedimg::utils::round_up<std::size_t>(amt, 128)),

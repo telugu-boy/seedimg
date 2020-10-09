@@ -19,6 +19,7 @@
 #include "ocl-singleton.hpp"
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 #include <seedimg-utils.hpp>
+#include <stdexcept>
 
 namespace seedimg::filters::ocl {
 namespace cconv {

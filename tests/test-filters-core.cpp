@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <functional>
 #include <iostream>
+#include <stdexcept>
 #include <unordered_map>
 
 #include <seedimg-autodetect.hpp>

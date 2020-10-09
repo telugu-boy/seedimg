@@ -20,10 +20,8 @@ seedimg - module based image manipulation library written in modern
 #include <iostream>
 
 #include <seedimg-autodetect.hpp>
-#include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
-#include <seedimg-formats/seedimg-tiff.hpp>
 
 #include <climits>
 auto main() -> int {

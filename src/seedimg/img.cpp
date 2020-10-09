@@ -17,6 +17,7 @@
 ************************************************************************/
 
 #include <seedimg.hpp>
+#include <stdexcept>
 
 #include <thread>
 

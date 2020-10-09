@@ -25,7 +25,7 @@ foreach(var ${vars})
     endif()
 endforeach()
 
-project(seedimg LANGUAGES CXX ASM VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
+project(seedimg LANGUAGES CXX C ASM VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

@@ -66,7 +66,7 @@ add_library(seedimg-png ${LIB_TYPE} seedimg-png.cpp)
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_link_libraries(seedimg-png PRIVATE ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} seedimg)
 else()
-    target_link_libraries(seedimg-png PRIVATE ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} seedimg stdc++fs)
+    target_link_libraries(seedimg-png PRIVATE ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} seedimg )
 endif()
 
 target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIRS})

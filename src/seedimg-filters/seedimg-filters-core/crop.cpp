@@ -22,6 +22,7 @@
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-utils.hpp>
 #include <seedimg.hpp>
+#include <stdexcept>
 
 namespace seedimg::filters {
 bool crop(simg &inp_img, simg &res_img, seedimg::point p1, seedimg::point p2) {
