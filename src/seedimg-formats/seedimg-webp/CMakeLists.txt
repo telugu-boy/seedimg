@@ -44,8 +44,8 @@ if(NOT WebP_FOUND)
     #cmake_policy(SET CMP0048 OLD)
     add_subdirectory(${libwebp_SOURCE_DIR} ${libwebp_BINARY_DIR})
     set_property(TARGET webp PROPERTY POSITION_INDEPENDENT_CODE ON)
-    set(WEBP_LIBRARIES webp)
-    set(WEBP_INCLUDE_DIRS ${libwebp_SOURCE_DIR}/src ${libwebp_BINARY_DIR})
+    set(WebP_LIBRARIES webp)
+    set(WebP_INCLUDE_DIRS ${libwebp_SOURCE_DIR}/src ${libwebp_BINARY_DIR})
 endif()
 
 
