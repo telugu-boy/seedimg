@@ -28,7 +28,7 @@ extern "C" {
 #include <webp/encode.h>
 }
 
-#include <seedimg-formats/seedimg-webp.hpp>
+#include <seedimg-modules/seedimg-webp.hpp>
 
 namespace seedimg::modules {
 namespace webp {

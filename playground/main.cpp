@@ -1,6 +1,6 @@
 /**********************************************************************
-seedimg - module based image manipulation library written in modern
-            C++ Copyright(C) 2020 telugu-boy, tripulse
+    seedimg - module based image manipulation library written in modern C++
+            Copyright(C) 2020 telugu-boy, tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -16,118 +16,30 @@ seedimg - module based image manipulation library written in modern
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <filesystem>
-#include <iostream>
+#include <fstream>
 
-#define SIMG_OCL_PXAMT 1
-#define SIMG_OCL_LOCAL_WG_SIZE 64
+#include <seedimg.hpp>
 
-#include <seedimg-autodetect.hpp>
+#include <seedimg-streams.hpp>
+#include <seedimg-modules/farbfeld.hpp>
+
 #include <seedimg-filters/seedimg-filters-core.hpp>
-#include <seedimg-filters/seedimg-filters-ocl.hpp>
 
-#include <random>
+using namespace seedimg;
+using namespace seedimg::modules;
+using namespace seedimg::filters;
 
-auto main() -> decltype(
-    std::remove_reference_t<decltype(std::declval<decltype(0)>())>{}) {
-  using namespace seedimg::filters;
-  std::cout << "Current path is " << std::filesystem::current_path()
-            << std::endl;
-  {
-    ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("cat.jpg");
-    // auto b = seedimg::make(a->width(), a->height());
-    if (a != nullptr) {
-      // crop_i(a, {0, 0}, {100, 100});
-      // grayscale_i(a, true);
-      // invert_i(a);
-      // blur_i(a, 10);
-      // h_blur_i(a, 10);
-      // v_blur_i(a, 100, 1);
-      // convolution(a, {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}});
-      // rotate_hue_i(a, 90);
-      // v_mirror_i(a);
-      // h_mirror_i(a);
-      // ocl::rotate_hue_i(a, -90);
-      // ocl::grayscale_i(a, true);
-      // cconv::ycbcr_i(a);
-      // cconv::hsv_i(a);
-      // saturation_i(a, 3.5f);
-      // cconv::rgb_i(a);
-      // constexpr auto comp = compose_smats(std::array{SEPIA_MAT, SEPIA_MAT});
-      // constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
-      // apply_mat_i(a, SEPIA_MAT);
-      // apply_mat_lut_i(a, sepia_lut);
-      // cconv::ycbcr_i(a);
-      // cconv::rgb_i(a);
-      // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
-      // cconv::rgb_i(a);
+int main() {
+         std::ifstream i{"jat.ff"};
+    decoding::farbfeld d{i};
 
-      auto inp_img_buf =
-          new cl::Buffer{ocl::get_context(), CL_MEM_READ_WRITE,
-                         seedimg::utils::round_up(sizeof(seedimg::pixel) *
-                                                      a->width() * a->height(),
-                                                  SIMG_OCL_BUF_PADDING)};
-      auto res_img_buf =
-          new cl::Buffer{ocl::get_context(), CL_MEM_READ_WRITE,
-                         seedimg::utils::round_up(sizeof(seedimg::pixel) *
-                                                      a->width() * a->height(),
-                                                  SIMG_OCL_BUF_PADDING)};
-      std::random_device rd;
-      std::mt19937 mt(rd());
-      std::uniform_real_distribution<float> sat(-3, 3);
-      std::uniform_real_distribution<float> br(-1, 1);
-      std::uniform_real_distribution<float> con(0.1f, 1.5f);
-      std::filesystem::create_directory("bibs");
-      auto &queue = ocl::get_queue();
-      ocl::write_img_1d(queue, a, *inp_img_buf, true);
+         std::ofstream o{"chamar.ff"};
+    encoding::farbfeld e{o, 512, 512};
 
-      cl_uchar4 *res = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
-          *res_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
-          seedimg::utils::round_up(sizeof(seedimg::pixel) * a->width() *
-                                       a->height(),
-                                   SIMG_OCL_BUF_PADDING)));
+    stream<false> proc {d, e};
 
-      auto proc = seedimg::make(a->width(), a->height(),
-                                reinterpret_cast<seedimg::pixel *>(res));
-      proc->set_deleter([] {});
-      for (int i = 0; i < 10; i++) {
-        /*
-      apply_mat(a, b,
-                compose_fsmats(std::array{generate_saturation_mat(sat(mt)),
-                                          generate_brightness_mat(br(mt)),
-                                          generate_contrast_mat(con(mt))}));*/
-        cl_float16 mat{{sat(rd), sat(rd), sat(rd), 0,
+    proc.chain.add(filters::invert);
+    proc.chain.add(filters::grayscale, true);
 
-                        br(rd), br(rd), br(rd), 0,
-
-                        con(rd), con(rd), con(rd), 0,
-
-                        sat(rd), br(rd), con(rd), 1}};
-
-        ocl::exec_ocl_callback_1d(a->width() * a->height(), inp_img_buf,
-                                  res_img_buf, "apply_mat", true,
-                                  ocl::default_exec_callback, mat);
-
-        // ocl::apply_mat(a, b, mat);
-        // rotate_hue(a, b, i);
-        seedimg::save("bibs/boil" + std::to_string(i) + ".jpg", proc);
-        std::cout << i << std::endl;
-      }
-      queue.enqueueUnmapMemObject(*res_img_buf, res);
-      // rotate_hue_i(a, 180);
-      // ocl::rotate_hue_i(a, 180, inp_img_buf);
-      // cconv::hsv_i(a);
-      // cconv::rgb_i(a)
-      // brightness_i(a, 50.0f);
-      // saturation_i(a, 5.0f);
-      // contrast_i(a, 2.0f);
-      // ocl::cconv::hsv_i(a, inp_img_buf);
-      // ocl::cconv::rgb_i(a, inp_img_buf);
-      bool b = seedimg::save("biol.jpg", a);
-    } else {
-      std::cerr << "failed" << std::endl;
-    }
-    std::cerr << "done" << std::endl;
-  }
+    proc.eval_all();
 }

@@ -31,7 +31,7 @@ extern "C" {
 #include <jpeglib.h>
 }
 
-#include <seedimg-formats/seedimg-jpeg.hpp>
+#include <seedimg-modules/seedimg-jpeg.hpp>
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)

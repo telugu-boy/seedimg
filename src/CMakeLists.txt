@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 add_subdirectory(seedimg)
 
 # image modules
-add_subdirectory(seedimg-formats)
+add_subdirectory(seedimg-modules)
 
 # extras
 if(EXTRAS_ENABLED)
@@ -28,5 +28,5 @@ if(EXTRAS_ENABLED)
 endif()
 
 # automatic detection of image types:
-add_subdirectory(seedimg-autodetect)
+# add_subdirectory(seedimg-autodetect)
 

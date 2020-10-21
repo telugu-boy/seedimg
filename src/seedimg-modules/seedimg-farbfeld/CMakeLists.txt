@@ -1,6 +1,6 @@
-#[[
+#[[ 
 seedimg - module based image manipulation library written in modern C++ 
-Copyright (C) 2020 telugu-boy 
+Copyright (C) 2020 telugu-boy, tripulse
  
 This program is free software: you can redistribute it and/or modify 
 it under the terms of the GNU Lesser General Public License as published by 
@@ -15,14 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
-set(APP_EXE playground)
 
-add_executable(${APP_EXE} main.cpp)
-
-file(COPY cat.jpg DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
-
-target_link_libraries(${APP_EXE} seedimg
-    seedimg-farbfeld
-    seedimg-filters-core
-    stdc++fs)
-target_include_directories(${APP_EXE} PRIVATE "${CMAKE_SOURCE_DIR}/seedimg")
+add_library(seedimg-farbfeld ${LIB_TYPE} farbfeld.cpp)
+target_link_libraries(seedimg-farbfeld PRIVATE seedimg)

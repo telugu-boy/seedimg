@@ -31,7 +31,7 @@ extern "C" {
 #include <tiffio.h>
 }
 
-#include <seedimg-formats/seedimg-tiff.hpp>
+#include <seedimg-modules/seedimg-tiff.hpp>
 
 namespace seedimg::modules {
 namespace tiff {

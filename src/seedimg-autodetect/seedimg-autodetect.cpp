@@ -18,7 +18,7 @@
 ************************************************************************/
 #include <filesystem>
 
-#include <seedimg-formats/seedimg-farbfeld.hpp>
+#include <seedimg-formats/farbfeld.hpp>
 #include <seedimg-formats/seedimg-irdump.hpp>
 #include <seedimg-formats/seedimg-jpeg.hpp>
 #include <seedimg-formats/seedimg-png.hpp>

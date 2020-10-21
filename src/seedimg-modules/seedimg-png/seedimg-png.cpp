@@ -30,7 +30,7 @@ extern "C" {
 #include <png.h>
 }
 
-#include <seedimg-formats/seedimg-png.hpp>
+#include <seedimg-modules/seedimg-png.hpp>
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)

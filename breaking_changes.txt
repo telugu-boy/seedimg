@@ -1,0 +1,19 @@
+
+    Streaming API
+
+
+        Through this API images can be sequentially encoded/decoded, from arbitrary
+        output/input streams which eliminates the usage of file based reading.
+
+        Arbitrary linear filters can be applied when performing I/O. State requring,
+        non-linear filters are subject to potential UB.
+
+        THIS API IS STILL IN ITS EXPERIMENTAL STAGE PLEASE DO NOT IMITATATE TO USE IT
+        IN A PRODUCTION ENVIRONMENT. FINIALISATION OF THIS API WILL REQUIRE A SIGNFICANT
+        AMOUNT OF TIME.
+
+        However, for some image formats sequential I/O is not quite possible
+        such as WebP, because RIFF requires either a seekable stream for updating
+        the size of RIFF chunk at the end of writing the whole file or to buffer
+        the whole bytestream in memory to write it all once its fully encoded.
+
