@@ -16,6 +16,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
+
 #include <fstream>
 
 #include <seedimg.hpp>
@@ -24,6 +25,7 @@
 #include <seedimg-modules/farbfeld.hpp>
 
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-modules/irdump.hpp>
 
 using namespace seedimg;
 using namespace seedimg::modules;
@@ -33,13 +35,17 @@ int main() {
          std::ifstream i{"jat.ff"};
     decoding::farbfeld d{i};
 
-         std::ofstream o{"chamar.ff"};
-    encoding::farbfeld e{o, 512, 512};
+         std::ofstream o{"chamar.ir"};
+    encoding::irdump   e{o, d.dimensions()};
 
-    stream<false> proc {d, e};
+//    stream<false> proc {d, e};
 
-    proc.chain.add(filters::invert);
-    proc.chain.add(filters::grayscale, true);
+//    proc.chain.add(filters::invert);
+//    proc.chain.add(filters::grayscale, true);
 
-    proc.eval_all();
+//    proc.eval_all();
+
+    simg img = seedimg::make(d.width(), d.height());
+    d >> img;
+    e << img;
 }
