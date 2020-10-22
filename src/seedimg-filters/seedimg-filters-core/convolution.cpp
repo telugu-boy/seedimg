@@ -25,70 +25,75 @@ Copyright (C) 2020 tripulse
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg.hpp>
 
+#include <seedimg-utils.hpp>
+
 void seedimg::filters::convolution(simg &input,
                                    std::vector<std::vector<float>> kernel) {
-  seedimg::point kernel_dims{kernel.size() ? kernel[0].size() : 0,
-                             kernel.size()};
-  // NOTE: only square aka. NxN kernels are allowed as they're symmetric and
-  //       thus very easy to implement, if not then just ignore.
-  if (kernel_dims.x != kernel_dims.y || kernel_dims.x == 0)
-    return;
+  if(kernel.size() == 0 || kernel[0].size() == 0)
+      return;
 
-  {
-    // will be used as the divisor to normalize all the kernel elements.
-    auto kernmatrix_normdiv = std::abs(std::accumulate(
-        kernel.begin(), kernel.end(), 0.0, [](float s, auto r) -> float {
-          return s + std::accumulate(r.begin(), r.end(), 0.0);
-        }));
+  simg_int kw = kernel[0].size();
+  simg_int kh = kernel   .size();
 
-    for (simg_int r = 0; r < kernel_dims.y; ++r)
-      std::transform(
-          kernel[r].begin(), kernel[r].end(), kernel[r].begin(),
-          [&](auto elem) -> float { return elem / kernmatrix_normdiv; });
-  }
+  // sum of all elements to divide up all elements by, used for normalising
+  // the convolution matrix, though this method is applicable solely for
+  // kernels that sum up to 1.
+  float neg_sum = 0.0f, pos_sum = 0.0f;
 
-  // the centerpoint of the kernel, where the current pixel is located.
-  // kernel { y-axis: [-a..+a], x-axis: [-b..b] }, (a) and (b) are half
-  // of kernel's (width) and (height).
-  seedimg::point kernel_origin{kernel_dims.x / 2, kernel_dims.y / 2};
+  for(const auto& r : kernel)
+     for(auto e : r)
+         if(std::signbit(e))
+             neg_sum -= e;
+         else
+             pos_sum += e;
+
+  // approximated the center coordinate of kernel, for a symmetric one
+  // the origin is the current pixel.
+  simg_int ko_x = kw / 2, ko_y = kh / 2;
+
+  // flip the kernel both vertically and horizontally +
+  // normalise all the elements.
+  for(simg_int y = 0; y < kh; ++y)
+      for(simg_int x = 0; x < kw; ++x)
+          kernel[kh - y - 1][kw - x - 1] =
+                  kernel[y][x] / (std::signbit(kernel[y][x]) ? neg_sum : pos_sum);
 
   for (simg_int y = 0; y < input->height(); ++y) {
-    for (simg_int x = 0; x < input->width(); ++x) {
-      // output value to be used as an accumulator.
-      // this will be resulting pixel in the kernel's origin.
-      struct {
-        float r = 0, g = 0, b = 0, a = 0;
-      } outpix;
+    for (simg_int x = 0; x < input->width(); ++x) {     
+      struct { float r=0, g=0, b=0, a=0; } o;
 
-      for (std::size_t dy = 0; dy < kernel_dims.y; ++dy) {
-        for (std::size_t dx = 0; dx < kernel_dims.x; ++dx) {
-          // NOTE: for edge handling a mixture of mirroring and wrapping is
-          // done. wrapping when it reaches the end, mirroring when it reaches
-          // the start.
+      for (std::size_t dy = 0; dy < kh; ++dy) {
+        for (std::size_t dx = 0; dx < kw; ++dx) {
+          // When the 2D sliding window is at the edge of the image plane,
+          // the edges of the kernel fall outside the bound, to conceal that
+          // a mixture of wrapping and mirroring is used.
           auto pix = input->pixel(
               static_cast<simg_int>(
                   static_cast<unsigned long long>(std::llabs(
                       static_cast<long long>(x) + static_cast<long long>(dx) -
-                      static_cast<long long>(kernel_origin.x))) %
+                      static_cast<long long>(ko_x))) %
                   input->width()),
               static_cast<simg_int>(
                   static_cast<unsigned long long>(std::llabs(
                       static_cast<long long>(y) + static_cast<long long>(dy) -
-                      static_cast<long long>(kernel_origin.y))) %
+                      static_cast<long long>(ko_y))) %
                   input->height()));
 
-          // TODO: alpha isn't altered, need to add an option for it.
-          outpix.r += static_cast<float>(pix.r) * kernel[dy][dx];
-          outpix.g += static_cast<float>(pix.g) * kernel[dy][dx];
-          outpix.b += static_cast<float>(pix.b) * kernel[dy][dx];
-          outpix.a += static_cast<float>(pix.a) * kernel[dy][dx];
+          o.r += static_cast<float>(pix.r) * kernel[dy][dx];
+          o.g += static_cast<float>(pix.g) * kernel[dy][dx];
+          o.b += static_cast<float>(pix.b) * kernel[dy][dx];
+          o.a += static_cast<float>(pix.a) * kernel[dy][dx];
         }
       }
 
-      input->pixel(x, y) = {{static_cast<std::uint8_t>(outpix.r)},
-                            {static_cast<std::uint8_t>(outpix.g)},
-                            {static_cast<std::uint8_t>(outpix.b)},
-                            static_cast<std::uint8_t>(outpix.a)};
+      using namespace seedimg::utils;
+
+      input->pixel(x, y) = {{clamp(static_cast<std::uint8_t>(o.r), 0, 255)},
+                            {clamp(static_cast<std::uint8_t>(o.g), 0, 255)},
+                            {clamp(static_cast<std::uint8_t>(o.b), 0, 255)},
+                             clamp(static_cast<std::uint8_t>(o.a), 0, 255)};
+
+
     }
   }
 }
