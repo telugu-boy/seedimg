@@ -17,4 +17,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
 
-add_library(seedimg-irdump ${LIB_TYPE} seedimg-irdump.cpp)
+add_library(seedimg-irdump ${LIB_TYPE} irdump.cpp)
