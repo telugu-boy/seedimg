@@ -35,9 +35,6 @@ void seedimg::filters::convolution(simg &input,
   simg_int kw = kernel[0].size();
   simg_int kh = kernel   .size();
 
-  // sum of all elements to divide up all elements by, used for normalising
-  // the convolution matrix, though this method is applicable solely for
-  // kernels that sum up to 1.
   float neg_sum = 0.0f, pos_sum = 0.0f;
 
   for(const auto& r : kernel)
