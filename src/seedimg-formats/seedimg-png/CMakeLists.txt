@@ -48,13 +48,13 @@ if(NOT PNG_FOUND)
       FetchContent_Populate(libpng)
     endif()
 
-    set(PNG_SHARED OFF)
-    set(PNG_TESTS OFF)
+    set(PNG_SHARED ON CACHE BOOL "" FORCE)
+    set(PNG_TESTS ON CACHE BOOL "" FORCE)
 
     add_subdirectory(${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
     set_property(TARGET png_static
         PROPERTY POSITION_INDEPENDENT_CODE ON)
-    target_include_directories(png_static ${ZLIB_INCLUDE_DIRS})
+    target_include_directories(png_static PUBLIC ${ZLIB_INCLUDE_DIRS})
     set(PNG_LIBRARIES png_static)
     set(PNG_INCLUDE_DIRS ${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
 endif()
