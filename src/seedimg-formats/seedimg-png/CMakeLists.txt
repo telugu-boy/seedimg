@@ -32,7 +32,7 @@ if(NOT ZLIB_FOUND)
     set_property(TARGET zlibstatic PROPERTY POSITION_INDEPENDENT_CODE ON)
     set(ZLIB_LIBRARIES zlibstatic)
     set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
-    set(PNG_BUILD_ZLIB ON)
+    set(PNG_BUILD_ZLIB ON CACHE BOOL "" FORCE)
 endif()
 
 
@@ -64,10 +64,6 @@ endif()
 
 add_library(seedimg-png ${LIB_TYPE} seedimg-png.cpp)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-png PRIVATE ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} seedimg)
-else()
-    target_link_libraries(seedimg-png PRIVATE ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} seedimg )
-endif()
+target_link_libraries(seedimg-png PRIVATE ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} seedimg)
 
 target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIRS})
