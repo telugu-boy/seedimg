@@ -40,6 +40,7 @@ endif()
 
 find_package(PNG)
 if(NOT PNG_FOUND)
+    set(M_LIBRARY m CACHE BOOL "" FORCE)
     FetchContent_Declare(
         libpng
         URL https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/libpng-1.6.37.tar.xz/download
