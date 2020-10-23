@@ -57,6 +57,7 @@ if(NOT PNG_FOUND)
     set_property(TARGET png_static
         PROPERTY POSITION_INDEPENDENT_CODE ON)
     target_include_directories(png_static PUBLIC ${ZLIB_INCLUDE_DIRS})
+    target_link_libraries(png_static PRIVATE m)
     set(PNG_LIBRARIES png_static)
     set(PNG_INCLUDE_DIRS ${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
 endif()
