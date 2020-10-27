@@ -31,18 +31,23 @@ namespace seedimg::filters {
 namespace ocl {
 void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
                            std::size_t amt, ...) {
-  queue.enqueueNDRangeKernel(
-      kern, cl::NullRange,
-      cl::NDRange(seedimg::utils::round_up<std::size_t>(amt, 128)),
-      cl::NDRange(128));
+  // std::cout << "start" << std::endl;
+  // for (int i = 0; i < 250; i++) {
+  // std::cout << i << std::endl;
+  queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt / 128),
+                             cl::NDRange(64));
   queue.finish();
+  // }
+  // std::cout << "end" << std::endl;
 }
 
 void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
                   cl::Buffer &inp_img_buf) {
   cl_uchar4 *inp = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
       inp_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
-      sizeof(seedimg::pixel) * inp_img->width() * inp_img->height()));
+      seedimg::utils::round_up(sizeof(seedimg::pixel) * inp_img->width() *
+                                   inp_img->height(),
+                               8192UL)));
   std::memcpy(inp, inp_img->data(),
               sizeof(seedimg::pixel) * inp_img->width() * inp_img->height());
   queue.enqueueUnmapMemObject(inp_img_buf, inp);
@@ -53,7 +58,9 @@ void read_img_1d(cl::CommandQueue &queue, simg &res_img,
                  cl::Buffer &res_img_buf) {
   cl_uchar4 *res = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
       res_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
-      sizeof(seedimg::pixel) * res_img->width() * res_img->height()));
+      seedimg::utils::round_up(sizeof(seedimg::pixel) * res_img->width() *
+                                   res_img->height(),
+                               8192UL)));
   std::memcpy(res_img->data(), res,
               sizeof(seedimg::pixel) * res_img->width() * res_img->height());
   queue.enqueueUnmapMemObject(res_img_buf, res);

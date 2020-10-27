@@ -23,9 +23,16 @@
 #define CL_HPP_MINIMUM_OPENCL_VERSION 100
 #endif
 
+#ifndef CL_HPP_TARGET_OPENCL_VERSION
+#define CL_HPP_TARGET_OPENCL_VERSION 100
+#endif
+
+#include <iostream>
+
 #include <CL/cl2.hpp>
 
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-utils.hpp>
 
 #include <functional>
 
@@ -83,9 +90,9 @@ void hsv_i(simg &inp_img, cl::Buffer *inp_buf = nullptr);
 // All arguments must be passed in the order of which the callback AND kernel
 // accepts them or else undefined behavior
 template <typename Func, typename... Args>
-void exec_ocl_callback(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
-                       cl::Buffer *res_buf, const std::string &kernel_name,
-                       Func &&callback, Args &&... kernel_args) {
+void exec_ocl_callback_1d(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
+                          cl::Buffer *res_buf, const std::string &kernel_name,
+                          Func &&callback, Args &&... kernel_args) {
   const auto &context = get_context();
   auto &queue = get_queue();
 
@@ -93,10 +100,10 @@ void exec_ocl_callback(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
   cl::Buffer *inp_img_buf = inp_buf;
   if (inp_buf == nullptr) {
     inp_img_buf = new cl::Buffer{
-        context,
-        CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
-        sizeof(seedimg::pixel) * inp_img->width() * inp_img->height(),
-    };
+        context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
+        seedimg::utils::round_up(sizeof(seedimg::pixel) * inp_img->width() *
+                                     inp_img->height(),
+                                 8192UL)};
   }
 
   cl::Buffer *res_img_buf = inp_img_buf;
@@ -110,14 +117,18 @@ void exec_ocl_callback(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
 
   cl_uint i = 0;
   // this sets all the arguments passed to the kernel with a fold expression,
-  (kern.setArg(i++, kernel_args), ...);
+  (kern.setArg(i++, std::forward<Args>(kernel_args)), ...);
   // sets the last two parameters as input and res. so, ALL kernels' last
   // arguments must be pointers to input image data and output.
   kern.setArg(i++, *inp_img_buf);
   kern.setArg(i, *res_img_buf);
 
   // and then calls the callback with whatever parameters were passed.
-  std::invoke(callback, queue, kern, std::forward<Args>(kernel_args)...);
+  std::invoke(callback, queue, kern,
+              seedimg::utils::round_up(sizeof(seedimg::pixel) *
+                                           inp_img->width() * inp_img->height(),
+                                       8192UL),
+              std::forward<Args>(kernel_args)...);
 
   read_img_1d(queue, res_img, *res_img_buf);
   if (inp_buf == nullptr)

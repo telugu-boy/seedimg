@@ -24,6 +24,10 @@
 #define CL_HPP_MINIMUM_OPENCL_VERSION 100
 #endif
 
+#ifndef CL_HPP_TARGET_OPENCL_VERSION
+#define CL_HPP_TARGET_OPENCL_VERSION 100
+#endif
+
 #include <CL/cl2.hpp>
 
 #include <seedimg.hpp>

@@ -25,14 +25,12 @@ namespace seedimg::filters {
 namespace ocl {
 void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat,
                cl::Buffer *inp_buf, cl::Buffer *res_buf) {
-
   cl_float16 matvec;
   for (std::size_t i = 0; i < 16; i++)
     matvec.s[i] = mat[i];
 
-  exec_ocl_callback(inp_img, res_img, inp_buf, res_buf, "apply_mat",
-                    default_exec_callback, inp_img->width() * inp_img->height(),
-                    matvec);
+  exec_ocl_callback_1d(inp_img, res_img, inp_buf, res_buf, "apply_mat",
+                       default_exec_callback, matvec);
 }
 
 void apply_mat_i(simg &inp_img, const fsmat &mat, cl::Buffer *inp_buf,

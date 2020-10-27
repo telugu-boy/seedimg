@@ -30,9 +30,8 @@ void hsv(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
   else if (inp_img->colourspace() != seedimg::colourspaces::rgb)
     throw std::invalid_argument("Colourspace is not RGB");
 
-  exec_ocl_callback(inp_img, res_img, inp_buf, res_buf, "rgb2hsv",
-                    default_exec_callback,
-                    inp_img->width() * inp_img->height());
+  exec_ocl_callback_1d(inp_img, res_img, inp_buf, res_buf, "rgb2hsv",
+                       default_exec_callback);
 
   static_cast<seedimg::uimg *>(res_img.get())
       ->set_colourspace(seedimg::colourspaces::hsv);

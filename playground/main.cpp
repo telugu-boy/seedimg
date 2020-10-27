@@ -31,7 +31,7 @@ auto main() -> int {
   {
     // ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("cat.jpg");
-    auto b = seedimg::make(a->width(), a->height());
+    // auto b = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);
@@ -57,6 +57,11 @@ auto main() -> int {
       // cconv::rgb_i(a);
       // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
       // cconv::rgb_i(a);
+      auto inp_img_buf = new cl::Buffer{
+          ocl::get_context(), CL_MEM_READ_WRITE,
+          seedimg::utils::round_up(
+              sizeof(seedimg::pixel) * a->width() * a->height(), 8192UL)};
+      ocl::cconv::hsv_i(a, inp_img_buf);
       seedimg::save("boil.webp", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

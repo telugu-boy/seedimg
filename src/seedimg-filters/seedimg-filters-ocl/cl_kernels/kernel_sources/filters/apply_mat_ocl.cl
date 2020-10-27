@@ -4,30 +4,30 @@ inline uchar clmp_(float i){
            (0.0f < i && i < 255.0f) * i;
 }
 
-__kernel void apply_mat(ulong amt_pixels, float16 matvec, __global uchar4* inp_pix, __global uchar4* res_pix) {
-      int num = get_global_id(0);
-      if(num >= amt_pixels)
-          return;
+__kernel void apply_mat(float16 matvec, __global uchar4* inp_pix, __global uchar4* res_pix) {
+      ulong id = get_global_id(0)*128;
       
-      uchar4 pix = inp_pix[num];
-      
-	  res_pix[num].xyz = (uchar3)(
-                    clmp_(
-                    matvec.s0 * pix.x +
-                    matvec.s4 * pix.y +
-                    matvec.s8 * pix.z +
-                    matvec.sc),
-                  
-                    clmp_(
-                    matvec.s1 * pix.x +
-                    matvec.s5 * pix.y +
-                    matvec.s9 * pix.z +
-                    matvec.sd),
-      
-                    clmp_(
-                    matvec.s2 * pix.x +
-                    matvec.s6 * pix.y +
-                    matvec.sa * pix.z +
-                    matvec.se));
-                  
+      for(ulong num = id; num < id+128; ++num) {
+        uchar4 pix = inp_pix[num];
+        
+        res_pix[num].xyz = (uchar3)(
+                        clmp_(
+                        matvec.s0 * pix.x +
+                        matvec.s4 * pix.y +
+                        matvec.s8 * pix.z +
+                        matvec.sc),
+                    
+                        clmp_(
+                        matvec.s1 * pix.x +
+                        matvec.s5 * pix.y +
+                        matvec.s9 * pix.z +
+                        matvec.sd),
+        
+                        clmp_(
+                        matvec.s2 * pix.x +
+                        matvec.s6 * pix.y +
+                        matvec.sa * pix.z +
+                        matvec.se));
+        /*res_pix[num] = pix;*/
+    }
 }
