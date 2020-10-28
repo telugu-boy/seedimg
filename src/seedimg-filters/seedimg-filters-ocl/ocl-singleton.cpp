@@ -31,14 +31,15 @@ namespace seedimg::filters {
 namespace ocl {
 void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
                            std::size_t amt, ...) {
-  // std::cout << "start" << std::endl;
-  // for (int i = 0; i < 250; i++) {
-  // std::cout << i << std::endl;
+  /*
+  std::cout << "start" << std::endl;
+  for (int i = 0; i < 1000; i++) {
+    std::cout << i << std::endl;*/
   queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt / 128),
                              cl::NDRange(64));
   queue.finish();
-  // }
-  // std::cout << "end" << std::endl;
+  /*}
+  std::cout << "end" << std::endl;*/
 }
 
 void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
