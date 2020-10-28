@@ -60,7 +60,7 @@ auto main() -> int {
       auto inp_img_buf = new cl::Buffer{
           ocl::get_context(), CL_MEM_READ_WRITE,
           seedimg::utils::round_up(
-              sizeof(seedimg::pixel) * a->width() * a->height(), 8192UL)};
+              sizeof(seedimg::pixel) * a->width() * a->height(), 32768UL)};
       ocl::cconv::hsv_i(a, inp_img_buf);
       seedimg::save("boil.webp", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);

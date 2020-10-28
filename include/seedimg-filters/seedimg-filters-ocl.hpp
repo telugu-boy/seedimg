@@ -103,7 +103,7 @@ void exec_ocl_callback_1d(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
         context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
         seedimg::utils::round_up(sizeof(seedimg::pixel) * inp_img->width() *
                                      inp_img->height(),
-                                 8192UL)};
+                                 32768UL)};
   }
 
   cl::Buffer *res_img_buf = inp_img_buf;
@@ -127,7 +127,7 @@ void exec_ocl_callback_1d(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
   std::invoke(callback, queue, kern,
               seedimg::utils::round_up(sizeof(seedimg::pixel) *
                                            inp_img->width() * inp_img->height(),
-                                       8192UL),
+                                       32768UL),
               std::forward<Args>(kernel_args)...);
 
   read_img_1d(queue, res_img, *res_img_buf);
