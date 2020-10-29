@@ -1,6 +1,6 @@
 ﻿/**********************************************************************
     seedimg - module based image manipulation library written in modern
-                C++ Copyright(C) 2020 telugu-boy
+                C++ Copyright(C) 2020 telugu-boy, tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -16,92 +16,116 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <filesystem>
+#include <seedimg-autodetect.hpp>
 
-#include <seedimg-formats/farbfeld.hpp>
-#include <seedimg-formats/seedimg-irdump.hpp>
-#include <seedimg-formats/seedimg-jpeg.hpp>
-#include <seedimg-formats/seedimg-png.hpp>
-#include <seedimg-formats/seedimg-tiff.hpp>
-#include <seedimg-formats/seedimg-webp.hpp>
-#include <seedimg.hpp>
+#include <functional>
+#include <cstring>
+#include <fstream>
 
-#include "seedimg-autodetect.hpp"
+#include <seedimg-modules/modules-abc.hpp>
+#include <seedimg-modules/farbfeld.hpp>
+#include <seedimg-modules/irdump.hpp>
 
-enum seedimg_img_type seedimg_match_ext(const std::string &ext) noexcept {
-  if (ext == "png")
-    return seedimg_img_type::png;
-  if (ext == "jpeg" || ext == "jpg" || ext == "jfif")
-    return seedimg_img_type::jpeg;
-  if (ext == "webp")
-    return seedimg_img_type::webp;
-  if (ext == "ff" || ext == "farbfeld")
-    return seedimg_img_type::farbfeld;
-  if (ext == "tiff" || ext == "tif")
-    return seedimg_img_type::tiff;
-  if (ext == "sir")
-    return seedimg_img_type::irdump;
-  return seedimg_img_type::unknown;
+#include <seedimg-utils.hpp>
+
+
+constexpr const auto FMT_DETECTORS = seedimg::utils::make_array(
+    #define F(fmt, size, funcb) std::make_tuple( \
+            simg_imgfmt::fmt, \
+            static_cast<std::size_t>(size), \
+            [](const char* const h) funcb)
+
+    #define EQ(a, b, s) (std::memcmp(a, b, s) == 0)
+
+    /* format   sigsize           comparator */
+    F(farbfeld,    8,   { return EQ(h, "farbfeld", 8); })
+);
+
+constexpr const auto MAX_SIGSIZE = std::get<1>(*std::max_element(
+            std::begin(FMT_DETECTORS),
+            std::end(FMT_DETECTORS),
+            [](auto a, auto b) { return std::get<1>(a) < std::get<1>(b);
+        }));
+
+
+static std::unordered_map<std::string, simg_imgfmt> EXT2FMT = {
+    { "ff", simg_imgfmt::farbfeld},
+    {"sir", simg_imgfmt::irdump},
+};
+
+
+simg_imgfmt detect_format(std::istream& buf) {
+    char sig[MAX_SIGSIZE];
+    buf.read(sig, MAX_SIGSIZE);
+
+    simg_imgfmt fmt = simg_imgfmt::unknown;
+
+    for(auto fmtdet : FMT_DETECTORS) {
+        if(std::get<2>(fmtdet)(sig)) {
+            fmt = std::get<0>(fmtdet);
+            break;
+        }
+    }
+
+    for(size_t i = 0; i < MAX_SIGSIZE; ++i)
+        buf.unget();  // unextract read chars.
+
+    return fmt;
 }
 
-std::optional<enum seedimg_img_type>
-seedimg_imgtype(const std::string &filename) noexcept {
-  if (!std::filesystem::exists(filename))
-    return std::nullopt;
-  if (seedimg::modules::png::check(filename))
-    return seedimg_img_type::png;
-  if (seedimg::modules::jpeg::check(filename))
-    return seedimg_img_type::jpeg;
-  if (seedimg::modules::webp::check(filename))
-    return seedimg_img_type::webp;
-  if (seedimg::modules::farbfeld::check(filename))
-    return seedimg_img_type::farbfeld;
-  if (seedimg::modules::tiff::check(filename))
-    return seedimg_img_type::tiff;
-  return seedimg_img_type::unknown;
+template<typename I>
+simg read_img(std::istream& buf) {
+    I reader{buf};
+    auto img = seedimg::make(reader.width(), reader.height());
+
+    for(simg_int r = 0; r < img->height(); ++r)
+        if(!reader.read(img->row(r)))
+            return nullptr;
+    return img;
 }
+
+template<typename O>
+bool write_img(std::ostream& buf, const simg& img) {
+    O writer{buf, img->width(), img->height()};
+
+    for(simg_int r = 0; r < img->height(); ++r)
+        if(!writer.write(img->row(r)))
+            return false;
+    return true;
+}
+
 
 namespace seedimg {
-simg load(const std::string &filename) {
-  auto type = seedimg_imgtype(filename);
-  if (type == std::nullopt)
-    return nullptr;
-  switch (*type) {
-  case seedimg_img_type::png:
-    return seedimg::modules::png::from(filename);
-  case seedimg_img_type::jpeg:
-    return seedimg::modules::jpeg::from(filename);
-  case seedimg_img_type::webp:
-    return seedimg::modules::webp::from(filename);
-  case seedimg_img_type::farbfeld:
-    return seedimg::modules::farbfeld::from(filename);
-  case seedimg_img_type::tiff: {
-    // this will return the first one only. use the full function to get the
-    // entire vector.
-    return std::move(seedimg::modules::tiff::from(filename, 1)[0]);
-  }
-  default:
-    return nullptr;
-  }
-}
+    using namespace seedimg::modules;
 
-bool save(const std::string &filename, const simg &image) {
-  std::string extension_type{filename.substr(filename.rfind('.') + 1)};
-  switch (seedimg_match_ext(extension_type)) {
-  case seedimg_img_type::png:
-    return seedimg::modules::png::to(filename, image);
-  case seedimg_img_type::jpeg:
-    return seedimg::modules::jpeg::to(filename, image);
-  case seedimg_img_type::webp:
-    return seedimg::modules::webp::to(filename, image);
-  case seedimg_img_type::farbfeld:
-    return seedimg::modules::farbfeld::to(filename, image);
-  case seedimg_img_type::tiff:
-    return seedimg::modules::tiff::to(filename, image);
-  case seedimg_img_type::irdump:
-    return seedimg::modules::irdump::to(filename, image);
-  default:
-    return false;
-  }
+    simg load(std::istream& buf) {
+        #define impli(fmt) case simg_imgfmt::fmt: return read_img<decoding::fmt>(buf)
+
+        switch(detect_format(buf)) {
+              impli  (farbfeld);
+            default: return nullptr;
+        }
+    }
+
+    simg load(const std::string& filename) {
+        std::ifstream in(filename);
+        return load(in);
+    }
+
+    bool save(std::ostream& buf, simg_imgfmt fmt, const simg& img) {
+        #define implo(fmt) case simg_imgfmt::fmt: return write_img<encoding::fmt>(buf, img)
+        switch(fmt) {
+              implo  (farbfeld);
+              implo  (irdump);
+            default: return false;
+        }
+    }
+
+    bool save(const std::string& filename, const simg& img) {
+        std::ofstream out(filename);
+        return save(out,
+                    EXT2FMT[filename.substr(
+                                filename.rfind('.') + 1
+                    )], img);
+    }
 }
-} // namespace seedimg

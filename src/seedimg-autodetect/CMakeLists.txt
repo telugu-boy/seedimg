@@ -16,15 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
 add_library(seedimg-autodetect ${LIB_TYPE} seedimg-autodetect.cpp)
-
 target_link_libraries(seedimg-autodetect PUBLIC
     seedimg
-    seedimg-png 
-    seedimg-jpeg 
-    seedimg-webp
-    seedimg-tiff
-)
-
-target_include_directories(seedimg-autodetect PUBLIC
-    "${CMAKE_SOURCE_DIR}/seedimg-formats"
+    seedimg-farbfeld
+    seedimg-irdump
 )

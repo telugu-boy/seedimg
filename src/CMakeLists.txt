@@ -28,5 +28,4 @@ if(EXTRAS_ENABLED)
 endif()
 
 # automatic detection of image types:
-# add_subdirectory(seedimg-autodetect)
-
+add_subdirectory(seedimg-autodetect)
