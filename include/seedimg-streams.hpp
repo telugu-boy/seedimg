@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#include <seedimg-modules/formats.hpp>
+#include <seedimg-modules/modules-abc.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 
 namespace seedimg {

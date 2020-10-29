@@ -23,11 +23,11 @@
 #include <ostream>
 
 #include <seedimg.hpp>
-#include "formats.hpp"
+#include <seedimg-modules/modules-abc.hpp>
 
 namespace seedimg::modules::decoding {
 
-class irdump : public input {
+class irdump : public input_abc {
 private:
     simg_int _width;
     simg_int _height;
@@ -41,23 +41,13 @@ public:
     simg_int height() const noexcept { return _height; }
 
     bool read(pixel* to);
-    bool read(simg& to) {
-        if(to->width() != _width || to->height() != _height)
-            return false;  // will not crop/resize.
-
-        for(simg_int r = 0; r < to->height(); ++r)
-            if(!read(to->row(r)))
-                return false;
-
-        return true;
-    }
 };
 
 }
 
 namespace seedimg::modules::encoding {
 
-class irdump : public output {
+class irdump : public output_abc {
 private:
     simg_int _width;
     simg_int _height;
@@ -70,18 +60,8 @@ public:
         irdump(output, dimensions.x, dimensions.y) {}
 
     bool write(const pixel* const from);
-    bool write(const simg& to) {
-        if(to->width() != _width || to->height() != _height)
-            return false;  // will not crop/resize
-
-        for(simg_int r = 0; r < to->height(); ++r)
-            if(!write(to->row(r)))
-                return false;
-
-        return true;
-    }
-
     void flush() { out.flush(); }
+
     ~irdump()    { out.flush(); }
 };
 

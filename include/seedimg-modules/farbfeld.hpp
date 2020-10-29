@@ -23,11 +23,11 @@
 #include <ostream>
 
 #include <seedimg.hpp>
-#include "formats.hpp"
+#include <seedimg-modules/modules-abc.hpp>
 
 namespace seedimg::modules::decoding {
 
-class farbfeld : public input {
+class farbfeld : public input_abc {
 private:
     simg_int _width;
     simg_int _height;
@@ -57,7 +57,7 @@ public:
 
 namespace seedimg::modules::encoding {
 
-class farbfeld : public output {
+class farbfeld : public output_abc {
 private:
     simg_int _width;
     simg_int _height;
