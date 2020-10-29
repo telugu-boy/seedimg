@@ -90,5 +90,14 @@ void map_range_iter(IIter start, IIter end, OIter output, T a, T b, T c, T d) {
     ++outelem;
   }
 }
+
+template<typename ...Args>
+constexpr auto make_array(Args&&... args) {
+    return std::array<
+                std::decay_t<
+                    std::common_type_t<Args...>>,
+                sizeof...(Args)>
+        {std::forward<Args>(args)...};
 } // namespace seedimg::utils
+}
 #endif
