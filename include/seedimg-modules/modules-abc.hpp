@@ -16,7 +16,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-
 #ifndef SEEDIMG_FORMATS_HPP
 #define SEEDIMG_FORMATS_HPP
 
@@ -29,7 +28,7 @@ namespace decoding {
  * @brief An input reads an image progressively from a given readable-stream.
  * The unit of reading data is a single row.
  */
-class input {
+class input_abc {
 public:
     /**
      * @brief Maximum (X,Y) coordinates aka. size of the image.
@@ -45,21 +44,12 @@ public:
      * @return 'true' if succeeded reading a row, 'false' otherwise
      */
     virtual bool read(pixel* to) = 0;
+    bool   operator>>(pixel* to) { return read(to); }
 
-    /**
-     * @brief Read an RGBA image from input to a seedimg::img.
-     * @param to seedimg::img to read in, its dimensions must match with input.
-     * @return 'true' if succeeded reading an image, 'false' otherwise
-     */
-    virtual bool read(simg& to) = 0;
-
-    bool operator>>(pixel* to) { return read(to); }
-    bool operator>>(simg& to)  { return read(to); }
-
-    virtual ~input();
+    virtual ~input_abc();
 };
 
-input::~input() {}  // sequelch -Wweak-vtables.
+input_abc::~input_abc() {}  // sequelch -Wweak-vtables.
 
 
 class input_init_failure : std::runtime_error {
@@ -78,19 +68,15 @@ namespace encoding {
 /**
  * @brief An output writes an image progressively to a given writable-stream.
  */
-class output {
+class output_abc {
 public:
-    virtual bool write(const pixel* const from) = 0;
-
     /**
-     * @brief Write an RGBA image from seedimg::img to an output.
-     * @param from seedimg::img to write in, its dimensions must match with given.
-     * @return 'true' if succeeded reading an image, 'false' otherwise
+     * @brief Write a row of pixels from input to a buffer.
+     * @param from buffer to read from, its size must be atleast (4 * width)
+     * @return 'true' if succeeded writing a row, 'false' otherwise
      */
-    virtual bool write(const simg& from) = 0;
-
-    bool operator<<(const pixel* const from) { return write(from); }
-    bool operator<<(const simg&        from) { return write(from); }
+    virtual bool write(const pixel* const from) = 0;
+    bool    operator<<(const pixel* const from) { return write(from); }
 
     /**
      * @brief Ensure that data is written to the destination, automatically called
@@ -98,10 +84,10 @@ public:
      */
     virtual void flush() = 0;
 
-    virtual ~output();
+    virtual ~output_abc();
 };
 
-output::~output() {}  // sequelch -Wweak-vtables.
+output_abc::~output_abc() {}  // sequelch -Wweak-vtables.
 
 
 class output_init_failure : std::runtime_error {
