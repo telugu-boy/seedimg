@@ -17,13 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 set(APP_EXE playground)
 
-add_executable(${APP_EXE} main.cpp)
-
 file(COPY jat.ff DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
 
+add_executable(${APP_EXE} main.cpp)
 target_link_libraries(${APP_EXE} seedimg
-    seedimg-farbfeld
-    seedimg-irdump
-    seedimg-filters-core
-    stdc++fs)
-#target_include_directories(${APP_EXE} PRIVATE "${CMAKE_SOURCE_DIR}/seedimg")
+    seedimg-autodetect
+    seedimg-filters-core)
