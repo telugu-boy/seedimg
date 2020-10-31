@@ -16,9 +16,9 @@ __kernel void rgb2hsv(__global uchar4* inp_pix, __global uchar4* res_pix) {
         float delta = cmax - cmin;
         
         
-        float h = (rp == cmax) * (30*fmodulo((gp-bp)/delta,6.0f)) +
-        (gp == cmax) * (60*((bp-rp)/delta+2)) +
-        (bp == cmax) * (60*((rp-gp)/delta+4));
+        float h = (rp == cmax) * (30 * fmodulo((gp-bp) / delta, 6.0f)) +
+                  (gp == cmax) * (60 * ((bp-rp) / delta + 2)) +
+                  (bp == cmax) * (60 * ((rp-gp) / delta + 4));
         
         float s = (cmax > 0) * ((delta/cmax)*100.0f);
         
