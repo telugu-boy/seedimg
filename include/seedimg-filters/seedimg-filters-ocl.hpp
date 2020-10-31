@@ -180,7 +180,7 @@ void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
                            std::size_t amt, bool blocking, ...) {
 
   std::cout << "start" << std::endl;
-  for (int i = 0; i < 51; i++) {
+  for (int i = 0; i < 10; i++) {
     std::cout << i << std::endl;
     queue.enqueueNDRangeKernel(kern, cl::NullRange,
                                cl::NDRange(amt / SIMG_OCL_PXAMT),
