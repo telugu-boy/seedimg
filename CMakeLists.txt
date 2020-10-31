@@ -35,6 +35,10 @@ include(CTest)
 include(ExternalProject)
 include(CheckCXXCompilerFlag)
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+link_libraries(Threads::Threads)
+
 set(AUTODETECT_ENABLED ON CACHE BOOL "Enable automatic detection of images. Requires ALL format modules.")
 
 if(NOT AUTODETECT_ENABLED)
