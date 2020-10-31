@@ -1,7 +1,8 @@
 __kernel void hsv2rgb(__global uchar4* inp_pix, __global uchar4* res_pix) {
-    ulong id = get_global_id(0) * 128;
+    ulong id = get_global_id(0) * SIMG_OCL_PXAMT;
+    //ulong num = get_global_id(0);
     
-    for(ulong num = id; num < id+128; ++num) {
+    for(ulong num = id; num < id + SIMG_OCL_PXAMT; ++num) {
         float4 pix = convert_float4(inp_pix[num]);
         pix.x *= 2;
         pix.yz /= 100;

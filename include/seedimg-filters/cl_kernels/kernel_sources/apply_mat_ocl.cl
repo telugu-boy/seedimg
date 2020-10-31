@@ -5,9 +5,9 @@ inline uchar clmp_(float i){
 }
 
 __kernel void apply_mat(float16 matvec, __global uchar4* inp_pix, __global uchar4* res_pix) {
-      ulong id = get_global_id(0)*128;
+      ulong id = get_global_id(0) * SIMG_OCL_PXAMT;
       
-      for(ulong num = id; num < id+128; ++num) {
+      for(ulong num = id; num < id + SIMG_OCL_PXAMT; ++num) {
         uchar4 pix = inp_pix[num];
         
         res_pix[num].xyz = (uchar3)(

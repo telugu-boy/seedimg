@@ -19,6 +19,9 @@
 #ifndef SEEDIMG_CORE_H
 #define SEEDIMG_CORE_H
 
+#define SIMG_WRAP_IN_QUOTES(exp) #exp
+#define SIMG_EXPAND_WRAP_IN_QUOTES(exp) SIMG_WRAP_IN_QUOTES(exp)
+
 #include <array>
 #include <cinttypes>
 #include <memory>

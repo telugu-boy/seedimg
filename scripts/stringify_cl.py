@@ -3,7 +3,7 @@ import os
 
 def stringify(iname, oname):
   with open(iname, "r") as i, open(oname, "w") as o:
-    o.write('R"(' + i.read() + ')\"');
+    o.write('R"(' + i.read().replace("SIMG_OCL_PXAMT", ')" SIMG_EXPAND_WRAP_IN_QUOTES(SIMG_OCL_PXAMT) R"(') + ')"');
     
 if __name__ == "__main__":
     # .cl files are suffixed with _ocl.cl

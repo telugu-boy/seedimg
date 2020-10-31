@@ -19,6 +19,8 @@ seedimg - module based image manipulation library written in modern
 #include <filesystem>
 #include <iostream>
 
+#define SIMG_OCL_PXAMT 1
+
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #include <seedimg-filters/seedimg-filters-ocl.hpp>

@@ -19,6 +19,10 @@
 #ifndef SEEDIMG_FILTERS_OCL_H
 #define SEEDIMG_FILTERS_OCL_H
 
+#ifndef SIMG_OCL_PXAMT
+#define SIMG_OCL_PXAMT 32
+#endif
+
 #ifndef CL_HPP_MINIMUM_OPENCL_VERSION
 #define CL_HPP_MINIMUM_OPENCL_VERSION 100
 #endif
@@ -179,8 +183,8 @@ void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
     if (blocking)
       queue.finish();*/
 
-  queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt / 128),
-                             cl::NDRange(64));
+  queue.enqueueNDRangeKernel(
+      kern, cl::NullRange, cl::NDRange(amt / SIMG_OCL_PXAMT), cl::NDRange(64));
   if (blocking)
     queue.finish();
 }
