@@ -86,7 +86,7 @@ simg load(const std::string &filename) {
 }
 
 bool save(const std::string &filename, const simg &image) {
-  std::string extension_type = filename.substr(filename.rfind('.') + 1);
+  std::string extension_type{filename.substr(filename.rfind('.') + 1)};
   switch (seedimg_match_ext(extension_type)) {
   case seedimg_img_type::png:
     return seedimg::modules::png::to(filename, image);

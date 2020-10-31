@@ -9,18 +9,17 @@ if __name__ == "__main__":
     # .cl files are suffixed with _ocl.cl
     # resulting files are suffixed with _kernel.clh
     names = [
-        "filters/apply_mat",
-        
-        "cconv/rgb2hsv",
-        "cconv/hsv2rgb",
+        "apply_mat",
+        "rgb2hsv",
+        "hsv2rgb",
     ]
     try:
-        os.mkdir("../src/seedimg-filters/seedimg-filters-ocl/cl_kernels/cconv")
-        os.mkdir("../src/seedimg-filters/seedimg-filters-ocl/cl_kernels/filters")
+        os.mkdir("../include/seedimg-filters/cl_kernels")
+        os.mkdir("../include/seedimg-filters/cl_kernels")
     except:
         pass
     for name in names:
-        stringify("../src/seedimg-filters/seedimg-filters-ocl/cl_kernels/kernel_sources/"+name+"_ocl.cl",
-        "../src/seedimg-filters/seedimg-filters-ocl/cl_kernels/"+name+"_kernel.clh")
+        stringify("../include/seedimg-filters/cl_kernels/kernel_sources/"+name+"_ocl.cl",
+        "../include/seedimg-filters/cl_kernels/"+name+"_kernel.clh")
     
     print("Done.")

@@ -23,13 +23,15 @@ file(COPY cat.jpg DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
 
 target_link_libraries(${APP_EXE}
     seedimg-filters-core
-    seedimg-filters-cconv
     seedimg-autodetect
     stdc++fs
 )
 
-if(OPENCL_ENABLED)
-  target_link_libraries(${APP_EXE} seedimg-filters-ocl)
+if(OPENCL_TESTS_ENABLED)
+  find_package(OpenCL REQUIRED)
+  target_link_libraries(${APP_EXE} ${OpenCL_LIBRARY})
+  target_include_directories(${APP_EXE} PRIVATE ${OpenCL_INCLUDE_DIRS})
+  target_link_libraries(${APP_EXE})
 endif()
 
 target_include_directories(${APP_EXE} PRIVATE

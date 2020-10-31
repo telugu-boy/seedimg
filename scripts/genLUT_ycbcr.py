@@ -3,7 +3,7 @@ def write_rh(l, typ, names, filename):
     for inner in range(len(l)):
         arr.append(f"static constexpr {typ} const {names[inner]}[] = {{ {', '.join(map(str, l[inner]))} }};")
         
-    with open("../src/seedimg-filters/seedimg-filters-cconv/" + filename, "w") as f:
+    with open("../include/seedimg-filters/rh/" + filename, "w") as f:
         for s in arr:
             f.write(s + "\n")
 

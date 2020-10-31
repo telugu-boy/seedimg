@@ -24,21 +24,25 @@
 #include <array>
 #include <cmath>
 #include <functional>
+#include <seedimg-utils.hpp>
 #include <seedimg.hpp>
 
 const float PI = 4 * std::atan(1.0f);
-namespace seedimg {
-// Seedimg MATrix
-typedef std::array<float, 9> smat;
-// Full size Seedimg MATrix
-typedef std::array<float, 16> fsmat;
-// LookUp Table (additonal) Vector
-typedef std::array<float, 3> lutvec;
-// Seedimg LookUp Table
-template <typename T>
-using slut = std::array<std::array<float, seedimg::img::MAX_PIXEL_VALUE + 1>,
-                        sizeof(T) / sizeof(typename T::value_type)>;
-} // namespace seedimg
+
+namespace seedimg::utils {
+template <typename T = smat,
+          std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
+          std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
+constexpr auto gen_lut(const T &mat) {
+  std::array<std::array<float, MaxPV>, Amt> res{};
+  for (std::size_t elem = 0; elem < Amt; ++elem) {
+    for (std::size_t i = 0; i < MaxPV; ++i) {
+      res[elem][i] = i * mat[elem];
+    }
+  }
+  return res;
+}
+} // namespace seedimg::utils
 
 namespace seedimg::filters {
 
@@ -119,25 +123,222 @@ void saturation_i(simg &inp_img, float mul);
 void contrast(simg &input, simg &output, float intensity = 100.0,
               bool alpha = false);
 void contrast_i(simg &image, float intensity = 100.0, bool alpha = false);
-
-namespace cconv {};
-namespace ocl {}
 } // namespace seedimg::filters
+namespace simgdetails {
+#include "rh/from_ycbcr_jpeg_lut.rh"
 
-namespace seedimg::utils {
-template <typename T = smat,
-          std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
-          std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
-constexpr auto gen_lut(const T &mat) {
-  std::array<std::array<float, MaxPV>, Amt> res{};
-  for (std::size_t elem = 0; elem < Amt; ++elem) {
-    for (std::size_t i = 0; i < MaxPV; ++i) {
-      res[elem][i] = i * mat[elem];
+inline void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
+                           simg_int end) {
+  for (; start < end; start++) {
+    for (simg_int x = 0; x < inp_img->width(); ++x) {
+      seedimg::pixel pix_src = inp_img->pixel(x, start);
+      struct {
+        float h;
+        float s;
+        float v;
+      } pix{static_cast<float>(pix_src.h) * 2,
+            static_cast<float>(pix_src.s) / 100,
+            static_cast<float>(pix_src.v) / 100};
+      float C = pix.v * pix.s;
+      float X = C * (1 - std::fabs(std::fmod(pix.h / 60.0f, 2.0f) - 1));
+
+      float m = pix.v - C;
+
+      float componentsp[4] = {m, m, m, 0};
+      switch (static_cast<int>(pix.h / 60)) {
+      case 0: {
+        componentsp[0] += C;
+        componentsp[1] += X;
+        componentsp[2] += 0;
+      } break;
+      case 1: {
+        componentsp[0] += X;
+        componentsp[1] += C;
+        componentsp[2] += 0;
+      } break;
+      case 2: {
+        componentsp[0] += 0;
+        componentsp[1] += C;
+        componentsp[2] += X;
+      } break;
+      case 3: {
+        componentsp[0] += 0;
+        componentsp[1] += X;
+        componentsp[2] += C;
+      } break;
+      case 4: {
+        componentsp[0] += X;
+        componentsp[1] += 0;
+        componentsp[2] += C;
+      } break;
+      case 5: {
+        componentsp[0] += C;
+        componentsp[1] += 0;
+        componentsp[2] += X;
+      } break;
+      }
+      res_img->pixel(x, start) = {
+          {static_cast<std::uint8_t>(componentsp[0] * 255)},
+          {static_cast<std::uint8_t>(componentsp[1] * 255)},
+          {static_cast<std::uint8_t>(componentsp[2] * 255)},
+          pix_src.a};
     }
   }
-  return res;
 }
-} // namespace seedimg::utils
+
+inline void ycbcr_jpeg2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
+                                  simg_int end) {
+  for (; start < end; ++start) {
+    for (simg_int x = 0; x < inp_img->width(); ++x) {
+      seedimg::pixel pix = inp_img->pixel(x, start);
+      // ry* is all 1. we do not need a lookup because it will all be the same
+      // as pix.y
+      // gcb1 and bcr3 are zero in the matrix.
+      res_img->pixel(x, start).r =
+          static_cast<std::uint8_t>(pix.y + 0 + jpeg_bcr1[pix.cr]);
+      res_img->pixel(x, start).g = static_cast<std::uint8_t>(
+          pix.y + jpeg_gcb2[pix.cb] + jpeg_bcr2[pix.cr]);
+      res_img->pixel(x, start).b =
+          static_cast<std::uint8_t>(pix.y + jpeg_gcb3[pix.cb] + 0);
+    }
+  }
+}
+
+inline float fmodulo(float x, float N) {
+  return std::fmod(x, N) + (std::fmod(x, N) < 0) * N;
+}
+
+inline bool feq(float a, float b) { return std::fabs(a - b) < .0000001f; }
+
+inline void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
+                           simg_int end) {
+  for (; start < end; ++start) {
+    for (simg_int x = 0; x < res_img->width(); ++x) {
+      // the p suffix in this sense stands for prime. normally we use R' G' B'
+      // to represent normalized colour.
+      float rp = static_cast<float>(inp_img->pixel(x, start).r) /
+                 static_cast<float>(seedimg::img::MAX_PIXEL_VALUE);
+      float gp = static_cast<float>(inp_img->pixel(x, start).g) /
+                 static_cast<float>(seedimg::img::MAX_PIXEL_VALUE);
+      float bp = static_cast<float>(inp_img->pixel(x, start).b) /
+                 static_cast<float>(seedimg::img::MAX_PIXEL_VALUE);
+      float cmax = std::max(rp, std::max(gp, bp));
+      float cmin = std::min(rp, std::min(gp, bp));
+      float delta = cmax - cmin;
+
+      std::uint8_t hue;
+      std::uint8_t sat = 0;
+      std::uint8_t val = static_cast<std::uint8_t>(cmax * 100.0f);
+
+      if (feq(rp, cmax)) {
+        hue = static_cast<std::uint8_t>(30 * fmodulo((gp - bp) / delta, 6));
+      } else if (feq(gp, cmax)) {
+        hue = static_cast<std::uint8_t>(60 * ((bp - rp) / delta + 2));
+      } else {
+        hue = static_cast<std::uint8_t>(60 * ((rp - gp) / delta + 4));
+      }
+
+      // saturation
+      if (!feq(cmax, 0)) {
+        sat = static_cast<std::uint8_t>((delta / cmax) * 100.0f);
+      }
+      res_img->pixel(x,
+                     start) = {{hue}, {sat}, {val}, inp_img->pixel(x, start).a};
+    }
+  }
+}
+} // namespace simgdetails
+
+// Colourspace conversion
+namespace seedimg::filters::cconv {
+static constexpr seedimg::smat const rgb_ycbcr_bt601_mat = {
+    298.082f / 256.0f, 298.082f / 256.0f,  298.082f / 256.0f,
+    0.0f / 256.0f,     -100.291f / 256.0f, 516.412f / 256.0f,
+    408.583f / 256.0f, -208.120f / 256.0f, 0.0f / 256.0f};
+
+static constexpr seedimg::lutvec const rgb_ycbcr_bt601_vec = {
+    -222.921f, 135.576f, -276.836f};
+
+static constexpr seedimg::slut<seedimg::smat> const rgb_ycbcr_bt601_lut =
+    seedimg::utils::gen_lut(rgb_ycbcr_bt601_mat);
+
+static constexpr seedimg::smat const ycbcr_jpeg_rgb_mat = {
+    0.299f,     -0.168736f, 0.5f, 0.587f,    -0.331264f,
+    -0.418688f, 0.114f,     0.5f, -0.081312f};
+
+static constexpr seedimg::lutvec const ycbcr_jpeg_rgb_vec = {0, 128, 128};
+
+static constexpr seedimg::slut<seedimg::smat> const ycbcr_jpeg_rgb_lut =
+    seedimg::utils::gen_lut(ycbcr_jpeg_rgb_mat);
+
+static constexpr seedimg::smat const ycbcr_bt601_rgb_mat = {
+    65.738f / 256.0f,  -37.945f / 256.0f, 112.439f / 256.0f,
+    129.057f / 256.0f, -74.494f / 256.0f, -94.154f / 256.0f,
+    25.064f / 256.0f,  112.439f / 256.0f, -18.285f / 256.0f};
+
+static constexpr seedimg::lutvec const ycbcr_bt601_rgb_vec = {16, 128, 128};
+
+static constexpr seedimg::slut<seedimg::smat> const ycbcr_bt601_rgb_lut =
+    seedimg::utils::gen_lut(ycbcr_bt601_rgb_mat);
+
+inline void rgb(simg &inp_img, simg &res_img) {
+  if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
+    return;
+  } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
+    seedimg::utils::hrz_thread(simgdetails::hsv2rgb_worker, inp_img, res_img);
+    // hsv2rgb_worker(inp_img, res_img, 0, inp_img->height());
+  } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg) {
+    seedimg::utils::hrz_thread(simgdetails::ycbcr_jpeg2rgb_worker, inp_img,
+                               res_img);
+  } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
+    seedimg::filters::apply_mat_lut(inp_img, res_img, rgb_ycbcr_bt601_lut,
+                                    rgb_ycbcr_bt601_vec);
+  }
+  static_cast<seedimg::uimg *>(res_img.get())
+      ->set_colourspace(seedimg::colourspaces::rgb);
+}
+
+inline void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }
+
+inline void hsv(simg &inp_img, simg &res_img) {
+  if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
+    return;
+  } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
+    seedimg::utils::hrz_thread(simgdetails::rgb2hsv_worker, inp_img, res_img);
+    // rgb2hsv_worker(inp_img, res_img, 0, inp_img->height());
+  } else if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg ||
+             inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
+    rgb(inp_img, res_img);
+    hsv(res_img, res_img);
+  }
+  static_cast<seedimg::uimg *>(res_img.get())
+      ->set_colourspace(seedimg::colourspaces::hsv);
+}
+inline void hsv_i(simg &inp_img) { hsv(inp_img, inp_img); }
+
+inline void ycbcr(simg &inp_img, simg &res_img, seedimg::colourspaces type) {
+  if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg ||
+      inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
+    return;
+  } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
+    if (type == seedimg::colourspaces::ycbcr_jpeg) {
+      seedimg::filters::apply_mat_lut(inp_img, res_img, ycbcr_jpeg_rgb_lut,
+                                      ycbcr_jpeg_rgb_vec);
+    } else if (type == seedimg::colourspaces::ycbcr_bt601) {
+      seedimg::filters::apply_mat_lut(inp_img, res_img, ycbcr_bt601_rgb_lut,
+                                      ycbcr_bt601_rgb_vec);
+    }
+  } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
+    rgb(inp_img, res_img);
+    ycbcr(res_img, res_img, type);
+  }
+  static_cast<seedimg::uimg *>(res_img.get())->set_colourspace(type);
+}
+inline void ycbcr_i(simg &inp_img, seedimg::colourspaces type) {
+  ycbcr(inp_img, inp_img, type);
+}
+
+} // namespace seedimg::filters::cconv
 
 namespace seedimg::filters {
 inline smat generate_hue_mat(float angle) {
@@ -233,9 +434,9 @@ public:
    */
   template <class F, class... Args>
   filterchain &add(F &&func, Args &&... args) {
-    filters.push_back([&](simg &input, simg &output) -> void {
-      func(input, output, std::forward<Args>(args)...);
-    });
+    filters.push_back(std::bind(func, std::placeholders::_1,
+                                std::placeholders::_2,
+                                std::forward<Args>(args)...));
 
     return *this;
   }
@@ -316,8 +517,9 @@ public:
    */
   template <class F, class... Args>
   filterchain_i &add(F &&func, Args &&... args) {
-    filters.push_back(
-        [&](simg &input) -> void { func(input, std::forward<Args>(args)...); });
+    filters.push_back([&](simg &input) -> void {
+      std::invoke(func, input, std::forward<Args>(args)...);
+    });
 
     return *this;
   }
@@ -338,7 +540,7 @@ public:
    */
   filterchain_i &eval(simg &img) {
     for (const auto &f : filters)
-      f(img);
+      std::invoke(f, img);
 
     return *this;
   }

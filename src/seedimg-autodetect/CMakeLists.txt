@@ -22,9 +22,7 @@ target_link_libraries(seedimg-autodetect PUBLIC
     seedimg-png 
     seedimg-jpeg 
     seedimg-webp
-    seedimg-farbfeld
     seedimg-tiff
-    seedimg-irdump
 )
 
 target_include_directories(seedimg-autodetect PUBLIC

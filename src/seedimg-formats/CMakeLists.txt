@@ -34,11 +34,3 @@ endif()
 if(TIFF_ENABLED)
   add_subdirectory(seedimg-tiff)
 endif()
-
-if(FARBFELD_ENABLED)
-  add_subdirectory(seedimg-farbfeld)
-endif()
-
-if(IRDUMP_ENABLED)
-  add_subdirectory(seedimg-irdump)
-endif()

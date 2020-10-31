@@ -24,7 +24,6 @@
 #include <unordered_map>
 
 #include <seedimg-autodetect.hpp>
-#include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #ifdef SEEDIMG_TESTS_OCL
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
@@ -94,12 +93,6 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
 int main(int, char *argv[]) {
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
-  // std::filesystem::create_directories(res_dir + "/png/");
-  std::filesystem::create_directories(res_dir + "/jpg/");
-  /*
-  std::filesystem::create_directories(res_dir + "/webp/");
-  std::filesystem::create_directories(res_dir + "/tiff/");
-  std::filesystem::create_directories(res_dir + "/farbfeld/");*/
   auto img = seedimg::load("test_image.jpg");
   filter_functions filter;
   try {
@@ -198,22 +191,28 @@ int main(int, char *argv[]) {
 
   seedimg::filters::cconv::rgb_i(img);
   char name_buf[256];
-  /*
-  std::snprintf(name_buf, 256, "tests_output/filters/png/result-%s.png",
-                argv[1]);
-  seedimg_autodetect_to(name_buf, img);*/
+
+  std::filesystem::create_directories(res_dir + "/jpg/");
+  std::filesystem::create_directories(res_dir + "/png/");
+  std::filesystem::create_directories(res_dir + "/webp/");
+  std::filesystem::create_directories(res_dir + "/tiff/");
+  std::filesystem::create_directories(res_dir + "/farbfeld/");
+
   std::snprintf(name_buf, 256, "tests_output/filters/jpg/result-%s.jpg",
                 argv[1]);
   seedimg::save(name_buf, img);
-  /*
+
+  std::snprintf(name_buf, 256, "tests_output/filters/png/result-%s.png",
+                argv[1]);
+  seedimg::save(name_buf, img);
   std::snprintf(name_buf, 256, "tests_output/filters/webp/result-%s.webp",
                 argv[1]);
-  seedimg_autodetect_to(name_buf, img);
-  std::snprintf(name_buf, 256, "tests_output/filters/farbfeld/result-%s.tiff",
+  seedimg::save(name_buf, img);
+  std::snprintf(name_buf, 256, "tests_output/filters/tiff/result-%s.tiff",
                 argv[1]);
-  seedimg_autodetect_to(name_buf, img);
+  seedimg::save(name_buf, img);
   std::snprintf(name_buf, 256, "tests_output/filters/farbfeld/result-%s.ff",
                 argv[1]);
-  seedimg_autodetect_to(name_buf, img);*/
+  seedimg::save(name_buf, img);
   std::cout << "SUCCESS";
 }

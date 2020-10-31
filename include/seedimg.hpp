@@ -19,6 +19,7 @@
 #ifndef SEEDIMG_CORE_H
 #define SEEDIMG_CORE_H
 
+#include <array>
 #include <cinttypes>
 #include <memory>
 #include <vector>
@@ -121,7 +122,16 @@ public:
   void set_data(seedimg::pixel *data) noexcept;
   void set_colourspace(seedimg::colourspaces colourspace) noexcept;
 };
-
+// Seedimg MATrix
+typedef std::array<float, 9> smat;
+// Full size Seedimg MATrix
+typedef std::array<float, 16> fsmat;
+// LookUp Table (additonal) Vector
+typedef std::array<float, 3> lutvec;
+// Seedimg LookUp Table
+template <typename T>
+using slut = std::array<std::array<float, seedimg::img::MAX_PIXEL_VALUE + 1>,
+                        sizeof(T) / sizeof(typename T::value_type)>;
 } // namespace seedimg
 
 typedef std::unique_ptr<seedimg::img> simg;
@@ -159,8 +169,8 @@ public:
 
   std::size_t size() const noexcept;
 
-  simg *begin() const noexcept;
-  simg *end() const noexcept;
+  std::vector<simg>::iterator begin() noexcept;
+  std::vector<simg>::iterator end() noexcept;
 
   ~anim();
 
