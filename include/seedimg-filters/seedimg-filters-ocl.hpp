@@ -178,21 +178,22 @@ inline cl::Kernel &get_kernel(const std::string &kernel_name) {
 // accepts them or else undefined behavior
 void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
                            std::size_t amt, bool blocking, ...) {
-  /*
-    std::cout << "start" << std::endl;
-    for (int i = 0; i < 1; i++) {
-      std::cout << i << std::endl;
-      queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt / 128),
-                                 cl::NDRange(64));
-    }
-    std::cout << "end" << std::endl;
-    if (blocking)
-      queue.finish();*/
 
-  queue.enqueueNDRangeKernel(
-      kern, cl::NullRange, cl::NDRange(amt / SIMG_OCL_PXAMT), cl::NDRange(64));
+  std::cout << "start" << std::endl;
+  for (int i = 0; i < 51; i++) {
+    std::cout << i << std::endl;
+    queue.enqueueNDRangeKernel(kern, cl::NullRange,
+                               cl::NDRange(amt / SIMG_OCL_PXAMT),
+                               cl::NDRange(SIMG_OCL_LOCAL_WG_SIZE));
+    queue.finish();
+  }
+  std::cout << "end" << std::endl;
   if (blocking)
     queue.finish();
+  /*
+    queue.enqueueNDRangeKernel(
+        kern, cl::NullRange, cl::NDRange(amt / SIMG_OCL_PXAMT),
+    cl::NDRange(64)); if (blocking) queue.finish();*/
 }
 
 template <typename Func, typename... Args>
@@ -239,11 +240,12 @@ void exec_ocl_callback_1d(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
 
   start = ch::steady_clock::now();
   // and then calls the callback with whatever parameters were passed.
-  std::invoke(callback, queue, kern,
-              seedimg::utils::round_up(sizeof(seedimg::pixel) *
-                                           inp_img->width() * inp_img->height(),
-                                       SIMG_OCL_BUF_PADDING),
-              false, std::forward<Args>(kernel_args)...);
+  std::invoke(
+      callback, queue, kern,
+      seedimg::utils::round_up(
+          inp_img->width() * inp_img->height(),
+          static_cast<std::size_t>(SIMG_OCL_LOCAL_WG_SIZE * SIMG_OCL_PXAMT)),
+      false, std::forward<Args>(kernel_args)...);
   queue.finish();
 
   end = ch::steady_clock::now();

@@ -66,8 +66,8 @@ auto main() -> decltype(
                          seedimg::utils::round_up(sizeof(seedimg::pixel) *
                                                       a->width() * a->height(),
                                                   SIMG_OCL_BUF_PADDING)};
-      ocl::rotate_hue_i(a, 180, inp_img_buf);
-      // ocl::cconv::hsv_i(a, inp_img_buf);
+      // ocl::rotate_hue_i(a, 180, inp_img_buf);
+      ocl::cconv::hsv_i(a, inp_img_buf);
       // ocl::cconv::rgb_i(a, inp_img_buf);
       seedimg::save("boil.webp", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);

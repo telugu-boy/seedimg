@@ -1,9 +1,3 @@
-inline uchar clmp_(float i){
-    return (i > 255.0f) * 255 +
-           (i < 0.0f) * 0 +
-           (0.0f < i && i < 255.0f) * i;
-}
-
 __kernel void apply_mat(float16 matvec, __global uchar4* inp_pix, __global uchar4* res_pix) {
       ulong id = get_global_id(0) * SIMG_OCL_PXAMT;
       
@@ -11,23 +5,23 @@ __kernel void apply_mat(float16 matvec, __global uchar4* inp_pix, __global uchar
         uchar4 pix = inp_pix[num];
         
         res_pix[num].xyz = (uchar3)(
-                        clmp_(
+                        (uchar)clamp(
                         matvec.s0 * pix.x +
                         matvec.s4 * pix.y +
                         matvec.s8 * pix.z +
-                        matvec.sc),
+                        matvec.sc, 0.0f, 255.0f),
                     
-                        clmp_(
+                        (uchar)clamp(
                         matvec.s1 * pix.x +
                         matvec.s5 * pix.y +
                         matvec.s9 * pix.z +
-                        matvec.sd),
+                        matvec.sd, 0.0f, 255.0f),
         
-                        clmp_(
+                        (uchar)clamp(
                         matvec.s2 * pix.x +
                         matvec.s6 * pix.y +
                         matvec.sa * pix.z +
-                        matvec.se));
+                        matvec.se, 0.0f, 255.0f));
         /*res_pix[num] = pix;*/
     }
 }
