@@ -19,7 +19,6 @@ seedimg - module based image manipulation library written in modern
 #include <filesystem>
 #include <iostream>
 
-#define SIMG_OCL_PXAMT 1
 #define SIMG_OCL_LOCAL_WG_SIZE 64
 
 #include <seedimg-autodetect.hpp>
@@ -66,9 +65,9 @@ auto main() -> decltype(
                          seedimg::utils::round_up(sizeof(seedimg::pixel) *
                                                       a->width() * a->height(),
                                                   SIMG_OCL_BUF_PADDING)};
-      // ocl::rotate_hue_i(a, 180, inp_img_buf);
-      ocl::cconv::hsv_i(a, inp_img_buf);
-      ocl::cconv::rgb_i(a, inp_img_buf);
+      ocl::rotate_hue_i(a, 180, inp_img_buf);
+      // ocl::cconv::hsv_i(a, inp_img_buf);
+      // ocl::cconv::rgb_i(a, inp_img_buf);
       seedimg::save("boil.webp", a);
       // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
     } else {

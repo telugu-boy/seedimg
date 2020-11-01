@@ -19,16 +19,11 @@
 #ifndef SEEDIMG_FILTERS_OCL_H
 #define SEEDIMG_FILTERS_OCL_H
 
-#ifndef SIMG_OCL_PXAMT
-#define SIMG_OCL_PXAMT 32
-#endif
-
 #ifndef SIMG_OCL_LOCAL_WG_SIZE
 #define SIMG_OCL_LOCAL_WG_SIZE 64
 #endif
 
-#define SIMG_OCL_BUF_PADDING                                                   \
-  sizeof(seedimg::pixel) * SIMG_OCL_LOCAL_WG_SIZE *SIMG_OCL_PXAMT
+#define SIMG_OCL_BUF_PADDING sizeof(seedimg::pixel) * SIMG_OCL_LOCAL_WG_SIZE
 
 #ifndef CL_HPP_MINIMUM_OPENCL_VERSION
 #define CL_HPP_MINIMUM_OPENCL_VERSION 100
@@ -180,10 +175,9 @@ void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
                            std::size_t amt, bool blocking, ...) {
 
   std::cout << "start" << std::endl;
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 51; i++) {
     std::cout << i << std::endl;
-    queue.enqueueNDRangeKernel(kern, cl::NullRange,
-                               cl::NDRange(amt / SIMG_OCL_PXAMT),
+    queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt),
                                cl::NDRange(SIMG_OCL_LOCAL_WG_SIZE));
     queue.finish();
   }
@@ -240,12 +234,11 @@ void exec_ocl_callback_1d(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
 
   start = ch::steady_clock::now();
   // and then calls the callback with whatever parameters were passed.
-  std::invoke(
-      callback, queue, kern,
-      seedimg::utils::round_up(
-          inp_img->width() * inp_img->height(),
-          static_cast<std::size_t>(SIMG_OCL_LOCAL_WG_SIZE * SIMG_OCL_PXAMT)),
-      false, std::forward<Args>(kernel_args)...);
+  std::invoke(callback, queue, kern,
+              seedimg::utils::round_up(
+                  inp_img->width() * inp_img->height(),
+                  static_cast<std::size_t>(SIMG_OCL_LOCAL_WG_SIZE)),
+              false, std::forward<Args>(kernel_args)...);
   queue.finish();
 
   end = ch::steady_clock::now();

@@ -36,10 +36,10 @@ template <class T> using pimpl = std::unique_ptr<T>;
 typedef struct point {
   simg_int x;
   simg_int y;
-  inline bool operator==(const point &other) const noexcept {
+  constexpr bool operator==(const point &other) const noexcept {
     return std::tie(x, y) == std::tie(other.x, other.y);
   }
-  inline bool operator!=(const point &other) const noexcept {
+  constexpr bool operator!=(const point &other) const noexcept {
     return !(*this == other);
   }
 } point;
