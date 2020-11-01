@@ -32,7 +32,7 @@ auto main() -> decltype(
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    // ocl::init_ocl_singleton(1, 0);
+    ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("cat.jpg");
     // auto b = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
@@ -65,6 +65,7 @@ auto main() -> decltype(
                          seedimg::utils::round_up(sizeof(seedimg::pixel) *
                                                       a->width() * a->height(),
                                                   SIMG_OCL_BUF_PADDING)};
+
       ocl::rotate_hue_i(a, 180, inp_img_buf);
       // ocl::cconv::hsv_i(a, inp_img_buf);
       // ocl::cconv::rgb_i(a, inp_img_buf);
