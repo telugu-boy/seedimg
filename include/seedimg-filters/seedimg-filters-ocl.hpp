@@ -174,7 +174,7 @@ inline cl::Kernel &get_kernel(const std::string &kernel_name) {
 void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
                            std::size_t amt, bool blocking, ...) {
 
-  std::cout << "start" << std::endl;
+  /* std::cout << "start" << std::endl;
   for (int i = 0; i < 51; i++) {
     std::cout << i << std::endl;
     queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt),
@@ -184,10 +184,12 @@ void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
   std::cout << "end" << std::endl;
   if (blocking)
     queue.finish();
-  /*
-    queue.enqueueNDRangeKernel(
-        kern, cl::NullRange, cl::NDRange(amt / SIMG_OCL_PXAMT),
-    cl::NDRange(64)); if (blocking) queue.finish();*/
+  */
+
+  queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt),
+                             cl::NDRange(64));
+  if (blocking)
+    queue.finish();
 }
 
 template <typename Func, typename... Args>

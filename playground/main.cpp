@@ -32,7 +32,7 @@ auto main() -> decltype(
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    ocl::init_ocl_singleton(1, 0);
+    // ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("cat.jpg");
     // auto b = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
