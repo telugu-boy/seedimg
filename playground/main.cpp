@@ -21,47 +21,41 @@ seedimg - module based image manipulation library written in modern
 
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
-#include <seedimg-filters/seedimg-filters-ocl.hpp>
 
-#include <climits>
-auto main() -> int {
-  using namespace seedimg::filters;
-  std::cout << "Current path is " << std::filesystem::current_path()
-            << std::endl;
-  {
-    // ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("cat.jpg");
-    auto b = seedimg::make(a->width(), a->height());
-    if (a != nullptr) {
-      // crop_i(a, {0, 0}, {100, 100});
-      // grayscale_i(a, true);
-      // invert_i(a);
-      // blur_i(a, 10);
-      // h_blur_i(a, 10);
-      // v_blur_i(a, 100, 1);
-      // convolution(a, {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}});
-      // rotate_hue_i(a, 90);
-      // v_mirror_i(a);
-      // h_mirror_i(a);
-      // ocl::rotate_hue_i(a, -90);
-      // ocl::grayscale_i(a, true);
-      // cconv::ycbcr_i(a);
-      // cconv::hsv_i(a);
-      // saturation_i(a, 3.5f);
-      // cconv::rgb_i(a);
-      // constexpr auto comp = compose_smats(std::array{SEPIA_MAT, SEPIA_MAT});
-      // constexpr static auto sepia_lut = seedimg::utils::gen_lut(comp);
-      // apply_mat_i(a, SEPIA_MAT);
-      // apply_mat_lut_i(a, sepia_lut);
-      // cconv::ycbcr_i(a);
-      // cconv::rgb_i(a);
-      // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
-      // cconv::rgb_i(a);
-      seedimg::save("boil.webp", a);
-      // bool b = seedimg::modules::jpeg::to("biol.jpg", a, 1);
-    } else {
-      std::cerr << "failed" << std::endl;
-    }
-    std::cerr << "done" << std::endl;
+using namespace seedimg::filters;
+
+
+#define RELEASE_DATE    "November, 2020"
+#define RELEASE_VERSION "v1.0-beta"
+
+
+auto main(int argc, char** argv) -> int {
+  fprintf(stderr, "               /--------------------\\             \n"
+                  "           -===( CHUTIA REALISATION )===-          \n"
+                  "               \\--------------------/             \n"
+                  "                                                   \n"
+                  "               [ The 5CP foundation ]              \n"
+                  "                   " RELEASE_DATE "                \n"
+                  "                      " RELEASE_VERSION "          \n"
+                  "                                                   \n"
+                  "                                                   \n"
+                  "  USAGE:   %s IN OUT chutianess iterations         \n",
+          argv[0]);
+
+  if(argc < 5) {
+    fprintf(stderr, "  ERROR:   no files were given, aborting!       \n");
+    exit(ENOENT);  // idk if windows support ERRNO '-'
   }
+
+  int lev  = atoi(argv[3]),
+      iter = atoi(argv[4]);
+
+  auto img  = seedimg::load(argv[1]);
+  auto orig = seedimg::make(img);
+
+  blur_i(img, static_cast<unsigned int>(lev),
+              static_cast<std::uint8_t>(iter));
+  difference_i(img, orig);
+
+  seedimg::save(argv[2], img);
 }
