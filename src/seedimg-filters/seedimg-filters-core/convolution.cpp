@@ -48,11 +48,14 @@ void seedimg::filters::convolution(simg &input,
   // the origin is the current pixel.
   simg_int ko_x = kw / 2, ko_y = kh / 2;
 
+  // normalised kernel.
+  std::vector<std::vector<float>> norm_kernel(kh, std::vector<float>(kw, 0.0));
+
   // flip the kernel both vertically and horizontally +
   // normalise all the elements.
   for(simg_int y = 0; y < kh; ++y)
       for(simg_int x = 0; x < kw; ++x)
-          kernel[kh - y - 1][kw - x - 1] =
+          norm_kernel[kh - y - 1][kw - x - 1] =
                   kernel[y][x] / (std::signbit(kernel[y][x]) ? neg_sum : pos_sum);
 
   for (simg_int y = 0; y < input->height(); ++y) {
@@ -76,19 +79,19 @@ void seedimg::filters::convolution(simg &input,
                       static_cast<long long>(ko_y))) %
                   input->height()));
 
-          o.r += static_cast<float>(pix.r) * kernel[dy][dx];
-          o.g += static_cast<float>(pix.g) * kernel[dy][dx];
-          o.b += static_cast<float>(pix.b) * kernel[dy][dx];
-          o.a += static_cast<float>(pix.a) * kernel[dy][dx];
+          o.r += static_cast<float>(pix.r) * norm_kernel[dy][dx];
+          o.g += static_cast<float>(pix.g) * norm_kernel[dy][dx];
+          o.b += static_cast<float>(pix.b) * norm_kernel[dy][dx];
+          // o.a += static_cast<float>(pix.a) * norm_kernel[dy][dx];
         }
       }
 
       using namespace seedimg::utils;
 
-      input->pixel(x, y) = {{clamp(static_cast<std::uint8_t>(o.r), 0, 255)},
-                            {clamp(static_cast<std::uint8_t>(o.g), 0, 255)},
-                            {clamp(static_cast<std::uint8_t>(o.b), 0, 255)},
-                             clamp(static_cast<std::uint8_t>(o.a), 0, 255)};
+      input->pixel(x, y) = {{static_cast<std::uint8_t>(clamp(o.r, 0, 255))},
+                            {static_cast<std::uint8_t>(clamp(o.g, 0, 255))},
+                            {static_cast<std::uint8_t>(clamp(o.b, 0, 255))},
+                             static_cast<std::uint8_t>(clamp(o.a, 0, 255))};
 
 
     }

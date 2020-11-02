@@ -120,6 +120,9 @@ void contrast(simg &input, simg &output, float intensity = 100.0,
               bool alpha = false);
 void contrast_i(simg &image, float intensity = 100.0, bool alpha = false);
 
+void difference  (simg& input, simg& output, simg& other, bool alpha = false);
+void difference_i(simg& img,   simg& other, bool alpha = false);
+
 namespace cconv {};
 namespace ocl {}
 } // namespace seedimg::filters

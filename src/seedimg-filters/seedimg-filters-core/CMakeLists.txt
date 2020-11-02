@@ -26,6 +26,7 @@ add_library(seedimg-filters-core ${LIB_TYPE}
     crop.cpp
     apply-mat.cpp
     contrast.cpp
-    saturation.cpp)
+    saturation.cpp
+    difference.cpp)
 
 target_link_libraries(seedimg-filters-core PRIVATE seedimg pthread)
