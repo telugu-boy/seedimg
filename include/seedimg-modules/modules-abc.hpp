@@ -52,13 +52,13 @@ public:
 input_abc::~input_abc() {}  // sequelch -Wweak-vtables.
 
 
-class input_init_failure : std::runtime_error {
+class input_failure : public std::runtime_error {
 public:
-    input_init_failure(const char* m) : std::runtime_error(m) {}
-    ~input_init_failure();
+    input_failure(const char* m) : std::runtime_error(m) {}
+    ~input_failure();
 };
 
-input_init_failure::~input_init_failure() {}
+input_failure::~input_failure() {}
 
 };
 
@@ -90,13 +90,13 @@ public:
 output_abc::~output_abc() {}  // sequelch -Wweak-vtables.
 
 
-class output_init_failure : std::runtime_error {
+class output_failure : public std::runtime_error {
 public:
-    output_init_failure(const char* m) : std::runtime_error(m) {}
-    ~output_init_failure();
+    output_failure(const char* m) : std::runtime_error(m) {}
+    ~output_failure();
 };
 
-output_init_failure::~output_init_failure() {}
+output_failure::~output_failure() {}
 
 };
 };

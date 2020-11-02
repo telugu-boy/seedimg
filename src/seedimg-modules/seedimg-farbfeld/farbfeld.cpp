@@ -56,7 +56,7 @@ farbfeld::farbfeld(std::istream& input) : in(input) {
     input.read(signature, 8);
 
     if(!std::equal(signature, std::end(signature), "farbfeld"))
-        throw input_init_failure {"invalid Farbfeld signature"};
+        throw input_failure {"invalid Farbfeld signature"};
 
     input.read(reinterpret_cast<char*>(&_width), 4);
     input.read(reinterpret_cast<char*>(&_height), 4);
