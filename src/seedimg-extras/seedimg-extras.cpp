@@ -23,20 +23,20 @@
 #include <seedimg.hpp>
 
 namespace seedimg::extras {
-histogram_result histogram(simg &input) {
-  histogram_result result;
+histogram_result histogram(simg& input) {
+    histogram_result result;
 
-  for (simg_int y = 0; y < input->height(); ++y) {
-    for (simg_int x = 0; x < input->width(); ++x) {
-      auto &pix = input->pixel(x, y);
+    for (simg_int y = 0; y < input->height(); ++y) {
+        for (simg_int x = 0; x < input->width(); ++x) {
+            auto& pix = input->pixel(x, y);
 
-      ++result.r[pix.r];
-      ++result.g[pix.g];
-      ++result.b[pix.b];
-      ++result.a[pix.a];
+            ++result.r[pix.r];
+            ++result.g[pix.g];
+            ++result.b[pix.b];
+            ++result.a[pix.a];
+        }
     }
-  }
 
-  return result;
+    return result;
 }
 } // namespace seedimg::extras

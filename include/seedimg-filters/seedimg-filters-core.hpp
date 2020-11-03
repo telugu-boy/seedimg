@@ -31,33 +31,31 @@
 const float PI = 4 * std::atan(1.0f);
 
 namespace seedimg::utils {
-template <typename T = smat,
-          std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
-          std::size_t Amt = sizeof(T) / sizeof(typename T::value_type)>
-constexpr auto gen_lut(const T &mat) {
-  std::array<std::array<float, MaxPV>, Amt> res{};
-  for (std::size_t elem = 0; elem < Amt; ++elem) {
-    for (std::size_t i = 0; i < MaxPV; ++i) {
-      res[elem][i] = i * mat[elem];
+template<typename T        = smat,
+         std::size_t MaxPV = seedimg::img::MAX_PIXEL_VALUE + 1,
+         std::size_t Amt   = sizeof(T) / sizeof(typename T::value_type)>
+constexpr auto gen_lut(const T& mat) {
+    std::array<std::array<float, MaxPV>, Amt> res{};
+    for (std::size_t elem = 0; elem < Amt; ++elem) {
+        for (std::size_t i = 0; i < MaxPV; ++i) { res[elem][i] = i * mat[elem]; }
     }
-  }
-  return res;
+    return res;
 }
 } // namespace seedimg::utils
 
 namespace seedimg::filters {
 inline smat generate_hue_mat(float angle) {
-  const float sinr = static_cast<float>(std::sin(angle * PI / 180));
-  const float cosr = static_cast<float>(std::cos(angle * PI / 180));
-  return {0.213f + cosr * 0.787f - sinr * 0.213f,
-          0.213f - cosr * 0.213f + sinr * 0.143f,
-          0.213f - cosr * 0.213f - sinr * 0.787f,
-          0.715f - cosr * 0.715f - sinr * 0.715f,
-          0.715f + cosr * 0.285f + sinr * 0.140f,
-          0.715f - cosr * 0.715f + sinr * 0.715f,
-          0.072f - cosr * 0.072f + sinr * 0.928f,
-          0.072f - cosr * 0.072f - sinr * 0.283f,
-          0.072f + cosr * 0.928f + sinr * 0.072f};
+    const float sinr = static_cast<float>(std::sin(angle * PI / 180));
+    const float cosr = static_cast<float>(std::cos(angle * PI / 180));
+    return {0.213f + cosr * 0.787f - sinr * 0.213f,
+            0.213f - cosr * 0.213f + sinr * 0.143f,
+            0.213f - cosr * 0.213f - sinr * 0.787f,
+            0.715f - cosr * 0.715f - sinr * 0.715f,
+            0.715f + cosr * 0.285f + sinr * 0.140f,
+            0.715f - cosr * 0.715f + sinr * 0.715f,
+            0.072f - cosr * 0.072f + sinr * 0.928f,
+            0.072f - cosr * 0.072f - sinr * 0.283f,
+            0.072f + cosr * 0.928f + sinr * 0.072f};
 }
 
 template <typename T> constexpr fsmat compose_fsmats(const T &mats) {
@@ -71,8 +69,7 @@ template <typename T> constexpr fsmat compose_fsmats(const T &mats) {
         res[i * 4 + j] = sum;
       }
     }
-  }
-  return res;
+    return res;
 }
 
 template <typename T> constexpr smat compose_smats(const T &mats) {
@@ -86,26 +83,21 @@ template <typename T> constexpr smat compose_smats(const T &mats) {
         res[i * 3 + j] = sum;
       }
     }
-  }
-  return res;
+    return res;
 }
 
 // matrix manipulation related functions, used for building
 // matrices, mostly for the apply_mat filter.
-constexpr fsmat scalar_mat_mul(const fsmat &mat, float sc) {
-  fsmat res{};
-  for (std::size_t i = 0; i < 16; i++) {
-    res[i] = mat[i] * sc;
-  }
-  return res;
+constexpr fsmat scalar_mat_mul(const fsmat& mat, float sc) {
+    fsmat res{};
+    for (std::size_t i = 0; i < 16; i++) { res[i] = mat[i] * sc; }
+    return res;
 }
 
-constexpr smat scalar_mat_mul(const smat &mat, float sc) {
-  smat res{};
-  for (std::size_t i = 0; i < 9; i++) {
-    res[i] = mat[i] * sc;
-  }
-  return res;
+constexpr smat scalar_mat_mul(const smat& mat, float sc) {
+    smat res{};
+    for (std::size_t i = 0; i < 9; i++) { res[i] = mat[i] * sc; }
+    return res;
 }
 
 constexpr fsmat to_fsmat(const smat &mat) {
@@ -1092,96 +1084,85 @@ namespace seedimg::filters {
  *
  * @tparam Inplace if to hold inplace or I/O based filters, default I/O based.
  */
-template<bool Inplace = false>
-class filterchain {
-private:  
-  std::vector<std::function<std::conditional_t<Inplace,
-    void(simg&),       // inplace
-    void(simg&, simg&) // i/o based
-  >>> filters;
+template<bool Inplace = false> class filterchain {
+  private:
+    std::vector<std::function<std::conditional_t<Inplace,
+                                                 void(simg&),       // inplace
+                                                 void(simg&, simg&) // i/o based
+                                                 >>>
+        filters;
 
-public:
-  /**
-   * @brief Push a function to end of the queue that follows the idioms of
-   * seedimg filter-function definitions. It will bind any number of additional
-   * arguments to the function (if it requires and given).
-   *
-   * @note Due to limitation with C++ parameter packs, default arguments of
-   * filter function also must be specified when adding.
-   *
-   * @param func a callable object.
-   * @param args custom arguments to pass to callable.
-   */
-  template <class F, class... Args>
-  filterchain &add(F &&func, Args &&... args) {    
-    if constexpr(Inplace)
-        filters.push_back([&](simg& input) -> void {
-            func(input, std::forward<Args>(args)...);
-        });
-    else
-        filters.push_back([&](simg& input, simg& output) -> void {
-            func(input, output, std::forward<Args>(args)...);
-        });
+  public:
+    /**
+     * @brief Push a function to end of the queue that follows the idioms of
+     * seedimg filter-function definitions. It will bind any number of
+     * additional arguments to the function (if it requires and given).
+     *
+     * @note Due to limitation with C++ parameter packs, default arguments of
+     * filter function also must be specified when adding.
+     *
+     * @param func a callable object.
+     * @param args custom arguments to pass to callable.
+     */
+    template<class F, class... Args> filterchain& add(F&& func, Args&&... args) {
+        if constexpr (Inplace)
+            filters.push_back([&](simg& input) -> void { func(input, std::forward<Args>(args)...); });
+        else
+            filters.push_back(
+                [&](simg& input, simg& output) -> void { func(input, output, std::forward<Args>(args)...); });
 
-    return *this;
-  }
+        return *this;
+    }
 
-  /**
-   * @brief Pop-off the most recently added filter in queue.
-   */
-  filterchain &pop() {
-    filters.pop_back();
-    return *this;
-  }
+    /**
+     * @brief Pop-off the most recently added filter in queue.
+     */
+    filterchain& pop() {
+        filters.pop_back();
+        return *this;
+    }
 
-  /**
-   * @brief Apply enqueued filters accumulatively from start to end.
-   * @note If queue was empty, it just copies image data.
-   *
-   * @param input image to apply filters on.
-   * @param output output of the accumulated result.
-   */
-  template<typename = std::enable_if_t<!Inplace>>
-  filterchain &eval(const simg &in, simg &out) {
-    // copy all pixels first into output, for "f(out, out)" to work.
-    std::copy(in->data(), in->data() + in->width() * in->height(), out->data());
+    /**
+     * @brief Apply enqueued filters accumulatively from start to end.
+     * @note If queue was empty, it just copies image data.
+     *
+     * @param input image to apply filters on.
+     * @param output output of the accumulated result.
+     */
+    template<typename = std::enable_if_t<!Inplace>> filterchain& eval(const simg& in, simg& out) {
+        // copy all pixels first into output, for "f(out, out)" to work.
+        std::copy(in->data(), in->data() + in->width() * in->height(), out->data());
 
-    for (const auto &f : filters)
-      f(out, out);
+        for (const auto& f : filters) f(out, out);
 
-    return *this;
-  }
+        return *this;
+    }
 
-  /**
-   * @brief Equavalient eval(const simg&, simg&), but does it inplace.
-   */
-  template<typename = std::enable_if<Inplace>>
-  filterchain &eval(simg& img) {
-      for (const auto &f : filters)
-        f(img);
+    /**
+     * @brief Equavalient eval(const simg&, simg&), but does it inplace.
+     */
+    template<typename = std::enable_if<Inplace>> filterchain& eval(simg& img) {
+        for (const auto& f : filters) f(img);
 
-      return *this;
-  }
+        return *this;
+    }
 
+    /**
+     * @brief Same effect as a single image but evalualtes on multiple frames,
+     * and does it inplace to avoid temporary allocations.
+     *
+     * @param imgs images to transform (inplace).
+     * @param start index to start with.
+     * @param end index to end with (0 = imgs.size() - 1).
+     */
+    template<typename = std::enable_if<Inplace>> filterchain& eval(anim& imgs, simg_int start = 0, simg_int end = 0) {
+        end = end ? end : imgs.size();
+        if (end <= start) // if nothing to do or invalid range.
+            return *this;
 
-  /**
-   * @brief Same effect as a single image but evalualtes on multiple frames,
-   * and does it inplace to avoid temporary allocations.
-   *
-   * @param imgs images to transform (inplace).
-   * @param start index to start with.
-   * @param end index to end with (0 = imgs.size() - 1).
-   */
-  template<typename = std::enable_if<Inplace>>
-  filterchain &eval(anim &imgs, simg_int start = 0, simg_int end = 0) {
-    end = end ? end : imgs.size();
-    if (end <= start) // if nothing to do or invalid range.
-      return *this;
-
-    for (simg_int i = start; i < end; ++i)
-      eval(imgs[i]);
-    return *this;
-  }
+        for (simg_int i = start; i < end; ++i) eval(imgs[i]);
+        return *this;
+    }
 };
 
 } // namespace seedimg::filters

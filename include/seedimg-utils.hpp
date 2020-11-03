@@ -99,5 +99,29 @@ constexpr auto make_array(Args&&... args) {
                 sizeof...(Args)>
         {std::forward<Args>(args)...};
 }
+
+namespace endian {
+inline std::uint16_t from_u16_big(uint8_t* cb) {
+    return static_cast<std::uint16_t>(cb[1] << 8)
+           | static_cast<std::uint16_t>(cb[0]);
+}
+inline void          to_u16_big(std::uint16_t n, std::uint8_t* out) {
+    out[0] = n >> 8 & 0xff;
+    out[1] = n      & 0xff;
+}
+
+inline simg_int from_u32_big(uint8_t* cb) {
+    return static_cast<simg_int>(cb[0] << 24)
+           | static_cast<simg_int>(cb[1] << 16)
+           | static_cast<simg_int>(cb[2] << 8)
+           | static_cast<simg_int>(cb[3]);
+}
+inline void     to_u32_big(simg_int n, std::uint8_t* out) {
+    out[0] = n >> 24 & 0xff;
+    out[1] = n >> 16 & 0xff;
+    out[2] = n >> 8  & 0xff;
+    out[3] = n       & 0xff;
+}
+}
 } // namespace seedimg::utils
 #endif

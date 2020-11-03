@@ -20,33 +20,16 @@
 
 namespace seedimg {
 class anim::anim_impl {
-public:
-  std::size_t framerate;
+  public:
+    std::size_t framerate;
 
-  anim_impl() : framerate{0}, data{} {}
+    anim_impl()
+        : framerate{0}
+        , data{} {}
 
-  anim_impl(std::size_t size, std::size_t framerate) {
-    this->framerate = framerate;
-    data = std::vector<simg>(size);
-  }
-
-  anim_impl(anim_impl const &anim_) {
-    data = std::vector<simg>();
-    data.reserve(anim_.data.size());
-  }
-  anim_impl(anim_impl &&other) {
-    framerate = other.framerate;
-    other.framerate = 0;
-    data = std::move(other.data);
-  }
-
-  anim_impl &operator=(anim_impl other) {
-    this->data.swap(other.data);
-    return *this;
-  }
-  anim_impl &operator=(anim_impl &&other) {
-    if (&other != this) {
-      this->data = std::move(other.data);
+    anim_impl(std::size_t size, std::size_t framerate) {
+        this->framerate = framerate;
+        data            = std::vector<simg>(size);
     }
     return *this;
   }
@@ -86,37 +69,37 @@ private:
   std::vector<simg> data;
 };
 
-anim::anim() : impl{new anim_impl{}} {};
+anim::anim()
+    : impl{new anim_impl{}} {};
 
 anim::anim(std::size_t size, std::size_t framerate)
     : impl{new anim_impl{size, framerate}} {}
 
-anim::anim(seedimg::anim const &anim_) : impl{new anim_impl{*anim_.impl}} {}
+anim::anim(seedimg::anim const& anim_)
+    : impl{new anim_impl{*anim_.impl}} {}
 
-anim::anim(seedimg::anim &&other) : impl{new anim_impl{*other.impl}} {}
+anim::anim(seedimg::anim&& other)
+    : impl{new anim_impl{*other.impl}} {}
 
-anim::anim(simg &&imgs...) : impl{new anim_impl{std::move(imgs)}} {}
+anim::anim(simg&& imgs...)
+    : impl{new anim_impl{std::move(imgs)}} {}
 
-anim &anim::operator=(anim other) {
-  *impl = *other.impl;
-  return *this;
+anim& anim::operator=(anim other) {
+    *impl = *other.impl;
+    return *this;
 }
-anim &anim::operator=(anim &&other) {
-  *impl = *other.impl;
-  return *this;
+anim& anim::operator=(anim&& other) {
+    *impl = *other.impl;
+    return *this;
 }
 
-simg &anim::operator[](std::size_t i) { return (*impl)[i]; }
-const simg &anim::operator[](std::size_t i) const { return (*impl)[i]; }
+simg& anim::operator[](std::size_t i) { return (*impl)[i]; }
+const simg& anim::operator[](std::size_t i) const { return (*impl)[i]; }
 
-void anim::add(simg &&img) { impl->add(std::move(img)); }
-bool anim::insert(simg &&img, std::size_t index) {
-  return impl->insert(std::move(img), index);
-}
+void anim::add(simg&& img) { impl->add(std::move(img)); }
+bool anim::insert(simg&& img, std::size_t index) { return impl->insert(std::move(img), index); }
 bool anim::remove(std::size_t index) { return impl->remove(index); }
-bool anim::trim(std::size_t start, std::size_t end) {
-  return impl->trim(start, end);
-}
+bool anim::trim(std::size_t start, std::size_t end) { return impl->trim(start, end); }
 
 std::size_t anim::size() const noexcept { return impl->size(); }
 
