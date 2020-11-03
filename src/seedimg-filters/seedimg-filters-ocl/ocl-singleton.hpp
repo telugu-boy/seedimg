@@ -30,25 +30,25 @@
 #include <unordered_map>
 
 class ocl_singleton {
-public:
-  std::vector<cl::Platform> all_platforms;
-  cl::Platform platform;
-  std::vector<cl::Device> all_devices;
-  cl::Context context;
-  cl::Device device;
-  cl::Program::Sources sources;
-  cl::Program program;
-  cl::CommandQueue queue;
+  public:
+    std::vector<cl::Platform> all_platforms;
+    cl::Platform              platform;
+    std::vector<cl::Device>   all_devices;
+    cl::Context               context;
+    cl::Device                device;
+    cl::Program::Sources      sources;
+    cl::Program               program;
+    cl::CommandQueue          queue;
 
-  std::unordered_map<std::string, cl::Kernel> kernels;
+    std::unordered_map<std::string, cl::Kernel> kernels;
 
-  static ocl_singleton &instance(std::size_t plat = 0, std::size_t dev = 0);
+    static ocl_singleton& instance(std::size_t plat = 0, std::size_t dev = 0);
 
-  ocl_singleton(ocl_singleton const &) = delete;
-  void operator=(ocl_singleton const &) = delete;
+    ocl_singleton(ocl_singleton const&) = delete;
+    void operator=(ocl_singleton const&) = delete;
 
-private:
-  ocl_singleton(std::size_t plat, std::size_t dev);
+  private:
+    ocl_singleton(std::size_t plat, std::size_t dev);
 };
 
 #endif

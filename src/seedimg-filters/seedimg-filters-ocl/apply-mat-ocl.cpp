@@ -23,55 +23,43 @@
 
 namespace seedimg::filters {
 namespace ocl {
-void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat,
-               cl::Buffer *inp_buf, cl::Buffer *res_buf) {
+void apply_mat(simg& inp_img, simg& res_img, const fsmat& mat, cl::Buffer* inp_buf, cl::Buffer* res_buf) {
 
-  cl_float16 matvec;
-  for (std::size_t i = 0; i < 16; i++)
-    matvec.s[i] = mat[i];
+    cl_float16 matvec;
+    for (std::size_t i = 0; i < 16; i++) matvec.s[i] = mat[i];
 
-  exec_ocl_callback(inp_img, res_img, inp_buf, res_buf, "apply_mat",
-                    default_exec_callback, inp_img->width() * inp_img->height(),
-                    matvec);
+    exec_ocl_callback(inp_img, res_img, inp_buf, res_buf, "apply_mat", default_exec_callback,
+                      inp_img->width() * inp_img->height(), matvec);
 }
 
-void apply_mat_i(simg &inp_img, const fsmat &mat, cl::Buffer *inp_buf,
-                 cl::Buffer *res_buf) {
-  apply_mat(inp_img, inp_img, mat, inp_buf, res_buf);
+void apply_mat_i(simg& inp_img, const fsmat& mat, cl::Buffer* inp_buf, cl::Buffer* res_buf) {
+    apply_mat(inp_img, inp_img, mat, inp_buf, res_buf);
 }
 
 // stupid autoformatter keeps ruining my perfect alignment
-void apply_mat(simg &inp_img, simg &res_img, const smat &mat,
-               cl::Buffer *inp_buf, cl::Buffer *res_buf) {
-  apply_mat(inp_img, res_img, to_fsmat(mat), inp_buf, res_buf);
+void apply_mat(simg& inp_img, simg& res_img, const smat& mat, cl::Buffer* inp_buf, cl::Buffer* res_buf) {
+    apply_mat(inp_img, res_img, to_fsmat(mat), inp_buf, res_buf);
 }
-void apply_mat_i(simg &inp_img, const smat &mat, cl::Buffer *inp_buf) {
-  apply_mat(inp_img, inp_img, mat, inp_buf, inp_buf);
-}
-
-void grayscale(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
-               cl::Buffer *res_buf) {
-  apply_mat(inp_img, res_img, GRAYSCALE_LUM_MAT, inp_buf, res_buf);
-}
-void grayscale_i(simg &inp_img, cl::Buffer *inp_buf) {
-  grayscale(inp_img, inp_img, inp_buf, inp_buf);
+void apply_mat_i(simg& inp_img, const smat& mat, cl::Buffer* inp_buf) {
+    apply_mat(inp_img, inp_img, mat, inp_buf, inp_buf);
 }
 
-void sepia(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
-           cl::Buffer *res_buf) {
-  apply_mat(inp_img, res_img, SEPIA_MAT, inp_buf, res_buf);
+void grayscale(simg& inp_img, simg& res_img, cl::Buffer* inp_buf, cl::Buffer* res_buf) {
+    apply_mat(inp_img, res_img, GRAYSCALE_LUM_MAT, inp_buf, res_buf);
 }
-void sepia_i(simg &inp_img, cl::Buffer *inp_buf) {
-  sepia(inp_img, inp_img, inp_buf, inp_buf);
+void grayscale_i(simg& inp_img, cl::Buffer* inp_buf) { grayscale(inp_img, inp_img, inp_buf, inp_buf); }
+
+void sepia(simg& inp_img, simg& res_img, cl::Buffer* inp_buf, cl::Buffer* res_buf) {
+    apply_mat(inp_img, res_img, SEPIA_MAT, inp_buf, res_buf);
+}
+void sepia_i(simg& inp_img, cl::Buffer* inp_buf) { sepia(inp_img, inp_img, inp_buf, inp_buf); }
+
+void rotate_hue(simg& inp_img, simg& res_img, float angle, cl::Buffer* inp_buf, cl::Buffer* res_buf) {
+    apply_mat(inp_img, res_img, generate_hue_mat(angle), inp_buf, res_buf);
 }
 
-void rotate_hue(simg &inp_img, simg &res_img, float angle, cl::Buffer *inp_buf,
-                cl::Buffer *res_buf) {
-  apply_mat(inp_img, res_img, generate_hue_mat(angle), inp_buf, res_buf);
-}
-
-void rotate_hue_i(simg &inp_img, float angle, cl::Buffer *inp_buf) {
-  rotate_hue(inp_img, inp_img, angle, inp_buf, inp_buf);
+void rotate_hue_i(simg& inp_img, float angle, cl::Buffer* inp_buf) {
+    rotate_hue(inp_img, inp_img, angle, inp_buf, inp_buf);
 }
 } // namespace ocl
 } // namespace seedimg::filters

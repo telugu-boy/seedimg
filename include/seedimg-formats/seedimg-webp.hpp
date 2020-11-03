@@ -25,10 +25,9 @@
 
 namespace seedimg::modules {
 namespace webp {
-bool check(const std::string &filename) noexcept;
-bool to(const std::string &filename, const simg &inp_img,
-        float quality = 100.0);
-simg from(const std::string &filename);
+bool check(const std::string& filename) noexcept;
+bool to(const std::string& filename, const simg& inp_img, float quality = 100.0);
+simg from(const std::string& filename);
 } // namespace webp
 } // namespace seedimg::modules
 

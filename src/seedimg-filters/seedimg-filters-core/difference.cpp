@@ -19,37 +19,27 @@
 #include <cmath>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 
-static inline std::uint8_t diff(std::uint8_t a, std::uint8_t b) {
-    return std::max(a, b) - std::min(a, b);
-}
+static inline std::uint8_t diff(std::uint8_t a, std::uint8_t b) { return std::max(a, b) - std::min(a, b); }
 
 namespace seedimg::filters {
-void difference  (simg& input, simg& output, simg& other, bool alpha) {
-    for(simg_int y = 0; y < input->height(); ++y) {
-        if(alpha) {
-            for(simg_int x = 0; x < input->width(); ++x) {
+void difference(simg& input, simg& output, simg& other, bool alpha) {
+    for (simg_int y = 0; y < input->height(); ++y) {
+        if (alpha) {
+            for (simg_int x = 0; x < input->width(); ++x) {
                 auto p  = input->pixel(x, y);
                 auto po = other->pixel(x, y);
 
-                output->pixel(x, y) = {{diff(p.r, po.r)},
-                                       {diff(p.g, po.g)},
-                                       {diff(p.b, po.b)},
-                                        diff(p.b, po.b)};
+                output->pixel(x, y) = {{diff(p.r, po.r)}, {diff(p.g, po.g)}, {diff(p.b, po.b)}, diff(p.b, po.b)};
             }
         } else {
-            for(simg_int x = 0; x < input->width(); ++x) {
+            for (simg_int x = 0; x < input->width(); ++x) {
                 auto p  = input->pixel(x, y);
                 auto po = other->pixel(x, y);
 
-                output->pixel(x, y) = {{diff(p.r, po.r)},
-                                       {diff(p.g, po.g)},
-                                       {diff(p.b, po.b)},
-                                        0xFF};
+                output->pixel(x, y) = {{diff(p.r, po.r)}, {diff(p.g, po.g)}, {diff(p.b, po.b)}, 0xFF};
             }
         }
     }
 }
-void difference_i(simg& img,   simg& other, bool alpha) {
-    difference(img, img, other, alpha);
-}
-}
+void difference_i(simg& img, simg& other, bool alpha) { difference(img, img, other, alpha); }
+} // namespace seedimg::filters

@@ -22,80 +22,74 @@
 #include <seedimg.hpp>
 
 namespace seedimg::filters {
-void rotate_cw(simg &inp_img, simg &res_img) {
-  if (inp_img == res_img)
-    rotate_cw_i(inp_img);
-  for (simg_int y = 0; y < res_img->height(); ++y) {
-    for (simg_int x = 0; x < res_img->width(); ++x) {
-      res_img->pixel(x, y) = inp_img->pixel(res_img->height() - y - 1, x);
+void rotate_cw(simg& inp_img, simg& res_img) {
+    if (inp_img == res_img) rotate_cw_i(inp_img);
+    for (simg_int y = 0; y < res_img->height(); ++y) {
+        for (simg_int x = 0; x < res_img->width(); ++x) {
+            res_img->pixel(x, y) = inp_img->pixel(res_img->height() - y - 1, x);
+        }
     }
-  }
 }
-void rotate_180(simg &inp_img, simg &res_img) {
-  for (simg_int y = 0; y < inp_img->height(); ++y) {
-    for (simg_int x = 0; x < inp_img->width(); ++x) {
-      res_img->pixel(x, y) =
-          inp_img->pixel(inp_img->width() - x - 1, inp_img->height() - y - 1);
+void rotate_180(simg& inp_img, simg& res_img) {
+    for (simg_int y = 0; y < inp_img->height(); ++y) {
+        for (simg_int x = 0; x < inp_img->width(); ++x) {
+            res_img->pixel(x, y) = inp_img->pixel(inp_img->width() - x - 1, inp_img->height() - y - 1);
+        }
     }
-  }
 }
-void rotate_ccw(simg &inp_img, simg &res_img) {
-  if (inp_img == res_img)
-    rotate_ccw_i(inp_img);
-  for (simg_int y = 0; y < res_img->height(); ++y) {
-    for (simg_int x = 0; x < res_img->width(); ++x) {
-      res_img->pixel(x, y) = inp_img->pixel(y, x);
+void rotate_ccw(simg& inp_img, simg& res_img) {
+    if (inp_img == res_img) rotate_ccw_i(inp_img);
+    for (simg_int y = 0; y < res_img->height(); ++y) {
+        for (simg_int x = 0; x < res_img->width(); ++x) { res_img->pixel(x, y) = inp_img->pixel(y, x); }
     }
-  }
 }
-void rotate_cw_i(simg &inp_img) {
-  simg res_img = seedimg::make(inp_img->height(), inp_img->width());
-  rotate_cw(inp_img, res_img);
-  inp_img.reset(res_img.release());
+void rotate_cw_i(simg& inp_img) {
+    simg res_img = seedimg::make(inp_img->height(), inp_img->width());
+    rotate_cw(inp_img, res_img);
+    inp_img.reset(res_img.release());
 }
-void rotate_180_i(simg &inp_img) {
-  // reverse each row
-  std::reverse(inp_img->data(),
-               inp_img->data() + inp_img->width() * inp_img->height());
+void rotate_180_i(simg& inp_img) {
+    // reverse each row
+    std::reverse(inp_img->data(), inp_img->data() + inp_img->width() * inp_img->height());
 }
-void rotate_ccw_i(simg &inp_img) {
-  simg res_img = seedimg::make(inp_img->height(), inp_img->width());
-  rotate_ccw(inp_img, res_img);
-  inp_img.reset(res_img.release());
+void rotate_ccw_i(simg& inp_img) {
+    simg res_img = seedimg::make(inp_img->height(), inp_img->width());
+    rotate_ccw(inp_img, res_img);
+    inp_img.reset(res_img.release());
 }
 
-void v_mirror(simg &inp_img, simg &res_img) {
-  for (simg_int y = 0; y < inp_img->height(); ++y) {
-    std::memcpy(res_img->row(res_img->height() - y - 1), inp_img->row(y),
-                inp_img->width() * sizeof(seedimg::pixel));
-  }
-}
-void h_mirror(simg &inp_img, simg &res_img) {
-  for (simg_int y = 0; y < res_img->height(); ++y) {
-    for (simg_int x = 0; x < res_img->width(); ++x) {
-      res_img->pixel(inp_img->width() - x - 1, y) = inp_img->pixel(x, y);
+void v_mirror(simg& inp_img, simg& res_img) {
+    for (simg_int y = 0; y < inp_img->height(); ++y) {
+        std::memcpy(res_img->row(res_img->height() - y - 1), inp_img->row(y),
+                    inp_img->width() * sizeof(seedimg::pixel));
     }
-  }
 }
-void v_mirror_i(simg &inp_img) {
-  simg_int h = inp_img->height();
-  simg_int w = inp_img->width();
-  seedimg::pixel *row = new seedimg::pixel[w];
-  // swaps last row and first row.
-  // then, swaps second last and second row
-  // continue h/2 times. automatically floors h, because for odd height the
-  // middle row must not be touched.
-  for (simg_int y = 0; y < h / 2; ++y) {
-    std::copy(inp_img->row(y), inp_img->row(y + 1), row);
-    std::copy(inp_img->row(h - y - 1), inp_img->row(h - y), inp_img->row(y));
-    std::copy(row, row + w, inp_img->row(h - y - 1));
-  }
+void h_mirror(simg& inp_img, simg& res_img) {
+    for (simg_int y = 0; y < res_img->height(); ++y) {
+        for (simg_int x = 0; x < res_img->width(); ++x) {
+            res_img->pixel(inp_img->width() - x - 1, y) = inp_img->pixel(x, y);
+        }
+    }
+}
+void v_mirror_i(simg& inp_img) {
+    simg_int        h   = inp_img->height();
+    simg_int        w   = inp_img->width();
+    seedimg::pixel* row = new seedimg::pixel[w];
+    // swaps last row and first row.
+    // then, swaps second last and second row
+    // continue h/2 times. automatically floors h, because for odd height the
+    // middle row must not be touched.
+    for (simg_int y = 0; y < h / 2; ++y) {
+        std::copy(inp_img->row(y), inp_img->row(y + 1), row);
+        std::copy(inp_img->row(h - y - 1), inp_img->row(h - y), inp_img->row(y));
+        std::copy(row, row + w, inp_img->row(h - y - 1));
+    }
 
-  delete[] row;
+    delete[] row;
 }
-void h_mirror_i(simg &inp_img) {
-  for (simg_int y = 0; y < inp_img->height(); ++y) {
-    std::reverse(inp_img->row(y), inp_img->row(y) + inp_img->width());
-  }
+void h_mirror_i(simg& inp_img) {
+    for (simg_int y = 0; y < inp_img->height(); ++y) {
+        std::reverse(inp_img->row(y), inp_img->row(y) + inp_img->width());
+    }
 }
 } // namespace seedimg::filters

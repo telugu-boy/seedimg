@@ -20,26 +20,20 @@
 #include <seedimg-utils.hpp>
 #include <stdexcept>
 
-void saturation_worker(simg &inp_img, simg &res_img, simg_int start,
-                       simg_int end, float mul) {
+void saturation_worker(simg& inp_img, simg& res_img, simg_int start, simg_int end, float mul) {
 
-  for (; start < end; ++start) {
-    for (simg_int x = 0; x < inp_img->width(); ++x) {
-      res_img->pixel(x, start).s =
-          seedimg::utils::clamp(inp_img->pixel(x, start).s * mul, 0, 100);
+    for (; start < end; ++start) {
+        for (simg_int x = 0; x < inp_img->width(); ++x) {
+            res_img->pixel(x, start).s = seedimg::utils::clamp(inp_img->pixel(x, start).s * mul, 0, 100);
+        }
     }
-  }
 }
 
 namespace seedimg::filters {
-void saturation(simg &inp_img, simg &res_img, float mul) {
-  if (inp_img->colourspace() != seedimg::colourspaces::hsv)
-    throw std::invalid_argument("Colourspace is not HSV");
-  if (mul < 0)
-    return;
-  seedimg::utils::hrz_thread(saturation_worker, inp_img, res_img, mul);
+void saturation(simg& inp_img, simg& res_img, float mul) {
+    if (inp_img->colourspace() != seedimg::colourspaces::hsv) throw std::invalid_argument("Colourspace is not HSV");
+    if (mul < 0) return;
+    seedimg::utils::hrz_thread(saturation_worker, inp_img, res_img, mul);
 }
-void saturation_i(simg &inp_img, float mul) {
-  saturation(inp_img, inp_img, mul);
-}
+void saturation_i(simg& inp_img, float mul) { saturation(inp_img, inp_img, mul); }
 } // namespace seedimg::filters

@@ -24,38 +24,32 @@
 
 namespace seedimg {
 
-bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
-                seedimg::point point) noexcept {
-  return xy1.x <= point.x && point.x <= xy2.x && xy1.y <= point.y &&
-         point.y <= xy2.y;
+bool is_on_rect(seedimg::point xy1, seedimg::point xy2, seedimg::point point) noexcept {
+    return xy1.x <= point.x && point.x <= xy2.x && xy1.y <= point.y && point.y <= xy2.y;
 }
 
-seedimg::point get_rect_dimensions(seedimg::point p1,
-                                   seedimg::point p2) noexcept {
-  auto ordered_x = std::minmax(p1.x, p2.x);
-  auto ordered_y = std::minmax(p1.y, p2.y);
-  // width, height
-  return {ordered_x.second - ordered_x.first,
-          ordered_y.second - ordered_y.first};
+seedimg::point get_rect_dimensions(seedimg::point p1, seedimg::point p2) noexcept {
+    auto ordered_x = std::minmax(p1.x, p2.x);
+    auto ordered_y = std::minmax(p1.y, p2.y);
+    // width, height
+    return {ordered_x.second - ordered_x.first, ordered_y.second - ordered_y.first};
 }
 
 // create shared ptrs from certain suitable params
 std::unique_ptr<seedimg::img> make(simg_int width, simg_int height) {
-  return std::make_unique<seedimg::img>(width, height);
+    return std::make_unique<seedimg::img>(width, height);
 }
 
-std::unique_ptr<seedimg::img> make(simg_int width, simg_int height,
-                                   seedimg::pixel *data) {
-  return std::make_unique<seedimg::img>(width, height, data);
+std::unique_ptr<seedimg::img> make(simg_int width, simg_int height, seedimg::pixel* data) {
+    return std::make_unique<seedimg::img>(width, height, data);
 }
 
-std::unique_ptr<seedimg::img> make(seedimg::img &&inp_img) {
-  return std::make_unique<seedimg::img>(std::move(inp_img));
+std::unique_ptr<seedimg::img> make(seedimg::img&& inp_img) {
+    return std::make_unique<seedimg::img>(std::move(inp_img));
 }
 
-std::unique_ptr<seedimg::img>
-make(const std::unique_ptr<seedimg::img> &inp_img) {
-  return std::make_unique<seedimg::img>(*inp_img);
+std::unique_ptr<seedimg::img> make(const std::unique_ptr<seedimg::img>& inp_img) {
+    return std::make_unique<seedimg::img>(*inp_img);
 }
 
 } // namespace seedimg

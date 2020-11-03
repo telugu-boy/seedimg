@@ -23,9 +23,9 @@
 
 namespace seedimg::modules {
 namespace farbfeld {
-bool check(const std::string &filename);
-bool to(const std::string &filename, const simg &inp_img);
-simg from(const std::string &filename);
+bool check(const std::string& filename);
+bool to(const std::string& filename, const simg& inp_img);
+simg from(const std::string& filename);
 } // namespace farbfeld
 } // namespace seedimg::modules
 

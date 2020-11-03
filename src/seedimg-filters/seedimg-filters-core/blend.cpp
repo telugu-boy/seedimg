@@ -22,53 +22,46 @@
 #include <seedimg-filters/seedimg-filters-core.hpp>
 
 inline std::uint8_t clamp(int a) {
-  if (a > seedimg::img::MAX_PIXEL_VALUE)
-    return seedimg::img::MAX_PIXEL_VALUE;
-  else if (a < 0)
-    return 0;
-  return static_cast<std::uint8_t>(a);
+    if (a > seedimg::img::MAX_PIXEL_VALUE)
+        return seedimg::img::MAX_PIXEL_VALUE;
+    else if (a < 0)
+        return 0;
+    return static_cast<std::uint8_t>(a);
 }
 
 namespace seedimg::filters {
-void pixel_add_worker(simg &image, simg &other, simg_int start_row,
-                      simg_int end_row) {
-  for (; start_row < end_row; ++start_row) {
-    for (simg_int x = 0; x < image->width(); ++x) {
-      auto &pix = image->pixel(x, start_row);
-      auto &opix = other->pixel(x, start_row);
+void pixel_add_worker(simg& image, simg& other, simg_int start_row, simg_int end_row) {
+    for (; start_row < end_row; ++start_row) {
+        for (simg_int x = 0; x < image->width(); ++x) {
+            auto& pix  = image->pixel(x, start_row);
+            auto& opix = other->pixel(x, start_row);
 
-      pix.r = clamp(pix.r + opix.r);
-      pix.g = clamp(pix.g + opix.g);
-      pix.b = clamp(pix.b + opix.b);
-      pix.a = clamp(pix.a + opix.a);
+            pix.r = clamp(pix.r + opix.r);
+            pix.g = clamp(pix.g + opix.g);
+            pix.b = clamp(pix.b + opix.b);
+            pix.a = clamp(pix.a + opix.a);
+        }
     }
-  }
 }
 
-void blend(std::pair<simg &, const std::uint8_t> input,
-           std::pair<simg &, const std::uint8_t> other, simg &output) {
-  if (input.first->width() != other.first->width() ||
-      input.first->height() != other.first->height())
-    return;
+void blend(std::pair<simg&, const std::uint8_t> input, std::pair<simg&, const std::uint8_t> other, simg& output) {
+    if (input.first->width() != other.first->width() || input.first->height() != other.first->height()) return;
 
-  // reduce the image gain as needed.
-  brightness_a(input.first, output, input.second);
-  brightness_a_i(other.first, other.second);
+    // reduce the image gain as needed.
+    brightness_a(input.first, output, input.second);
+    brightness_a_i(other.first, other.second);
 
-  auto start_end = input.first->start_end_rows();
-  std::vector<std::thread> workers(start_end.size());
+    auto                     start_end = input.first->start_end_rows();
+    std::vector<std::thread> workers(start_end.size());
 
-  for (std::size_t i = 0; i < workers.size(); i++)
-    workers.at(i) =
-        std::thread(pixel_add_worker, std::ref(output), std::ref(other.first),
-                    start_end.at(i).first, start_end.at(i).second);
-  for (std::size_t i = 0; i < workers.size(); ++i)
-    workers.at(i).join();
+    for (std::size_t i = 0; i < workers.size(); i++)
+        workers.at(i) = std::thread(pixel_add_worker, std::ref(output), std::ref(other.first), start_end.at(i).first,
+                                    start_end.at(i).second);
+    for (std::size_t i = 0; i < workers.size(); ++i) workers.at(i).join();
 }
 
-void blend_i(std::pair<simg &, const std::uint8_t> input,
-             std::pair<simg &, const std::uint8_t> other) {
-  blend(input, other, input.first);
+void blend_i(std::pair<simg&, const std::uint8_t> input, std::pair<simg&, const std::uint8_t> other) {
+    blend(input, other, input.first);
 }
 
 } // namespace seedimg::filters

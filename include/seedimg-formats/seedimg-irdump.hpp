@@ -21,14 +21,14 @@ namespace irdump {
  * @param input the given image to encode.
  * @return true on success, false on failure.
  */
-bool to(const std::string &filename, const simg &input);
+bool to(const std::string& filename, const simg& input);
 
 /**
  * @brief Decode a image in the Seedimg IR dump format from a filepath.
  * @param filepath a valid filepath (with/without filextension).
  * @return a non-null image on success, null on failure.
  */
-simg from(const std::string &filename);
+simg from(const std::string& filename);
 } // namespace irdump
 } // namespace seedimg::modules
 
