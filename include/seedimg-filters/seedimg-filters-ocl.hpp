@@ -19,11 +19,16 @@
 #ifndef SEEDIMG_FILTERS_OCL_H
 #define SEEDIMG_FILTERS_OCL_H
 
+#ifndef SIMG_OCL_PXAMT
+#define SIMG_OCL_PXAMT 1
+#endif
+
 #ifndef SIMG_OCL_LOCAL_WG_SIZE
 #define SIMG_OCL_LOCAL_WG_SIZE 64
 #endif
 
-#define SIMG_OCL_BUF_PADDING sizeof(seedimg::pixel) * SIMG_OCL_LOCAL_WG_SIZE
+#define SIMG_OCL_BUF_PADDING                                                   \
+  sizeof(seedimg::pixel) * SIMG_OCL_LOCAL_WG_SIZE *SIMG_OCL_PXAMT
 
 #ifndef CL_HPP_MINIMUM_OPENCL_VERSION
 #define CL_HPP_MINIMUM_OPENCL_VERSION 100
@@ -175,7 +180,7 @@ void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
                            std::size_t amt, bool blocking, ...) {
 
   std::cout << "start" << std::endl;
-  for (int i = 0; i < 1000000; i++) {
+  for (int i = 0; i < 60; i++) {
     std::cout << i << std::endl;
     queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt),
                                cl::NDRange(SIMG_OCL_LOCAL_WG_SIZE));

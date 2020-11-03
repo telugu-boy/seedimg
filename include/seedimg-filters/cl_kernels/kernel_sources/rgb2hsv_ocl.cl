@@ -8,6 +8,7 @@ __kernel void rgb2hsv(__global uchar4* inp_pix, __global uchar4* res_pix) {
       ulong start = spw * get_group_id(0) + get_local_id(0);
       ulong stop = start + spw;
       for(ulong num = start; num < stop; num+=get_local_size(0)) {
+      //ulong num = get_global_id(0);
         
         float rp = (float)inp_pix[num].x / 255.0f;
         float gp = (float)inp_pix[num].y / 255.0f;
@@ -16,10 +17,10 @@ __kernel void rgb2hsv(__global uchar4* inp_pix, __global uchar4* res_pix) {
         float cmax = fmax(rp, fmax(gp, bp));
         float cmin = fmin(rp, fmin(gp, bp));
         
-        /*
-        if(cmax == 0)
+        if(cmax == 0){
+            res_pix[num].xyz = (uchar3)(0,0,0);
             continue;
-        */
+        }
         
         
         float delta = cmax - cmin;

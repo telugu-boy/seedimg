@@ -38,9 +38,9 @@ constexpr T round_up(T inp, T mul) noexcept {
   return inp + mul - remainder;
 }
 
-template <typename I, typename MinT, typename MaxT, typename T = std::uint8_t>
-constexpr T clamp(I a, MinT min, MaxT max) {
-  return a > max ? max : a < min ? min : static_cast<T>(a);
+template <typename I, typename MinT, typename MaxT>
+constexpr auto clamp(I a, MinT min, MaxT max) {
+  return a > max ? max : a < min ? min : a;
 }
 
 template <typename T, typename... Args>

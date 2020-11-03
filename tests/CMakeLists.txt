@@ -19,7 +19,7 @@ set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
 
-target_link_libraries(${TESTS_EXE} seedimg-filters-core seedimg-autodetect)
+target_link_libraries(${TESTS_EXE} seedimg-autodetect)
 
 if(OPENCL_TESTS_ENABLED)
     find_package(OpenCL REQUIRED)

@@ -53,8 +53,6 @@ else()
     set(TIFF_ENABLED ON)
 endif()
 
-set(FILTERS_ENABLED ON CACHE BOOL "Enable image operations")
-
 set(OPENCL_TESTS_ENABLED ON CACHE BOOL "Enable OpenCL tests")
 
 set(EXTRAS_ENABLED OFF CACHE BOOL "Enable extras (like histogram)")

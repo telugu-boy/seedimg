@@ -27,9 +27,6 @@ if(EXTRAS_ENABLED)
     add_subdirectory(seedimg-extras)
 endif()
 
-# filter modules
-add_subdirectory(seedimg-filters)
-
 # automatic detection of image types:
 add_subdirectory(seedimg-autodetect)
 

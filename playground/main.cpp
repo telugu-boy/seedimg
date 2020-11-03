@@ -19,6 +19,7 @@ seedimg - module based image manipulation library written in modern
 #include <filesystem>
 #include <iostream>
 
+#define SIMG_OCL_PXAMT 1
 #define SIMG_OCL_LOCAL_WG_SIZE 64
 
 #include <seedimg-autodetect.hpp>
@@ -60,13 +61,19 @@ auto main() -> decltype(
       // cconv::rgb_i(a);
       // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
       // cconv::rgb_i(a);
-      auto inp_img_buf =
-          new cl::Buffer{ocl::get_context(), CL_MEM_READ_WRITE,
-                         seedimg::utils::round_up(sizeof(seedimg::pixel) *
-                                                      a->width() * a->height(),
-                                                  SIMG_OCL_BUF_PADDING)};
+      /*
+    auto inp_img_buf =
+        new cl::Buffer{ocl::get_context(), CL_MEM_READ_WRITE,
+                       seedimg::utils::round_up(sizeof(seedimg::pixel) *
+                                                    a->width() * a->height(),
+                                                SIMG_OCL_BUF_PADDING)};
 
-      ocl::rotate_hue_i(a, 180, inp_img_buf);
+    ocl::rotate_hue_i(a, 180, inp_img_buf);*/
+      // cconv::hsv_i(a);
+      // cconv::rgb_i(a)
+      // brightness_i(a, 50.0f);
+      // saturation_i(a, 5.0f);
+      // contrast_i(a, 2.0f);
       // ocl::cconv::hsv_i(a, inp_img_buf);
       // ocl::cconv::rgb_i(a, inp_img_buf);
       seedimg::save("boil.webp", a);
