@@ -26,6 +26,3 @@ add_subdirectory(seedimg-modules)
 if(EXTRAS_ENABLED)
     add_subdirectory(seedimg-extras)
 endif()
-
-# automatic detection of image types:
-add_subdirectory(seedimg-autodetect)
