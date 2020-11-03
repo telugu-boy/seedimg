@@ -40,7 +40,7 @@ if(NOT JPEG_FOUND)
 endif()
 
 
-add_library(seedimg-jpeg ${LIB_TYPE} seedimg-jpeg.cpp)
+add_library(seedimg-jpeg ${LIB_TYPE} jpeg.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES} seedimg)
