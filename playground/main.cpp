@@ -18,22 +18,24 @@
 ************************************************************************/
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 #include <seedimg.hpp>
 #include <seedimg-autodetect.hpp>
 
+#include <seedimg-modules/jpeg.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 
 using namespace seedimg;
 using namespace seedimg::modules;
 using namespace seedimg::filters;
 
+
 int main() {
-    simg img = seedimg::load("jat.ff");
+    simg img = seedimg::load("jat.jpg");
 
-    // will result in a blue-white image.
-    sepia_i(img);
-    invert_i(img);
+    sepia_i(img);   // reddish-brownish
+    invert_i(img);  // bluish-grayish (inverted)
 
-    seedimg::save("chamar.ff", img);
+    seedimg::save("chamar.jpg", img);
 }
