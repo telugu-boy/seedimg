@@ -42,5 +42,5 @@ SpaceBeforeParens: true
 SpaceBeforeRangeBasedForLoopColon: true
 SpacesBeforeTrailingComments: 1
 
-Standard: Cpp11
+Standard: Cpp17
 UseTab: Never
