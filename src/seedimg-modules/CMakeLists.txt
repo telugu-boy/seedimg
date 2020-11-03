@@ -19,10 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 set(EXTERN_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/extern-src)
 set(EXTERN_BINS ${CMAKE_BINARY_DIR}/extern)
 
-if(JPEG_ENABLED)
-  add_subdirectory(seedimg-jpeg)
-endif()
-
 if(PNG_ENABLED)
   add_subdirectory(seedimg-png)
 endif()

@@ -22,72 +22,108 @@
 #include <istream>
 #include <ostream>
 
-#include <seedimg.hpp>
 #include <seedimg-modules/modules-abc.hpp>
+#include <seedimg-utils.hpp>
 
-namespace seedimg::modules::decoding {
 
-class farbfeld : public input_abc {
-private:
-    simg_int _width;
-    simg_int _height;
-    simg_int _scline = 0;  // current scanline.
+namespace seedimg::modules {
+namespace farbfeld {
+class decoder : public input_abc {
+  private:
+    simg_int width_;
+    simg_int height_;
+    simg_int scline = 0;
 
     std::istream& in;
-public:
-    farbfeld(std::istream& input);
 
-    simg_int width () const noexcept { return _width; }
-    simg_int height() const noexcept { return _height; }
+  public:
+    decoder(std::istream& input) : in(input) {
+        char signature[8];
+        in.read(signature, 8);
 
-    bool read(pixel* to);
-    bool read(simg& to) {
-        if(to->width() != _width || to->height() != _height)
-            return false;  // will not crop/resize.
+        if (!std::equal(signature, std::end(signature), "farbfeld"))
+            throw input_failure {"invalid Farbfeld signature"};
 
-        for(simg_int r = 0; r < to->height(); ++r)
-            if(!read(to->row(r)))
-                return false;
+        in.read(reinterpret_cast<char*>(&width_), 4);
+        in.read(reinterpret_cast<char*>(&height_), 4);
 
+        width_  = seedimg::utils::endian::from_u32_big(reinterpret_cast<uint8_t*>(&width_));
+        height_ = seedimg::utils::endian::from_u32_big(reinterpret_cast<uint8_t*>(&height_));
+    }
+
+    simg_int width()  const noexcept { return width_;  }
+    simg_int height() const noexcept { return height_; }
+
+    bool read(pixel* to) {
+        if (scline == height_) return false;
+
+        for (simg_int i = 0; i < width_; ++i) {
+            std::uint8_t p[4 /*RGBA*/ * 2 /*16-bit*/];
+
+            in.read(reinterpret_cast<char*>(p), sizeof p);
+
+            to[i] = {{static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p)     >> 8)},
+                     {static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p + 2) >> 8)},
+                     {static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p + 4) >> 8)},
+                      static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p + 6) >> 8)};
+        }
+
+        ++scline;
         return true;
     }
+
+    ~decoder();
 };
 
-}
+decoder::~decoder() = default;
 
-namespace seedimg::modules::encoding {
 
-class farbfeld : public output_abc {
-private:
-    simg_int _width;
-    simg_int _height;
-    simg_int _scline = 0;
+class encoder : public output_abc {
+  private:
+    simg_int width;
+    simg_int height;
+    simg_int scline = 0;
 
-    // NOTE: usage of the rvalue type here is problematic.
-    // it writes to file when called from constructor but not
-    // anymore when called from the .write() method, so we're
-    // going to use a reference type here.
     std::ostream& out;
-public:
-    farbfeld(std::ostream& output, simg_int width, simg_int height);
-    farbfeld(std::ostream& output, seedimg::point dimensions) :
-        farbfeld(output, dimensions.x, dimensions.y) {}
+  public:
+    encoder(std::ostream& output, simg_int width, simg_int height)
+        : out(output)
+    {
+        std::uint8_t w[4];
+        std::uint8_t h[4];
 
-    bool write(const pixel* const from);
-    bool write(const simg& to) {
-        if(to->width() != _width || to->height() != _height)
-            return false;  // will not crop/resize
+        seedimg::utils::endian::to_u32_big(width, w);
+        seedimg::utils::endian::to_u32_big(height, h);
 
-        for(simg_int r = 0; r < to->height(); ++r)
-            if(!write(to->row(r)))
-                return false;
+        out.write("farbfeld", 8);
+        out.write(reinterpret_cast<char*>(w), 4);
+        out.write(reinterpret_cast<char*>(h), 4);
+    }
 
+    bool write(const pixel* const from) {
+        if (scline == height) return false;
+
+        for (simg_int i = 0; i < width; ++i) {
+            std::uint8_t p[4 * 2];
+
+            seedimg::utils::endian::to_u16_big(static_cast<std::uint16_t>(from[i].r << 8), p);
+            seedimg::utils::endian::to_u16_big(static_cast<std::uint16_t>(from[i].g << 8), p + 2);
+            seedimg::utils::endian::to_u16_big(static_cast<std::uint16_t>(from[i].b << 8), p + 4);
+            seedimg::utils::endian::to_u16_big(static_cast<std::uint16_t>(from[i].a << 8), p + 6);
+
+            out.write(reinterpret_cast<char*>(p), 8);
+        }
+
+        ++scline;
         return true;
     }
 
     void flush() { out.flush(); }
-    ~farbfeld()  { out.flush(); }
+    ~encoder();
 };
 
-}
+encoder::~encoder() { flush(); }
+
+} // namespace farbfeld
+} // namespace seedimg::modules
 #endif

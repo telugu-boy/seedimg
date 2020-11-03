@@ -22,20 +22,13 @@
 #include <seedimg.hpp>
 
 namespace seedimg::modules {
-namespace decoding {
-
 /**
  * @brief An input reads an image progressively from a given readable-stream.
  * The unit of reading data is a single row.
  */
 class input_abc {
-public:
-    /**
-     * @brief Maximum (X,Y) coordinates aka. size of the image.
-     */
-    point dimensions() const noexcept { return {width(), height()}; }
-
-    virtual simg_int width() const noexcept = 0;
+  public:
+    virtual simg_int width() const noexcept  = 0;
     virtual simg_int height() const noexcept = 0;
 
     /**
@@ -44,60 +37,39 @@ public:
      * @return 'true' if succeeded reading a row, 'false' otherwise
      */
     virtual bool read(pixel* to) = 0;
-    bool   operator>>(pixel* to) { return read(to); }
 
     virtual ~input_abc();
 };
 
-input_abc::~input_abc() {}  // sequelch -Wweak-vtables.
+input_abc::~input_abc() {} // sequelch -Wweak-vtables.
 
-
-class input_failure : public std::runtime_error {
-public:
-    input_failure(const char* m) : std::runtime_error(m) {}
-    ~input_failure();
+struct input_failure : public std::runtime_error {
+    using std::runtime_error::runtime_error;
 };
 
-input_failure::~input_failure() {}
-
-};
-
-
-namespace encoding {
-
-/**
- * @brief An output writes an image progressively to a given writable-stream.
- */
 class output_abc {
-public:
+  public:
     /**
      * @brief Write a row of pixels from input to a buffer.
      * @param from buffer to read from, its size must be atleast (4 * width)
      * @return 'true' if succeeded writing a row, 'false' otherwise
      */
     virtual bool write(const pixel* const from) = 0;
-    bool    operator<<(const pixel* const from) { return write(from); }
 
     /**
-     * @brief Ensure that data is written to the destination, automatically called
-     * by the destructor (RAII idiom).
+     * @brief Ensure that data is written to the destination, automatically
+     * called by the destructor (RAII idiom).
      */
     virtual void flush() = 0;
 
     virtual ~output_abc();
 };
 
-output_abc::~output_abc() {}  // sequelch -Wweak-vtables.
-
+output_abc::~output_abc() {} // sequelch -Wweak-vtables.
 
 class output_failure : public std::runtime_error {
-public:
-    output_failure(const char* m) : std::runtime_error(m) {}
-    ~output_failure();
+    using std::runtime_error::runtime_error;
 };
 
-output_failure::~output_failure() {}
-
-};
-};
+}; // namespace seedimg::modules
 #endif
