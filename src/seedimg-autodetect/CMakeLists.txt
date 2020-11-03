@@ -20,4 +20,5 @@ target_link_libraries(seedimg-autodetect PUBLIC
     seedimg
     seedimg-farbfeld
     seedimg-irdump
+    seedimg-jpeg
 )

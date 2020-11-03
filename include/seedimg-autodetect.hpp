@@ -31,10 +31,11 @@
  *  O    cannot be loaded using load() but be saved using save().
  * IO    can    be loaded using load() and    saved using save().
  */
-enum class simg_imgfmt : size_t {
+enum simg_imgfmt : size_t {
     unknown,   // ..
     farbfeld,  // IO
-    irdump     // .O
+    irdump,    // .O,
+    jpeg       // IO
 };
 
 namespace seedimg {

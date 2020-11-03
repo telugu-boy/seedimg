@@ -25,51 +25,64 @@
 #include <seedimg-modules/modules-abc.hpp>
 #include <seedimg-modules/farbfeld.hpp>
 #include <seedimg-modules/irdump.hpp>
+#include <seedimg-modules/jpeg.hpp>
 
 #include <seedimg-utils.hpp>
 
+using namespace seedimg::utils;
 
-constexpr const auto FMT_DETECTORS = seedimg::utils::make_array(
-    #define F(fmt, size, funcb) std::make_tuple( \
-            simg_imgfmt::fmt, \
-            static_cast<std::size_t>(size), \
-            [](const char* const h) funcb)
+const auto FMT_DETECTORS = seedimg::utils::make_array(
+    #define entry(fmt, size, funcb) \
+        std::make_tuple<simg_imgfmt, std::streamsize, \
+                        std::function<bool(const char* const)>> \
+            (fmt, \
+             size, \
+             [](const char* const h) funcb)
+    #define eq(a, b, s) (std::memcmp(a, b, s) == 0)
 
-    #define EQ(a, b, s) (std::memcmp(a, b, s) == 0)
 
-    /* format   sigsize           comparator */
-    F(farbfeld,    8,   { return EQ(h, "farbfeld", 8); })
+        /* format   sigsize           comparator */
+    entry(farbfeld,   8,   { return eq(h, "farbfeld",         8); }),
+    entry(jpeg,       4,   { return eq(h, "\xFF\xD8\xFF\xE0", 4); })
 );
 
-constexpr const auto MAX_SIGSIZE = std::get<1>(*std::max_element(
-            std::begin(FMT_DETECTORS),
-            std::end(FMT_DETECTORS),
-            [](auto a, auto b) { return std::get<1>(a) < std::get<1>(b);
-        }));
+const auto MAX_SIGSIZE =
+        std::get<1>(
+            *std::max_element(
+                std::begin(FMT_DETECTORS),
+                std::end(FMT_DETECTORS),
+                [](auto a, auto b) {
+                    return std::get<1>(a) < std::get<1>(b);
+         }));
 
-
-static std::unordered_map<std::string, simg_imgfmt> EXT2FMT = {
-    { "ff", simg_imgfmt::farbfeld},
-    {"sir", simg_imgfmt::irdump},
+static std::unordered_map<std::string, simg_imgfmt> EXT_TO_FMT = {
+    {"ff",   farbfeld},
+    {"sir",  irdump  },
+    {"jpg",  jpeg    },
+    {"jpeg", jpeg    },
+    {"jpe",  jpeg    },
+    {"jif",  jpeg    },
+    {"jfif", jpeg    },
+    {"jfi",  jpeg    },
 };
 
 
 simg_imgfmt detect_format(std::istream& buf) {
-    char sig[MAX_SIGSIZE];
-    buf.read(sig, MAX_SIGSIZE);
+    auto signature = new char[static_cast<std::size_t>(MAX_SIGSIZE)];
+    buf.read(signature, MAX_SIGSIZE);  // read to size of most lengthy signature.
 
-    simg_imgfmt fmt = simg_imgfmt::unknown;
-
+    simg_imgfmt fmt = unknown;
     for(auto fmtdet : FMT_DETECTORS) {
-        if(std::get<2>(fmtdet)(sig)) {
+        if(std::get<2>(fmtdet)(signature)) {
             fmt = std::get<0>(fmtdet);
             break;
         }
     }
 
-    for(size_t i = 0; i < MAX_SIGSIZE; ++i)
-        buf.unget();  // unextract read chars.
+    for(std::streamsize i = 0; i < MAX_SIGSIZE; ++i)
+        buf.unget();
 
+    delete[] signature;
     return fmt;
 }
 
@@ -99,11 +112,10 @@ namespace seedimg {
     using namespace seedimg::modules;
 
     simg load(std::istream& buf) {
-        #define impli(fmt) case simg_imgfmt::fmt: return read_img<decoding::fmt>(buf)
-
         switch(detect_format(buf)) {
-              impli  (farbfeld);
-            default: return nullptr;
+            case farbfeld: return read_img<decoding::farbfeld>(buf);
+            case jpeg:     return read_img<decoding::jpeg>    (buf);
+            default:       return nullptr;
         }
     }
 
@@ -113,19 +125,19 @@ namespace seedimg {
     }
 
     bool save(std::ostream& buf, simg_imgfmt fmt, const simg& img) {
-        #define implo(fmt) case simg_imgfmt::fmt: return write_img<encoding::fmt>(buf, img)
+        if(img == nullptr)
+            return false;
+
         switch(fmt) {
-              implo  (farbfeld);
-              implo  (irdump);
-            default: return false;
+            case farbfeld: return write_img<encoding::farbfeld>(buf, img);
+            case irdump:   return write_img<encoding::irdump>  (buf, img);
+            case jpeg:     return write_img<encoding::jpeg>    (buf, img);
+            default:       return false;
         }
     }
 
     bool save(const std::string& filename, const simg& img) {
         std::ofstream out(filename);
-        return save(out,
-                    EXT2FMT[filename.substr(
-                                filename.rfind('.') + 1
-                    )], img);
+        return save(out, EXT_TO_FMT[filename.substr(filename.rfind('.') + 1)], img);
     }
 }
