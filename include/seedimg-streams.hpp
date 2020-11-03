@@ -21,13 +21,6 @@
 #include <seedimg-filters/seedimg-filters-core.hpp>
 
 namespace seedimg {
-
-using input  = seedimg::modules::decoding::input_abc;
-using output = seedimg::modules::encoding::output_abc;
-
-template<bool Inplace>
-using filterchain = seedimg::filters::filterchain<Inplace>;
-
 /**
  * @brief Holds input, output streams, a filterchain. Reads rows progressively from
  * input and applies the filterchain to it and writes to the output.
@@ -37,8 +30,8 @@ using filterchain = seedimg::filters::filterchain<Inplace>;
 template<bool Inplace>
 class stream {
 private:
-    input& i;
-    output& o;
+    seedimg::modules::input_abc& i;
+    seedimg::modules::output_abc& o;
 
     simg img;      // internal
     simg img_out;  // when not inplace.
@@ -48,9 +41,10 @@ public:
      * filters that change dimensions, are non-linear, are stateful are subject to potential
      * UB (undefined behaviour).
      */
-    filterchain<Inplace> chain;
+    seedimg::filters::filterchain<Inplace> chain;
 
-    stream(input& in, output& out)
+    stream(seedimg::modules::input_abc& in,
+           seedimg::modules::output_abc& out)
         : i(in), o(out),
           img                        (seedimg::make(i.width(), 1)),
           img_out(Inplace ? nullptr : seedimg::make(i.width(), 1)) {}
