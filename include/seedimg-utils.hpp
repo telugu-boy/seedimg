@@ -98,6 +98,6 @@ constexpr auto make_array(Args&&... args) {
                     std::common_type_t<Args...>>,
                 sizeof...(Args)>
         {std::forward<Args>(args)...};
-} // namespace seedimg::utils
 }
+} // namespace seedimg::utils
 #endif

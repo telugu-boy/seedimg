@@ -22,8 +22,8 @@
 
 namespace seedimg {
 
-using input  = seedimg::modules::decoding::input;
-using output = seedimg::modules::encoding::output;
+using input  = seedimg::modules::decoding::input_abc;
+using output = seedimg::modules::encoding::output_abc;
 
 template<bool Inplace>
 using filterchain = seedimg::filters::filterchain<Inplace>;
