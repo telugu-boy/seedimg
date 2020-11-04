@@ -185,10 +185,10 @@ int main(int, char *argv[]) {
     break;
   case filter_functions::SATURATION_HSV: {
     seedimg::filters::cconv::hsv_i(img);
-    seedimg::filters::saturation_i(img, 2.5);
+    seedimg::filters::saturation_i(img, 5.0f);
   } break;
   case filter_functions::SATURATION_RGB:
-    seedimg::filters::saturation_i(img, 2.5);
+    seedimg::filters::saturation_i(img, 5.0f);
     break;
   case filter_functions::SEPIA:
     seedimg::filters::sepia_i(img);

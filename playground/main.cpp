@@ -129,8 +129,6 @@ auto main() -> decltype(
       // contrast_i(a, 2.0f);
       // ocl::cconv::hsv_i(a, inp_img_buf);
       // ocl::cconv::rgb_i(a, inp_img_buf);
-      ocl::cconv::hsv_i(a);
-      ocl::saturation_i(a, 5);
       seedimg::save("biol.jpg", a);
     } else {
       std::cerr << "failed" << std::endl;
