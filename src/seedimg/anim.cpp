@@ -20,18 +20,16 @@
 
 namespace seedimg {
 class anim::anim_impl {
-  public:
-    std::size_t framerate;
+public:
+  std::size_t framerate;
 
-    anim_impl()
-        : framerate{0}
-        , data{} {}
+  anim_impl()
+      : framerate{0},
+        data{} {}
 
-    anim_impl(std::size_t size, std::size_t framerate) {
-        this->framerate = framerate;
-        data            = std::vector<simg>(size);
-    }
-    return *this;
+  anim_impl(std::size_t size, std::size_t framerate) {
+      this->framerate = framerate;
+      data            = std::vector<simg>(size);
   }
 
   anim_impl(simg &&img...) : anim_impl() { this->add(std::move(img)); }
@@ -64,7 +62,6 @@ class anim::anim_impl {
 
   std::vector<simg>::iterator begin() noexcept { return data.begin(); }
   std::vector<simg>::iterator end() noexcept { return data.end(); }
-
 private:
   std::vector<simg> data;
 };
@@ -91,7 +88,9 @@ anim& anim::operator=(anim other) {
 anim& anim::operator=(anim&& other) {
     *impl = *other.impl;
     return *this;
+
 }
+
 
 simg& anim::operator[](std::size_t i) { return (*impl)[i]; }
 const simg& anim::operator[](std::size_t i) const { return (*impl)[i]; }
