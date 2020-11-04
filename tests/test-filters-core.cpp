@@ -27,7 +27,6 @@
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 #endif
 #include <seedimg-autodetect.hpp>
-#include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #ifdef SEEDIMG_TESTS_OCL
 #include <seedimg-filters/seedimg-filters-ocl.hpp>

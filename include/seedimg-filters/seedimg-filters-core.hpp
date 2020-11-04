@@ -70,6 +70,7 @@ template <typename T> constexpr fsmat compose_fsmats(const T &mats) {
       }
     }
     return res;
+  }
 }
 
 template <typename T> constexpr smat compose_smats(const T &mats) {
@@ -84,6 +85,7 @@ template <typename T> constexpr smat compose_smats(const T &mats) {
       }
     }
     return res;
+  }
 }
 
 // matrix manipulation related functions, used for building
