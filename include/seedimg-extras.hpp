@@ -26,7 +26,7 @@
 
 namespace seedimg::extras {
 typedef struct {
-  std::array<std::size_t, 256> r, g, b, a;
+    std::array<std::size_t, 256> r, g, b, a;
 } histogram_result;
 
 /**
@@ -34,7 +34,22 @@ typedef struct {
  * @param input Input image to do the analysis on.
  * @return a structure of 4 channels as 256-length arrays.
  */
-histogram_result histogram(simg &input);
+histogram_result histogram(simg& input) {
+    histogram_result result;
+
+    // size of the image, pre-computed.
+    simg_int size = input->width() * input->height();
+
+    for (simg_int i = 0; i < size; ++i) {
+        auto& p = input->data()[i];
+
+        ++result.r[p.r];
+        ++result.g[p.g];
+        ++result.b[p.b];
+        ++result.a[p.a];
+    }
+    return result;
+}
 
 #endif
 }
