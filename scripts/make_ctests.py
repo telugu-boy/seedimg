@@ -19,7 +19,7 @@ set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
 
-target_link_libraries(${TESTS_EXE} seedimg-filters-core seedimg-autodetect)
+target_link_libraries(${TESTS_EXE} seedimg-autodetect)
 
 if(OPENCL_TESTS_ENABLED)
     find_package(OpenCL REQUIRED)
@@ -41,9 +41,9 @@ include_directories(../)
 template = """add_test({}_test ${{TESTS_EXE}} {})
 set_tests_properties({}_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")\n\n"""
 
-tests = ["grayscale_lum", "grayscale_avg", "invert", "invert_alpha","invert_alpha_only", "crop", "blur", "h_blur", "v_blur", "kernel_convolution", "rotate_hue", "brightness", "brightness_alpha", "blend", "blend_alpha","rotate_cw", "rotate_180", "rotate_ccw", "v_mirror", "h_mirror", "saturation", "sepia"]
+tests = ["grayscale_lum", "grayscale_avg", "invert", "invert_alpha","invert_alpha_only", "crop", "blur", "h_blur", "v_blur", "kernel_convolution", "rotate_hue", "brightness", "brightness_alpha", "blend", "blend_alpha","rotate_cw", "rotate_180", "rotate_ccw", "v_mirror", "h_mirror", "saturation", "saturation_rgb", "sepia", "diff"]
 
-enum_mapping = ["GRAYSCALE_LUM", "GRAYSCALE_AVG", "INVERT", "INVERT_A", "INVERT_AO", "CROP", "BLUR", "H_BLUR", "V_BLUR", "KERNEL_CONVOLUTION", "ROTATE_HUE", "BRIGHTNESS", "BRIGHTNESS_A", "BLEND", "BLEND_A", "ROTATE_CW", "ROTATE_180", "ROTATE_CCW", "V_MIRROR", "H_MIRROR", "SATURATION", "SEPIA"]
+enum_mapping = ["GRAYSCALE_LUM", "GRAYSCALE_AVG", "INVERT", "INVERT_A", "INVERT_AO", "CROP", "BLUR", "H_BLUR", "V_BLUR", "KERNEL_CONVOLUTION", "ROTATE_HUE", "BRIGHTNESS", "BRIGHTNESS_A", "BLEND", "BLEND_A", "ROTATE_CW", "ROTATE_180", "ROTATE_CCW", "V_MIRROR", "H_MIRROR", "SATURATION", "SATURATION_RGB", "SEPIA", "DIFF"]
 
 tests_ocl = ["rotate_hue_ocl", "grayscale_lum_ocl", "sepia_ocl"]
 

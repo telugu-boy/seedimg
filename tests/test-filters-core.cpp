@@ -28,7 +28,6 @@
 #ifdef SEEDIMG_TESTS_OCL
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 #endif
-
 enum class filter_functions {
   GRAYSCALE_LUM,
   GRAYSCALE_AVG,
@@ -51,7 +50,9 @@ enum class filter_functions {
   V_MIRROR,
   H_MIRROR,
   SATURATION,
+  SATURATION_RGB,
   SEPIA,
+  DIFF,
 #ifdef SEEDIMG_FILTERS_OCL_H
   ROTATE_HUE_OCL,
   GRAYSCALE_LUM_OCL,
@@ -82,7 +83,9 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"v_mirror", filter_functions::V_MIRROR},
         {"h_mirror", filter_functions::H_MIRROR},
         {"saturation", filter_functions::SATURATION},
+        {"saturation_rgb", filter_functions::SATURATION_RGB},
         {"sepia", filter_functions::SEPIA},
+        {"diff", filter_functions::DIFF},
 #ifdef SEEDIMG_FILTERS_OCL_H
         {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
         {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
@@ -173,9 +176,17 @@ int main(int, char *argv[]) {
     seedimg::filters::cconv::hsv_i(img);
     seedimg::filters::saturation_i(img, 2.5);
   } break;
+  case filter_functions::SATURATION_RGB:
+    seedimg::filters::saturation_i(img, 2.5);
+    break;
   case filter_functions::SEPIA:
     seedimg::filters::sepia_i(img);
     break;
+  case filter_functions::DIFF: {
+    auto other = seedimg::make(img);
+    seedimg::filters::blur_i(other, 5);
+    seedimg::filters::difference_i(img, other);
+  } break;
 #ifdef SEEDIMG_FILTERS_OCL_H
   case filter_functions::ROTATE_HUE_OCL:
     seedimg::filters::ocl::rotate_hue_i(img, 180);
