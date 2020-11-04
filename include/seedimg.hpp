@@ -34,21 +34,16 @@ typedef std::size_t simg_int;
 
 namespace seedimg {
 
-template <class T> using pimpl = std::unique_ptr<T>;
+template<class T> using pimpl = std::unique_ptr<T>;
 
 typedef struct point {
-  simg_int x;
-  simg_int y;
-  constexpr bool operator==(const point &other) const noexcept {
-    return std::tie(x, y) == std::tie(other.x, other.y);
-  }
-  constexpr bool operator!=(const point &other) const noexcept {
-    return !(*this == other);
-  }
+    simg_int    x;
+    simg_int    y;
+    inline bool operator==(const point& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
+    inline bool operator!=(const point& other) const noexcept { return !(*this == other); }
 } point;
 
-bool is_on_rect(seedimg::point xy1, seedimg::point xy2,
-                seedimg::point point) noexcept;
+bool is_on_rect(seedimg::point xy1, seedimg::point xy2, seedimg::point point) noexcept;
 
 point get_rect_dimensions(seedimg::point p1, seedimg::point p2) noexcept;
 
@@ -242,7 +237,7 @@ using slut = std::array<std::array<float, seedimg::img::MAX_PIXEL_VALUE + 1>,
                         sizeof(T) / sizeof(typename T::value_type)>;
 } // namespace seedimg
 
-typedef std::unique_ptr<seedimg::img> simg;
+typedef std::unique_ptr<seedimg::img>  simg;
 typedef std::unique_ptr<seedimg::uimg> suimg;
 
 namespace seedimg {
@@ -256,35 +251,35 @@ make(const std::unique_ptr<seedimg::img> &inp_img);
 // Animations or for files storing more than one image GIF, TIFF, etc. APNG
 // support might be added as a separate module.
 class anim {
-public:
-  std::size_t framerate;
+  public:
+    std::size_t framerate;
 
-  anim();
-  anim(std::size_t size, std::size_t framerate = 30);
-  anim(simg &&imgs...);
-  anim(seedimg::anim const &anim_);
-  anim(seedimg::anim &&other);
-  anim &operator=(anim other);
-  anim &operator=(anim &&other);
+    anim();
+    anim(std::size_t size, std::size_t framerate = 30);
+    anim(simg&& imgs...);
+    anim(seedimg::anim const& anim_);
+    anim(seedimg::anim&& other);
+    anim& operator=(anim other);
+    anim& operator=(anim&& other);
 
-  simg &operator[](std::size_t i);
-  const simg &operator[](std::size_t i) const;
+    simg&       operator[](std::size_t i);
+    const simg& operator[](std::size_t i) const;
 
-  void add(simg &&img);
-  bool insert(simg &&img, std::size_t index);
-  bool remove(std::size_t index);
-  bool trim(std::size_t start, std::size_t end);
+    void add(simg&& img);
+    bool insert(simg&& img, std::size_t index);
+    bool remove(std::size_t index);
+    bool trim(std::size_t start, std::size_t end);
 
-  std::size_t size() const noexcept;
+    std::size_t size() const noexcept;
 
   std::vector<simg>::iterator begin() noexcept;
   std::vector<simg>::iterator end() noexcept;
 
-  ~anim();
+    ~anim();
 
-protected:
-  class anim_impl;
-  pimpl<anim_impl> impl;
+  protected:
+    class anim_impl;
+    pimpl<anim_impl> impl;
 };
 
 namespace modules {};

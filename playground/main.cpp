@@ -16,26 +16,25 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <iostream>
-#include <fstream>
 #include <cassert>
+#include <fstream>
+#include <iostream>
 
-#include <seedimg.hpp>
 #include <seedimg-autodetect.hpp>
+#include <seedimg.hpp>
 
-#include <seedimg-modules/jpeg.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-modules/jpeg.hpp>
 
 using namespace seedimg;
 using namespace seedimg::modules;
 using namespace seedimg::filters;
 
-
 int main() {
     simg img = seedimg::load("jat.jpg");
 
-    sepia_i(img);   // reddish-brownish
-    invert_i(img);  // bluish-grayish (inverted)
+    sepia_i(img);  // reddish-brownish
+    invert_i(img); // bluish-grayish (inverted)
 
     seedimg::save("chamar.jpg", img);
 }

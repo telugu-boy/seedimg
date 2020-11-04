@@ -19,16 +19,16 @@
 #ifndef SEEDIMG_JPEG_H
 #define SEEDIMG_JPEG_H
 
+#include <csetjmp>
 #include <istream>
 #include <ostream>
-#include <csetjmp>
 
 #include <seedimg-modules/modules-abc.hpp>
 #include <seedimg-utils.hpp>
 
 extern "C" {
-    #include <jerror.h>
-    #include <jpeglib.h>
+#include <jerror.h>
+#include <jpeglib.h>
 }
 
 namespace seedimg::modules {
@@ -53,10 +53,10 @@ constexpr const static auto J_BUF_SIZE = 8 * 1024;
  * @brief Subsampling ratios/schemes to be used in JPEG encoding.
  */
 enum subsampling {
-    YCbCr_444,  /* Lossless                              */
-    YCbCr_422,  /* Cb, Cr horizontally halved            */
-    YCbCr_411,  /* Cb, Cr horizontally quartered         */
-    YCbCr_420   /* Cb, Cr horizontally, verically halved */
+    YCbCr_444, /* Lossless                              */
+    YCbCr_422, /* Cb, Cr horizontally halved            */
+    YCbCr_411, /* Cb, Cr horizontally quartered         */
+    YCbCr_420  /* Cb, Cr horizontally, verically halved */
 };
 
 /**
@@ -64,8 +64,8 @@ enum subsampling {
  * transmission protocols where data can be corrupt.
  */
 struct restart_int {
-    bool per_row;  /** Treat rows as units, otherwise MCUs. */
-    int  val;      /** Put a marker after (val) units. */
+    bool per_row; /** Treat rows as units, otherwise MCUs. */
+    int  val;     /** Put a marker after (val) units. */
 };
 
 class decoder : public input_abc {
@@ -80,7 +80,7 @@ class decoder : public input_abc {
     jpeg_decompress_struct d;
     std::istream&          in;
 
-    static void init_source(j_decompress_ptr) {}
+    static void    init_source(j_decompress_ptr) {}
     static boolean fill_input_buffer(j_decompress_ptr j) {
         auto self = reinterpret_cast<decoder*>(j->client_data);
         auto src  = reinterpret_cast<istream_jsrcm*>(j->src);
@@ -117,12 +117,13 @@ class decoder : public input_abc {
         }
     }
     static void term_source(j_decompress_ptr) {}
+
   public:
     /**
      * @param method DCT (discrete cosine transform) compuation method to use.
      */
-    decoder(std::istream& input, J_DCT_METHOD method = JDCT_DEFAULT) : in(input)
-    {
+    decoder(std::istream& input, J_DCT_METHOD method = JDCT_DEFAULT)
+        : in(input) {
         d.err              = jpeg_std_error(&err.pub);
         err.pub.error_exit = impl::jpeg_error_exit;
 
@@ -178,7 +179,6 @@ decoder::~decoder() {
     jpeg_destroy_decompress(&d);
 }
 
-
 class encoder : public output_abc {
     jpeg_compress_struct      c;
     impl::simg_jpeg_error_mgr err;
@@ -202,7 +202,8 @@ class encoder : public output_abc {
         auto dest = reinterpret_cast<ostream_jdstm*>(j->dest);
 
         try {
-            reinterpret_cast<encoder*>(j->client_data)->out.write(reinterpret_cast<char*>(dest->buffer), impl::J_BUF_SIZE);
+            reinterpret_cast<encoder*>(j->client_data)
+                ->out.write(reinterpret_cast<char*>(dest->buffer), impl::J_BUF_SIZE);
         } catch (std::ios_base::failure) { return FALSE; }
 
         dest->pub.next_output_byte = dest->buffer;
@@ -225,6 +226,7 @@ class encoder : public output_abc {
     }
 
     std::ostream& out;
+
   public:
     /**
      * @param quality   IJG quality scale (0..100], though qualities below 25
@@ -237,18 +239,18 @@ class encoder : public output_abc {
      * @param method    DCT (discrete cosine transform) compuation method to use.
      * @param res_int   Restart interval of MCU blocks or rows.
      */
-    encoder(std::ostream&    output,
-         simg_int         width,
-         simg_int         height,
-         int              quality     = 100,
-         subsampling subsamp     = YCbCr_444,
-         bool             progressive = false,
-         bool             optimize    = false,
-         bool             arithcoding = false,
-         int              smoothing   = 0,
-         J_DCT_METHOD     dct_method  = JDCT_DEFAULT,
-         restart_int    res_int     = {false, 0}) : out(output)
-    {
+    encoder(std::ostream& output,
+            simg_int      width,
+            simg_int      height,
+            int           quality     = 100,
+            subsampling   subsamp     = YCbCr_444,
+            bool          progressive = false,
+            bool          optimize    = false,
+            bool          arithcoding = false,
+            int           smoothing   = 0,
+            J_DCT_METHOD  dct_method  = JDCT_DEFAULT,
+            restart_int   res_int     = {false, 0})
+        : out(output) {
         c.err              = jpeg_std_error(&err.pub);
         err.pub.error_exit = impl::jpeg_error_exit;
 
@@ -325,9 +327,7 @@ class encoder : public output_abc {
         if (res_int.per_row)
             c.restart_in_rows = res_int.val;
         else
-            c.restart_interval = seedimg::utils::clamp(res_int.val,
-                                                       0,
-                                                       std::numeric_limits<int>::max());
+            c.restart_interval = seedimg::utils::clamp(res_int.val, 0, std::numeric_limits<int>::max());
         jpeg_start_compress(&c, TRUE);
     }
 

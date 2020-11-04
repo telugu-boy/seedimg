@@ -25,7 +25,6 @@
 #include <seedimg-modules/modules-abc.hpp>
 #include <seedimg-utils.hpp>
 
-
 namespace seedimg::modules {
 namespace farbfeld {
 class decoder : public input_abc {
@@ -37,12 +36,12 @@ class decoder : public input_abc {
     std::istream& in;
 
   public:
-    decoder(std::istream& input) : in(input) {
+    decoder(std::istream& input)
+        : in(input) {
         char signature[8];
         in.read(signature, 8);
 
-        if (!std::equal(signature, std::end(signature), "farbfeld"))
-            throw input_failure {"invalid Farbfeld signature"};
+        if (!std::equal(signature, std::end(signature), "farbfeld")) throw input_failure{"invalid Farbfeld signature"};
 
         in.read(reinterpret_cast<char*>(&width_), 4);
         in.read(reinterpret_cast<char*>(&height_), 4);
@@ -51,7 +50,7 @@ class decoder : public input_abc {
         height_ = seedimg::utils::endian::from_u32_big(reinterpret_cast<uint8_t*>(&height_));
     }
 
-    simg_int width()  const noexcept { return width_;  }
+    simg_int width() const noexcept { return width_; }
     simg_int height() const noexcept { return height_; }
 
     bool read(pixel* to) {
@@ -62,10 +61,10 @@ class decoder : public input_abc {
 
             in.read(reinterpret_cast<char*>(p), sizeof p);
 
-            to[i] = {{static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p)     >> 8)},
+            to[i] = {{static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p) >> 8)},
                      {static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p + 2) >> 8)},
                      {static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p + 4) >> 8)},
-                      static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p + 6) >> 8)};
+                     static_cast<uint8_t>(seedimg::utils::endian::from_u16_big(p + 6) >> 8)};
         }
 
         ++scline;
@@ -77,7 +76,6 @@ class decoder : public input_abc {
 
 decoder::~decoder() = default;
 
-
 class encoder : public output_abc {
   private:
     simg_int width;
@@ -85,10 +83,10 @@ class encoder : public output_abc {
     simg_int scline = 0;
 
     std::ostream& out;
+
   public:
     encoder(std::ostream& output, simg_int width, simg_int height)
-        : out(output)
-    {
+        : out(output) {
         std::uint8_t w[4];
         std::uint8_t h[4];
 

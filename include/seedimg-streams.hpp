@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
-#include <seedimg-modules/modules-abc.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
+#include <seedimg-modules/modules-abc.hpp>
 
 namespace seedimg {
 /**
@@ -27,15 +27,14 @@ namespace seedimg {
  *
  * @tparam Inplace whether to use an inplace filterchain.
  */
-template<bool Inplace>
-class stream {
-private:
-    seedimg::modules::input_abc& i;
+template<bool Inplace> class stream {
+  private:
+    seedimg::modules::input_abc&  i;
     seedimg::modules::output_abc& o;
 
-    simg img;      // internal
-    simg img_out;  // when not inplace.
-public:
+    simg img;     // internal
+    simg img_out; // when not inplace.
+  public:
     /**
      * @brief A chain of filters that will be applied on input image and be written to output,
      * filters that change dimensions, are non-linear, are stateful are subject to potential
@@ -43,26 +42,25 @@ public:
      */
     seedimg::filters::filterchain<Inplace> chain;
 
-    stream(seedimg::modules::input_abc& in,
-           seedimg::modules::output_abc& out)
-        : i(in), o(out),
-          img                        (seedimg::make(i.width(), 1)),
-          img_out(Inplace ? nullptr : seedimg::make(i.width(), 1)) {}
+    stream(seedimg::modules::input_abc& in, seedimg::modules::output_abc& out)
+        : i(in)
+        , o(out)
+        , img(seedimg::make(i.width(), 1))
+        , img_out(Inplace ? nullptr : seedimg::make(i.width(), 1)) {}
 
     /**
      * @brief Evaluate a single row. Reads a row, applies filterchain, writes it.
      * @return true if evaluation successful, false otherwise.
      */
     bool eval() {
-        i.read(img->data());  // img->data() = img->row(0)
+        i.read(img->data()); // img->data() = img->row(0)
 
         bool result;
 
-        if constexpr(Inplace) {
+        if constexpr (Inplace) {
             chain.eval(img);
             result = o.write(img->data());
-        }
-        else {
+        } else {
             chain.eval(img, img_out);
             result = o.write(img_out->data());
         }
@@ -75,9 +73,8 @@ public:
      * @return true if evaluation successful, false otherwise.
      */
     bool eval_all() {
-        for(simg_int r = 0; r < i.height(); ++r)
-            if(eval() == false)
-                return false;
+        for (simg_int r = 0; r < i.height(); ++r)
+            if (eval() == false) return false;
 
         return true;
     }

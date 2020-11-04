@@ -25,7 +25,6 @@
 #include <seedimg-modules/modules-abc.hpp>
 #include <seedimg-utils.hpp>
 
-
 namespace seedimg::modules {
 namespace irdump {
 class decoder : public input_abc {
@@ -37,7 +36,8 @@ class decoder : public input_abc {
     std::istream& in;
 
   public:
-    decoder(std::istream& input) : in(input) {
+    decoder(std::istream& input)
+        : in(input) {
         input.read(reinterpret_cast<char*>(&width_), 4);
         input.read(reinterpret_cast<char*>(&height_), 4);
 
@@ -45,15 +45,13 @@ class decoder : public input_abc {
         height_ = seedimg::utils::endian::from_u32_big(reinterpret_cast<uint8_t*>(&height_));
     }
 
-    simg_int width() const noexcept  { return width_;  }
+    simg_int width() const noexcept { return width_; }
     simg_int height() const noexcept { return height_; }
 
     bool read(pixel* to) {
-        if (scline == height_)
-            return false;
+        if (scline == height_) return false;
 
-        in.read(reinterpret_cast<char*>(to),
-                static_cast<std::streamsize>(4 * width_));
+        in.read(reinterpret_cast<char*>(to), static_cast<std::streamsize>(4 * width_));
 
         ++scline;
         return true;
@@ -73,11 +71,10 @@ class encoder : public output_abc {
     std::ostream& out;
 
   public:
-    encoder(std::ostream& output, simg_int width, simg_int height) :
-          width(width)
+    encoder(std::ostream& output, simg_int width, simg_int height)
+        : width(width)
         , height(height)
-        , out(output)
-    {
+        , out(output) {
         std::uint8_t w[4], h[4];
 
         seedimg::utils::endian::to_u32_big(width, w);
@@ -90,8 +87,7 @@ class encoder : public output_abc {
     bool write(const pixel* const from) {
         if (scline == height) return false;
 
-        out.write(reinterpret_cast<const char*>(from),
-                  static_cast<std::streamsize>(4 * width));
+        out.write(reinterpret_cast<const char*>(from), static_cast<std::streamsize>(4 * width));
 
         ++scline;
         return true;

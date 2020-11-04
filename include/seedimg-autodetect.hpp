@@ -20,9 +20,9 @@
 #define SEEDIMG_AUTODETECT_H
 
 #include <cstring>
-#include <string>
 #include <fstream>
 #include <functional>
+#include <string>
 
 #include <seedimg-modules/modules-abc.hpp>
 
@@ -31,7 +31,6 @@
 #include <seedimg-modules/jpeg.hpp>
 
 #include <seedimg-utils.hpp>
-
 
 namespace seedimg {
 /**
@@ -42,31 +41,28 @@ namespace seedimg {
  *   IO    can    be loaded using load() and    saved using save().
  */
 enum simg_imgfmt {
-    unknown,   // ..
-    farbfeld,  // IO
-    irdump,    // .O,
-    jpeg       // IO
+    unknown,  // ..
+    farbfeld, // IO
+    irdump,   // .O,
+    jpeg      // IO
 };
 
 namespace impl {
 const auto AUTODETECT_FMT_DETECTORS = seedimg::utils::make_array(
-    #define entry(fmt, size, funcb)                                                                                        \
-        std::make_tuple<simg_imgfmt, std::streamsize, std::function<bool(const char* const)>>(                             \
-            fmt, size, [](const char* const h) funcb)
+#define entry(fmt, size, funcb)                                                                                        \
+    std::make_tuple<simg_imgfmt, std::streamsize, std::function<bool(const char* const)>>(                             \
+        fmt, size, [](const char* const h) funcb)
 
-    #define eq(a, b, s) (std::memcmp(a, b, s) == 0)
+#define eq(a, b, s) (std::memcmp(a, b, s) == 0)
 
     /* format   sigsize           comparator */
     entry(farbfeld, 8, { return eq(h, "farbfeld", 8); }),
     entry(jpeg, 4, { return eq(h, "\xFF\xD8\xFF\xE0", 4); }));
 
-const auto AUTODETECT_MAX_SIGSIZE
-    = std::get<1>(*std::max_element(
-                      std::begin(AUTODETECT_FMT_DETECTORS),
-                      std::end(AUTODETECT_FMT_DETECTORS),
-                      [](auto a, auto b) {
-          return std::get<1>(a) < std::get<1>(b);
-      }));
+const auto AUTODETECT_MAX_SIGSIZE = std::get<1>(
+    *std::max_element(std::begin(AUTODETECT_FMT_DETECTORS), std::end(AUTODETECT_FMT_DETECTORS), [](auto a, auto b) {
+        return std::get<1>(a) < std::get<1>(b);
+    }));
 
 static std::unordered_map<std::string, simg_imgfmt> AUTODETECT_EXT_TO_FMTTYPE = {
     {"ff", farbfeld},
@@ -78,7 +74,6 @@ static std::unordered_map<std::string, simg_imgfmt> AUTODETECT_EXT_TO_FMTTYPE = 
     {"jfif", jpeg},
     {"jfi", jpeg},
 };
-
 
 simg_imgfmt autodetect_format(std::istream& buf) {
     auto signature = new char[static_cast<std::size_t>(AUTODETECT_MAX_SIGSIZE)];
@@ -116,12 +111,9 @@ template<typename O> bool autodetect_write_img(std::ostream& buf, const simg& im
 }
 } // namespace impl
 
-
 simg load(std::istream& buf) {
-    #define IN_FORMAT(fmt) \
-        case simg_imgfmt::fmt: \
-            return impl::autodetect_read_img \
-                   <seedimg::modules::fmt::decoder>(buf)
+#define IN_FORMAT(fmt)                                                                                                 \
+    case simg_imgfmt::fmt: return impl::autodetect_read_img<seedimg::modules::fmt::decoder>(buf)
 
     switch (impl::autodetect_format(buf)) {
         IN_FORMAT(farbfeld);
@@ -139,10 +131,8 @@ simg load(const std::string& filename) {
 bool save(std::ostream& buf, simg_imgfmt fmt, const simg& img) {
     if (img == nullptr) return false;
 
-    #define OUT_FORMAT(fmt) \
-        case simg_imgfmt::fmt: \
-            return impl::autodetect_write_img \
-                   <seedimg::modules::fmt::encoder>(buf, img)
+#define OUT_FORMAT(fmt)                                                                                                \
+    case simg_imgfmt::fmt: return impl::autodetect_write_img<seedimg::modules::fmt::encoder>(buf, img)
 
     switch (fmt) {
         OUT_FORMAT(farbfeld);

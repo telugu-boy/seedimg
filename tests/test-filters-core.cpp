@@ -26,71 +26,70 @@
 #ifdef SEEDIMG_TESTS_OCL
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 #endif
+#include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-cconv.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
-#include <seedimg-autodetect.hpp>
 #ifdef SEEDIMG_TESTS_OCL
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 #endif
 
 enum class filter_functions {
-  GRAYSCALE_LUM,
-  GRAYSCALE_AVG,
-  INVERT,
-  INVERT_A,
-  INVERT_AO,
-  CROP,
-  BLUR,
-  H_BLUR,
-  V_BLUR,
-  KERNEL_CONVOLUTION,
-  ROTATE_HUE,
-  BRIGHTNESS,
-  BRIGHTNESS_A,
-  BLEND,
-  BLEND_A,
-  ROTATE_CW,
-  ROTATE_180,
-  ROTATE_CCW,
-  V_MIRROR,
-  H_MIRROR,
-  SATURATION,
-  SEPIA,
+    GRAYSCALE_LUM,
+    GRAYSCALE_AVG,
+    INVERT,
+    INVERT_A,
+    INVERT_AO,
+    CROP,
+    BLUR,
+    H_BLUR,
+    V_BLUR,
+    KERNEL_CONVOLUTION,
+    ROTATE_HUE,
+    BRIGHTNESS,
+    BRIGHTNESS_A,
+    BLEND,
+    BLEND_A,
+    ROTATE_CW,
+    ROTATE_180,
+    ROTATE_CCW,
+    V_MIRROR,
+    H_MIRROR,
+    SATURATION,
+    SEPIA,
 #ifdef SEEDIMG_FILTERS_OCL_H
-  ROTATE_HUE_OCL,
-  GRAYSCALE_LUM_OCL,
-  SEPIA_OCL,
+    ROTATE_HUE_OCL,
+    GRAYSCALE_LUM_OCL,
+    SEPIA_OCL,
 #endif
 };
 
-static const std::unordered_map<std::string, filter_functions> filter_mapping =
-    {
-        {"grayscale_lum", filter_functions::GRAYSCALE_LUM},
-        {"grayscale_avg", filter_functions::GRAYSCALE_AVG},
-        {"invert", filter_functions::INVERT},
-        {"invert_alpha", filter_functions::INVERT_A},
-        {"invert_alpha_only", filter_functions::INVERT_AO},
-        {"crop", filter_functions::CROP},
-        {"blur", filter_functions::BLUR},
-        {"h_blur", filter_functions::H_BLUR},
-        {"v_blur", filter_functions::V_BLUR},
-        {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION},
-        {"rotate_hue", filter_functions::ROTATE_HUE},
-        {"brightness", filter_functions::BRIGHTNESS},
-        {"brightness_alpha", filter_functions::BRIGHTNESS_A},
-        {"blend", filter_functions::BLEND},
-        {"blend_alpha", filter_functions::BLEND_A},
-        {"rotate_cw", filter_functions::ROTATE_CW},
-        {"rotate_180", filter_functions::ROTATE_180},
-        {"rotate_ccw", filter_functions::ROTATE_CCW},
-        {"v_mirror", filter_functions::V_MIRROR},
-        {"h_mirror", filter_functions::H_MIRROR},
-        {"saturation", filter_functions::SATURATION},
-        {"sepia", filter_functions::SEPIA},
+static const std::unordered_map<std::string, filter_functions> filter_mapping = {
+    {"grayscale_lum", filter_functions::GRAYSCALE_LUM},
+    {"grayscale_avg", filter_functions::GRAYSCALE_AVG},
+    {"invert", filter_functions::INVERT},
+    {"invert_alpha", filter_functions::INVERT_A},
+    {"invert_alpha_only", filter_functions::INVERT_AO},
+    {"crop", filter_functions::CROP},
+    {"blur", filter_functions::BLUR},
+    {"h_blur", filter_functions::H_BLUR},
+    {"v_blur", filter_functions::V_BLUR},
+    {"kernel_convolution", filter_functions::KERNEL_CONVOLUTION},
+    {"rotate_hue", filter_functions::ROTATE_HUE},
+    {"brightness", filter_functions::BRIGHTNESS},
+    {"brightness_alpha", filter_functions::BRIGHTNESS_A},
+    {"blend", filter_functions::BLEND},
+    {"blend_alpha", filter_functions::BLEND_A},
+    {"rotate_cw", filter_functions::ROTATE_CW},
+    {"rotate_180", filter_functions::ROTATE_180},
+    {"rotate_ccw", filter_functions::ROTATE_CCW},
+    {"v_mirror", filter_functions::V_MIRROR},
+    {"h_mirror", filter_functions::H_MIRROR},
+    {"saturation", filter_functions::SATURATION},
+    {"sepia", filter_functions::SEPIA},
 #ifdef SEEDIMG_FILTERS_OCL_H
-        {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
-        {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
-        {"sepia_ocl", filter_functions::SEPIA_OCL},
+    {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
+    {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
+    {"sepia_ocl", filter_functions::SEPIA_OCL},
 #endif
 };
 
@@ -183,17 +182,11 @@ int main(int, char *argv[]) {
     seedimg::filters::sepia_i(img);
     break;
 #ifdef SEEDIMG_FILTERS_OCL_H
-  case filter_functions::ROTATE_HUE_OCL:
-    seedimg::filters::ocl::rotate_hue_i(img, 180);
-    break;
-  case filter_functions::GRAYSCALE_LUM_OCL:
-    seedimg::filters::ocl::grayscale_i(img);
-    break;
-  case filter_functions::SEPIA_OCL:
-    seedimg::filters::ocl::sepia_i(img);
-    break;
+        case filter_functions::ROTATE_HUE_OCL: seedimg::filters::ocl::rotate_hue_i(img, 180); break;
+        case filter_functions::GRAYSCALE_LUM_OCL: seedimg::filters::ocl::grayscale_i(img); break;
+        case filter_functions::SEPIA_OCL: seedimg::filters::ocl::sepia_i(img); break;
 #endif
-  }
+    }
 
   seedimg::filters::cconv::rgb_i(img);
   char name_buf[256];
