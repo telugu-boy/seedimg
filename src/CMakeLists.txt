@@ -21,4 +21,3 @@ add_subdirectory(seedimg-formats)
 
 # automatic detection of image types:
 add_subdirectory(seedimg-autodetect)
-

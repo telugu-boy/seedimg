@@ -47,6 +47,5 @@ static inline histogram_result histogram(simg &input) {
     }
   }
   return result;
-}
 } // namespace seedimg::extras
 #endif

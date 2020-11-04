@@ -23,6 +23,9 @@
 #include <stdexcept>
 #include <unordered_map>
 
+#ifdef SEEDIMG_TESTS_OCL
+#include <seedimg-filters/seedimg-filters-ocl.hpp>
+#endif
 #include <seedimg-autodetect.hpp>
 #include <seedimg-filters/seedimg-filters-core.hpp>
 #ifdef SEEDIMG_TESTS_OCL
@@ -107,6 +110,7 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
 int main(int, char *argv[]) {
   std::cout << argv[1] << std::endl;
   std::string res_dir = "tests_output/filters/";
+
   auto img = seedimg::load("test_image.jpg");
   filter_functions filter;
   try {

@@ -1,6 +1,6 @@
 /**********************************************************************
-seedimg - module based image manipulation library written in modern
-            C++ Copyright(C) 2020 telugu-boy, tripulse
+    seedimg - module based image manipulation library written in modern C++
+            Copyright(C) 2020 telugu-boy, tripulse
 
     This program is free software : you can redistribute it and /
     or modify it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,8 @@ seedimg - module based image manipulation library written in modern
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-#include <filesystem>
+#include <cassert>
+#include <fstream>
 #include <iostream>
 
 #define SIMG_OCL_LOCAL_WG_SIZE 64

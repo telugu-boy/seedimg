@@ -56,7 +56,7 @@ static inline void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
       inp_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
       seedimg::utils::round_up(sizeof(seedimg::pixel) * inp_img->width() *
                                    inp_img->height(),
-                               SIMG_OCL_BUF_PADDING)));
+                               static_cast<std::size_t>(SIMG_OCL_BUF_PADDING))));
   std::memcpy(inp, inp_img->data(),
               sizeof(seedimg::pixel) * inp_img->width() * inp_img->height());
   queue.enqueueUnmapMemObject(inp_img_buf, inp);
@@ -70,7 +70,7 @@ static inline void read_img_1d(cl::CommandQueue &queue, simg &res_img,
       res_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
       seedimg::utils::round_up(sizeof(seedimg::pixel) * res_img->width() *
                                    res_img->height(),
-                               SIMG_OCL_BUF_PADDING)));
+                               static_cast<std::size_t>(SIMG_OCL_BUF_PADDING))));
   std::memcpy(res_img->data(), res,
               sizeof(seedimg::pixel) * res_img->width() * res_img->height());
   queue.enqueueUnmapMemObject(res_img_buf, res);
@@ -130,7 +130,7 @@ void exec_ocl_callback_1d(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
         context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
         seedimg::utils::round_up(sizeof(seedimg::pixel) * inp_img->width() *
                                      inp_img->height(),
-                                 SIMG_OCL_BUF_PADDING)};
+                                 static_cast<std::size_t>(SIMG_OCL_BUF_PADDING))};
   }
 
   cl::Buffer *res_img_buf = inp_img_buf;

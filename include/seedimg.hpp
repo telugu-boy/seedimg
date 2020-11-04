@@ -37,10 +37,10 @@ namespace seedimg {
 typedef struct point {
   simg_int x;
   simg_int y;
-  constexpr bool operator==(const point &other) const noexcept {
+  inline bool operator==(const point &other) const noexcept {
     return std::tie(x, y) == std::tie(other.x, other.y);
   }
-  constexpr bool operator!=(const point &other) const noexcept {
+  inline bool operator!=(const point &other) const noexcept {
     return !(*this == other);
   }
 } point;
@@ -276,7 +276,6 @@ make(const std::unique_ptr<seedimg::img> &inp_img) {
 class anim {
 public:
   std::size_t framerate;
-
   anim() : framerate{0}, data{} {}
 
   anim(std::size_t size, std::size_t framerate) {
@@ -331,12 +330,7 @@ public:
     return true;
   }
 
-  std::size_t size() const noexcept { return data.size(); }
-
-  std::vector<simg>::iterator begin() noexcept { return data.begin(); }
-  std::vector<simg>::iterator end() noexcept { return data.end(); }
-
-private:
+protected:
   std::vector<simg> data;
 };
 
