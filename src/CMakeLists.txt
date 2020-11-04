@@ -16,16 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
 
-# core
-add_subdirectory(seedimg)
-
 # image modules
 add_subdirectory(seedimg-formats)
-
-# extras
-if(EXTRAS_ENABLED)
-    add_subdirectory(seedimg-extras)
-endif()
 
 # automatic detection of image types:
 add_subdirectory(seedimg-autodetect)

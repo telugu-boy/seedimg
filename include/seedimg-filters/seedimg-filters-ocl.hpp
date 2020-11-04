@@ -19,16 +19,11 @@
 #ifndef SEEDIMG_FILTERS_OCL_H
 #define SEEDIMG_FILTERS_OCL_H
 
-#ifndef SIMG_OCL_PXAMT
-#define SIMG_OCL_PXAMT 1
-#endif
-
 #ifndef SIMG_OCL_LOCAL_WG_SIZE
 #define SIMG_OCL_LOCAL_WG_SIZE 64
 #endif
 
-#define SIMG_OCL_BUF_PADDING                                                   \
-  sizeof(seedimg::pixel) * SIMG_OCL_LOCAL_WG_SIZE *SIMG_OCL_PXAMT
+#define SIMG_OCL_BUF_PADDING sizeof(seedimg::pixel) * SIMG_OCL_LOCAL_WG_SIZE
 
 #ifndef CL_HPP_MINIMUM_OPENCL_VERSION
 #define CL_HPP_MINIMUM_OPENCL_VERSION 100
@@ -131,8 +126,9 @@ namespace seedimg::filters {
 namespace ocl {
 // this is the default callback function is recommended to be executed when no
 // customization is needed. Definition of exec_ocl_callback is at end of file.
-inline void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
-                         cl::Buffer &inp_img_buf, bool blocking = false) {
+static inline void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
+                                cl::Buffer &inp_img_buf,
+                                bool blocking = false) {
   cl_uchar4 *inp = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
       inp_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
       seedimg::utils::round_up(sizeof(seedimg::pixel) * inp_img->width() *
@@ -145,8 +141,8 @@ inline void write_img_1d(cl::CommandQueue &queue, simg &inp_img,
     queue.finish();
 }
 
-inline void read_img_1d(cl::CommandQueue &queue, simg &res_img,
-                        cl::Buffer &res_img_buf, bool blocking = false) {
+static inline void read_img_1d(cl::CommandQueue &queue, simg &res_img,
+                               cl::Buffer &res_img_buf, bool blocking = false) {
   cl_uchar4 *res = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
       res_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
       seedimg::utils::round_up(sizeof(seedimg::pixel) * res_img->width() *
@@ -159,16 +155,16 @@ inline void read_img_1d(cl::CommandQueue &queue, simg &res_img,
     queue.finish();
 }
 
-inline void init_ocl_singleton(std::size_t plat, std::size_t dev) {
+static inline void init_ocl_singleton(std::size_t plat, std::size_t dev) {
   simgdetails::ocl_singleton::instance(plat, dev);
 }
-inline cl::Context &get_context() {
+static inline cl::Context &get_context() {
   return simgdetails::ocl_singleton::instance().context;
 }
-inline cl::CommandQueue &get_queue() {
+static inline cl::CommandQueue &get_queue() {
   return simgdetails::ocl_singleton::instance().queue;
 }
-inline cl::Kernel &get_kernel(const std::string &kernel_name) {
+static inline cl::Kernel &get_kernel(const std::string &kernel_name) {
   return simgdetails::ocl_singleton::instance().kernels.at(kernel_name);
 }
 
@@ -296,9 +292,9 @@ void exec_ocl_callback_1d(std::size_t amt_pixs, cl::Buffer *inp_buf,
 }
 
 // same with filters-core. sepia and rotate_hue internally call this function.
-inline void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat,
-                      cl::Buffer *inp_buf = nullptr,
-                      cl::Buffer *res_buf = nullptr) {
+static inline void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat,
+                             cl::Buffer *inp_buf = nullptr,
+                             cl::Buffer *res_buf = nullptr) {
   cl_float16 matvec;
   for (std::size_t i = 0; i < 16; i++)
     matvec.s[i] = mat[i];
@@ -307,54 +303,56 @@ inline void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat,
                        default_exec_callback, matvec);
 }
 
-inline void apply_mat_i(simg &inp_img, const fsmat &mat,
-                        cl::Buffer *inp_buf = nullptr,
-                        cl::Buffer *res_buf = nullptr) {
+static inline void apply_mat_i(simg &inp_img, const fsmat &mat,
+                               cl::Buffer *inp_buf = nullptr,
+                               cl::Buffer *res_buf = nullptr) {
   apply_mat(inp_img, inp_img, mat, inp_buf, res_buf);
 }
 
 // stupid autoformatter keeps ruining my perfect alignment
-inline void apply_mat(simg &inp_img, simg &res_img, const smat &mat,
-                      cl::Buffer *inp_buf = nullptr,
-                      cl::Buffer *res_buf = nullptr) {
+static inline void apply_mat(simg &inp_img, simg &res_img, const smat &mat,
+                             cl::Buffer *inp_buf = nullptr,
+                             cl::Buffer *res_buf = nullptr) {
   apply_mat(inp_img, res_img, to_fsmat(mat), inp_buf, res_buf);
 }
-inline void apply_mat_i(simg &inp_img, const smat &mat,
-                        cl::Buffer *inp_buf = nullptr) {
+static inline void apply_mat_i(simg &inp_img, const smat &mat,
+                               cl::Buffer *inp_buf = nullptr) {
   apply_mat(inp_img, inp_img, mat, inp_buf, inp_buf);
 }
 
-inline void grayscale(simg &inp_img, simg &res_img,
-                      cl::Buffer *inp_buf = nullptr,
-                      cl::Buffer *res_buf = nullptr) {
+static inline void grayscale(simg &inp_img, simg &res_img,
+                             cl::Buffer *inp_buf = nullptr,
+                             cl::Buffer *res_buf = nullptr) {
   apply_mat(inp_img, res_img, GRAYSCALE_LUM_MAT, inp_buf, res_buf);
 }
-inline void grayscale_i(simg &inp_img, cl::Buffer *inp_buf = nullptr) {
+static inline void grayscale_i(simg &inp_img, cl::Buffer *inp_buf = nullptr) {
   grayscale(inp_img, inp_img, inp_buf, inp_buf);
 }
 
-inline void sepia(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
-                  cl::Buffer *res_buf = nullptr) {
+static inline void sepia(simg &inp_img, simg &res_img,
+                         cl::Buffer *inp_buf = nullptr,
+                         cl::Buffer *res_buf = nullptr) {
   apply_mat(inp_img, res_img, SEPIA_MAT, inp_buf, res_buf);
 }
-inline void sepia_i(simg &inp_img, cl::Buffer *inp_buf = nullptr) {
+static inline void sepia_i(simg &inp_img, cl::Buffer *inp_buf = nullptr) {
   sepia(inp_img, inp_img, inp_buf, inp_buf);
 }
 
-inline void rotate_hue(simg &inp_img, simg &res_img, float angle,
-                       cl::Buffer *inp_buf = nullptr,
-                       cl::Buffer *res_buf = nullptr) {
+static inline void rotate_hue(simg &inp_img, simg &res_img, float angle,
+                              cl::Buffer *inp_buf = nullptr,
+                              cl::Buffer *res_buf = nullptr) {
   apply_mat(inp_img, res_img, generate_hue_mat(angle), inp_buf, res_buf);
 }
 
-inline void rotate_hue_i(simg &inp_img, float angle,
-                         cl::Buffer *inp_buf = nullptr) {
+static inline void rotate_hue_i(simg &inp_img, float angle,
+                                cl::Buffer *inp_buf = nullptr) {
   rotate_hue(inp_img, inp_img, angle, inp_buf, inp_buf);
 }
 
 namespace cconv {
-inline void rgb(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
-                cl::Buffer *res_buf = nullptr) {
+static inline void rgb(simg &inp_img, simg &res_img,
+                       cl::Buffer *inp_buf = nullptr,
+                       cl::Buffer *res_buf = nullptr) {
   if (inp_img->colourspace() == seedimg::colourspaces::rgb)
     return;
   else if (inp_img->colourspace() != seedimg::colourspaces::hsv)
@@ -367,12 +365,13 @@ inline void rgb(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
       ->set_colourspace(seedimg::colourspaces::rgb);
 }
 
-inline void rgb_i(simg &inp_img, cl::Buffer *inp_buf = nullptr) {
+static inline void rgb_i(simg &inp_img, cl::Buffer *inp_buf = nullptr) {
   rgb(inp_img, inp_img, inp_buf, inp_buf);
 }
 
-inline void hsv(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
-                cl::Buffer *res_buf = nullptr) {
+static inline void hsv(simg &inp_img, simg &res_img,
+                       cl::Buffer *inp_buf = nullptr,
+                       cl::Buffer *res_buf = nullptr) {
   if (inp_img->colourspace() == seedimg::colourspaces::hsv)
     return;
   else if (inp_img->colourspace() != seedimg::colourspaces::rgb)
@@ -385,7 +384,7 @@ inline void hsv(simg &inp_img, simg &res_img, cl::Buffer *inp_buf = nullptr,
       ->set_colourspace(seedimg::colourspaces::hsv);
 }
 
-inline void hsv_i(simg &inp_img, cl::Buffer *inp_buf = nullptr) {
+static inline void hsv_i(simg &inp_img, cl::Buffer *inp_buf = nullptr) {
   hsv(inp_img, inp_img, inp_buf, inp_buf);
 }
 } // namespace cconv

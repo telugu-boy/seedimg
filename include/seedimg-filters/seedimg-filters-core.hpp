@@ -46,7 +46,7 @@ constexpr auto gen_lut(const T &mat) {
 } // namespace seedimg::utils
 
 namespace seedimg::filters {
-inline smat generate_hue_mat(float angle) {
+static inline smat generate_hue_mat(float angle) {
   const float sinr = static_cast<float>(std::sin(angle * PI / 180));
   const float cosr = static_cast<float>(std::cos(angle * PI / 180));
   return {0.213f + cosr * 0.787f - sinr * 0.213f,
@@ -117,7 +117,7 @@ constexpr fsmat to_fsmat(const smat &mat) {
 } // namespace seedimg::filters
 
 namespace simgdetails {
-inline void apply_mat_worker(simg &inp_img, simg &res_img, simg_int start,
+static inline void apply_mat_worker(simg &inp_img, simg &res_img, simg_int start,
                              simg_int end, const seedimg::fsmat &mat) {
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
@@ -138,7 +138,7 @@ inline void apply_mat_worker(simg &inp_img, simg &res_img, simg_int start,
   }
 }
 
-inline void apply_mat_lut_worker(simg &inp_img, simg &res_img, simg_int start,
+static inline void apply_mat_lut_worker(simg &inp_img, simg &res_img, simg_int start,
                                  simg_int end,
                                  const seedimg::slut<seedimg::smat> &lut,
                                  const std::array<float, 3> vec) {
@@ -161,7 +161,7 @@ inline void apply_mat_lut_worker(simg &inp_img, simg &res_img, simg_int start,
   }
 }
 
-inline void grayscale_worker_luminosity(simg &inp_img, simg &res_img,
+static inline void grayscale_worker_luminosity(simg &inp_img, simg &res_img,
                                         simg_int start_row, simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -180,7 +180,7 @@ inline void grayscale_worker_luminosity(simg &inp_img, simg &res_img,
   };
 }
 
-inline void grayscale_worker_average(simg &inp_img, simg &res_img,
+static inline void grayscale_worker_average(simg &inp_img, simg &res_img,
                                      simg_int start_row, simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -192,7 +192,7 @@ inline void grayscale_worker_average(simg &inp_img, simg &res_img,
   }
 }
 
-inline void invert_worker(simg &inp_img, simg &res_img, simg_int start_row,
+static inline void invert_worker(simg &inp_img, simg &res_img, simg_int start_row,
                           simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -207,7 +207,7 @@ inline void invert_worker(simg &inp_img, simg &res_img, simg_int start_row,
   }
 }
 
-inline void invert_worker_alpha(simg &inp_img, simg &res_img,
+static inline void invert_worker_alpha(simg &inp_img, simg &res_img,
                                 simg_int start_row, simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -222,7 +222,7 @@ inline void invert_worker_alpha(simg &inp_img, simg &res_img,
   }
 }
 
-inline void invert_worker_alpha_only(simg &inp_img, simg &res_img,
+static inline void invert_worker_alpha_only(simg &inp_img, simg &res_img,
                                      simg_int start_row, simg_int end_row) {
   simg_int w = inp_img->width();
   for (; start_row < end_row; ++start_row) {
@@ -234,7 +234,7 @@ inline void invert_worker_alpha_only(simg &inp_img, simg &res_img,
   }
 }
 
-inline void pixel_add_worker(simg &image, simg &other, simg_int start_row,
+static inline void pixel_add_worker(simg &image, simg &other, simg_int start_row,
                              simg_int end_row) {
   for (; start_row < end_row; ++start_row) {
     for (simg_int x = 0; x < image->width(); ++x) {
@@ -253,7 +253,7 @@ inline void pixel_add_worker(simg &image, simg &other, simg_int start_row,
   }
 }
 
-inline void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
+static inline void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
                                             simg_int start, simg_int end,
                                             unsigned int blur_level) {
   for (simg_int y = start; y < end; ++y) {
@@ -315,7 +315,7 @@ inline void horizontal_blur_i_single_worker(simg &inp_img, simg &res_img,
   }
 }
 
-inline void vertical_blur_i_single_worker(simg &inp_img, simg &res_img,
+static inline void vertical_blur_i_single_worker(simg &inp_img, simg &res_img,
                                           simg_int start, simg_int end,
                                           unsigned int blur_level) {
   for (simg_int x = start; x < end; ++x) {
@@ -377,25 +377,25 @@ inline void vertical_blur_i_single_worker(simg &inp_img, simg &res_img,
   }
 }
 
-inline void horizontal_blur_single_i(simg &inp_img, simg &res_img,
+static inline void horizontal_blur_single_i(simg &inp_img, simg &res_img,
                                      unsigned int blur_level) {
   seedimg::utils::hrz_thread(horizontal_blur_i_single_worker, inp_img, res_img,
                              blur_level);
 }
 
-inline void vertical_blur_single_i(simg &inp_img, simg &res_img,
+static inline void vertical_blur_single_i(simg &inp_img, simg &res_img,
                                    unsigned int blur_level) {
   seedimg::utils::vrt_thread(vertical_blur_i_single_worker, inp_img, res_img,
                              blur_level);
 }
 
-inline void box_blur_single(simg &inp_img, simg &res_img,
+static inline void box_blur_single(simg &inp_img, simg &res_img,
                             unsigned int blur_level) {
   horizontal_blur_single_i(inp_img, res_img, blur_level);
   vertical_blur_single_i(res_img, inp_img, blur_level);
 }
 
-inline unsigned int clamped_blur_level(unsigned int blur_level, simg_int width,
+static inline unsigned int clamped_blur_level(unsigned int blur_level, simg_int width,
                                        simg_int height) {
   return static_cast<unsigned int>(
       std::min(static_cast<int>(blur_level),
@@ -403,7 +403,7 @@ inline unsigned int clamped_blur_level(unsigned int blur_level, simg_int width,
                         static_cast<int>((height - 1)) / 2)));
 }
 
-inline void brightness_alpha_worker(simg &input, simg &output,
+static inline void brightness_alpha_worker(simg &input, simg &output,
                                     simg_int start_row, simg_int end_row,
                                     std::uint8_t intensity) {
   for (; start_row < end_row; ++start_row) {
@@ -441,34 +441,34 @@ static constexpr smat const GRAYSCALE_LUM_MAT = {0.2126f, 0.2126f, 0.2126f,
 // filters that exclusively use this functionality will go in apply-mat.cpp to
 // save unnecessary files.
 // Current list: sepia, rotate_hue, grayscale
-inline void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat) {
+static inline void apply_mat(simg &inp_img, simg &res_img, const fsmat &mat) {
   seedimg::utils::hrz_thread(simgdetails::apply_mat_worker, inp_img, res_img,
                              mat);
 }
 
-inline void apply_mat_i(simg &inp_img, const fsmat &mat) {
+static inline void apply_mat_i(simg &inp_img, const fsmat &mat) {
   apply_mat(inp_img, inp_img, mat);
 }
-inline void apply_mat(simg &inp_img, simg &res_img, const smat &mat) {
+static inline void apply_mat(simg &inp_img, simg &res_img, const smat &mat) {
   apply_mat(inp_img, res_img, to_fsmat(mat));
 }
-inline void apply_mat_i(simg &inp_img, const smat &mat) {
+static inline void apply_mat_i(simg &inp_img, const smat &mat) {
   apply_mat(inp_img, inp_img, mat);
 }
 
-inline void apply_mat_lut(simg &inp_img, simg &res_img,
+static inline void apply_mat_lut(simg &inp_img, simg &res_img,
                           const seedimg::slut<seedimg::smat> &lut,
                           const lutvec &vec = {0, 0, 0}) {
   seedimg::utils::hrz_thread(simgdetails::apply_mat_lut_worker, inp_img,
                              res_img, lut, vec);
 }
-inline void apply_mat_lut_i(simg &inp_img,
+static inline void apply_mat_lut_i(simg &inp_img,
                             const seedimg::slut<seedimg::smat> &lut,
                             const lutvec &vec = {0, 0, 0}) {
   apply_mat_lut(inp_img, inp_img, lut, vec);
 }
 
-inline void grayscale(simg &inp_img, simg &res_img, bool luminosity = true) {
+static inline void grayscale(simg &inp_img, simg &res_img, bool luminosity = true) {
   if (luminosity) {
     seedimg::utils::hrz_thread(simgdetails::grayscale_worker_luminosity,
                                inp_img, res_img);
@@ -478,14 +478,14 @@ inline void grayscale(simg &inp_img, simg &res_img, bool luminosity = true) {
   }
 }
 
-inline void grayscale_i(simg &inp_img, bool luminosity = true) {
+static inline void grayscale_i(simg &inp_img, bool luminosity = true) {
   grayscale(inp_img, inp_img, luminosity);
 }
 
-inline void invert(simg &inp_img, simg &res_img) {
+static inline void invert(simg &inp_img, simg &res_img) {
   seedimg::utils::hrz_thread(simgdetails::invert_worker, inp_img, res_img);
 }
-inline void invert_a(simg &inp_img, simg &res_img,
+static inline void invert_a(simg &inp_img, simg &res_img,
                      bool invert_alpha_only = false) {
   if (invert_alpha_only) {
     seedimg::utils::hrz_thread(simgdetails::invert_worker_alpha_only, inp_img,
@@ -495,19 +495,19 @@ inline void invert_a(simg &inp_img, simg &res_img,
                                res_img);
   }
 }
-inline void invert_i(simg &inp_img) { invert(inp_img, inp_img); }
-inline void invert_a_i(simg &inp_img, bool invert_alpha_only = false) {
+static inline void invert_i(simg &inp_img) { invert(inp_img, inp_img); }
+static inline void invert_a_i(simg &inp_img, bool invert_alpha_only = false) {
   invert_a(inp_img, inp_img, invert_alpha_only);
 }
 
-inline void rotate_cw(simg &inp_img, simg &res_img) {
+static inline void rotate_cw(simg &inp_img, simg &res_img) {
   for (simg_int y = 0; y < res_img->height(); ++y) {
     for (simg_int x = 0; x < res_img->width(); ++x) {
       res_img->pixel(x, y) = inp_img->pixel(res_img->height() - y - 1, x);
     }
   }
 }
-inline void rotate_180(simg &inp_img, simg &res_img) {
+static inline void rotate_180(simg &inp_img, simg &res_img) {
   for (simg_int y = 0; y < inp_img->height(); ++y) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
       res_img->pixel(x, y) =
@@ -515,7 +515,7 @@ inline void rotate_180(simg &inp_img, simg &res_img) {
     }
   }
 }
-inline void rotate_ccw(simg &inp_img, simg &res_img) {
+static inline void rotate_ccw(simg &inp_img, simg &res_img) {
   for (simg_int y = 0; y < res_img->height(); ++y) {
     for (simg_int x = 0; x < res_img->width(); ++x) {
       res_img->pixel(x, y) = inp_img->pixel(y, x);
@@ -523,37 +523,37 @@ inline void rotate_ccw(simg &inp_img, simg &res_img) {
   }
 }
 
-inline void rotate_cw_i(simg &inp_img) {
+static inline void rotate_cw_i(simg &inp_img) {
   simg res_img = seedimg::make(inp_img->height(), inp_img->width());
   rotate_cw(inp_img, res_img);
   inp_img.reset(res_img.release());
 }
 
-inline void rotate_180_i(simg &inp_img) {
+static inline void rotate_180_i(simg &inp_img) {
   // reverse each row
   std::reverse(inp_img->data(),
                inp_img->data() + inp_img->width() * inp_img->height());
 }
-inline void rotate_ccw_i(simg &inp_img) {
+static inline void rotate_ccw_i(simg &inp_img) {
   simg res_img = seedimg::make(inp_img->height(), inp_img->width());
   rotate_ccw(inp_img, res_img);
   inp_img.reset(res_img.release());
 }
 
-inline void v_mirror(simg &inp_img, simg &res_img) {
+static inline void v_mirror(simg &inp_img, simg &res_img) {
   for (simg_int y = 0; y < inp_img->height(); ++y) {
     std::copy(inp_img->row(y), inp_img->row(y) + inp_img->width(),
               res_img->row(res_img->height() - y - 1));
   }
 }
-inline void h_mirror(simg &inp_img, simg &res_img) {
+static inline void h_mirror(simg &inp_img, simg &res_img) {
   for (simg_int y = 0; y < res_img->height(); ++y) {
     for (simg_int x = 0; x < res_img->width(); ++x) {
       res_img->pixel(inp_img->width() - x - 1, y) = inp_img->pixel(x, y);
     }
   }
 }
-inline void v_mirror_i(simg &inp_img) {
+static inline void v_mirror_i(simg &inp_img) {
   simg_int h = inp_img->height();
   simg_int w = inp_img->width();
   seedimg::pixel *row = new seedimg::pixel[w];
@@ -569,13 +569,13 @@ inline void v_mirror_i(simg &inp_img) {
 
   delete[] row;
 }
-inline void h_mirror_i(simg &inp_img) {
+static inline void h_mirror_i(simg &inp_img) {
   for (simg_int y = 0; y < inp_img->height(); ++y) {
     std::reverse(inp_img->row(y), inp_img->row(y) + inp_img->width());
   }
 }
 
-inline bool crop(simg &inp_img, simg &res_img, seedimg::point p1,
+static inline bool crop(simg &inp_img, simg &res_img, seedimg::point p1,
                  seedimg::point p2) {
   if (p1 == seedimg::point{0, 0} &&
       p2 == seedimg::point{inp_img->width(), inp_img->height()}) {
@@ -600,7 +600,7 @@ inline bool crop(simg &inp_img, simg &res_img, seedimg::point p1,
   return true;
 }
 
-inline bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
+static inline bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
   seedimg::uimg *unmanaged = static_cast<seedimg::uimg *>(inp_img.get());
   if (p1 == seedimg::point{0, 0} &&
       p2 == seedimg::point{unmanaged->width(), unmanaged->height()}) {
@@ -636,7 +636,7 @@ inline bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
   return true;
 }
 
-inline void blur_i(simg &inp_img, unsigned int blur_level,
+static inline void blur_i(simg &inp_img, unsigned int blur_level,
                    std::uint8_t it = 3) {
   if (blur_level == 0)
     return;
@@ -648,7 +648,7 @@ inline void blur_i(simg &inp_img, unsigned int blur_level,
   }
 }
 
-inline void h_blur_i(simg &inp_img, unsigned int blur_level,
+static inline void h_blur_i(simg &inp_img, unsigned int blur_level,
                      std::uint8_t it = 3) {
   if (blur_level == 0)
     return;
@@ -666,7 +666,7 @@ inline void h_blur_i(simg &inp_img, unsigned int blur_level,
     inp_img.reset(res_img.release());
 }
 
-inline void v_blur_i(simg &inp_img, unsigned int blur_level,
+static inline void v_blur_i(simg &inp_img, unsigned int blur_level,
                      std::uint8_t it = 3) {
   if (blur_level == 0)
     return;
@@ -690,7 +690,7 @@ inline void v_blur_i(simg &inp_img, unsigned int blur_level,
  * NOTE: if weren't a square kernel, the image stays intact.
  * NOTE: alpha is passed-as it is, it's not convoluted.
  */
-inline void convolution(simg &input, std::vector<std::vector<float>> kernel) {
+static inline void convolution(simg &input, std::vector<std::vector<float>> kernel) {
   if (kernel.size() == 0 || kernel[0].size() == 0)
     return;
 
@@ -770,22 +770,22 @@ constexpr seedimg::fsmat generate_brightness_mat(float intensity) {
           intensity, intensity, intensity, 1};
 }
 
-inline void brightness(simg &input, simg &output, float intensity) {
+static inline void brightness(simg &input, simg &output, float intensity) {
   apply_mat(input, output, generate_brightness_mat(intensity));
 }
-inline void brightness_i(simg &image, float intensity) {
+static inline void brightness_i(simg &image, float intensity) {
   brightness(image, image, intensity);
 }
 
-inline void brightness_a(simg &input, simg &output, float intensity) {
+static inline void brightness_a(simg &input, simg &output, float intensity) {
   seedimg::utils::hrz_thread(simgdetails::brightness_alpha_worker, input,
                              output, intensity);
 }
-inline void brightness_a_i(simg &image, float intensity) {
+static inline void brightness_a_i(simg &image, float intensity) {
   brightness_a(image, image, intensity);
 }
 
-inline void blend(std::pair<simg &, const std::uint8_t> input,
+static inline void blend(std::pair<simg &, const std::uint8_t> input,
                   std::pair<simg &, const std::uint8_t> other, simg &output) {
   if (input.first->width() != other.first->width() ||
       input.first->height() != other.first->height())
@@ -797,22 +797,22 @@ inline void blend(std::pair<simg &, const std::uint8_t> input,
   seedimg::utils::hrz_thread(simgdetails::pixel_add_worker, output,
                              other.first);
 }
-inline void blend_i(std::pair<simg &, const std::uint8_t> input,
+static inline void blend_i(std::pair<simg &, const std::uint8_t> input,
                     std::pair<simg &, const std::uint8_t> other) {
   blend(input, other, input.first);
 }
 
 // apply_mat filters
-inline void sepia(simg &inp_img, simg &res_img) {
+static inline void sepia(simg &inp_img, simg &res_img) {
   apply_mat(inp_img, res_img, SEPIA_MAT);
 }
-inline void sepia_i(simg &inp_img) { apply_mat_i(inp_img, SEPIA_MAT); }
+static inline void sepia_i(simg &inp_img) { apply_mat_i(inp_img, SEPIA_MAT); }
 
-inline void rotate_hue(simg &inp_img, simg &res_img, int angle) {
+static inline void rotate_hue(simg &inp_img, simg &res_img, int angle) {
   apply_mat(inp_img, res_img, generate_hue_mat(angle));
 }
 
-inline void rotate_hue_i(simg &inp_img, int angle) {
+static inline void rotate_hue_i(simg &inp_img, int angle) {
   rotate_hue(inp_img, inp_img, angle);
 }
 
@@ -827,10 +827,10 @@ constexpr seedimg::fsmat generate_contrast_mat(float intensity) {
           t,         t,         t,         1};
 }
 
-inline void contrast(simg &input, simg &output, float intensity = 100.0) {
+static inline void contrast(simg &input, simg &output, float intensity = 100.0) {
   apply_mat(input, output, generate_contrast_mat(intensity));
 }
-inline void contrast_i(simg &image, float intensity = 100.0) {
+static inline void contrast_i(simg &image, float intensity = 100.0) {
   contrast(image, image, intensity);
 }
 
@@ -851,7 +851,7 @@ constexpr seedimg::fsmat generate_saturation_mat(float mul) {
 }
 
 // HSV colourspace filters
-inline void saturation(simg &inp_img, simg &res_img, float mul) {
+static inline void saturation(simg &inp_img, simg &res_img, float mul) {
   if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     seedimg::utils::hrz_thread(simgdetails::saturation_worker, inp_img, res_img,
                                mul);
@@ -861,14 +861,14 @@ inline void saturation(simg &inp_img, simg &res_img, float mul) {
     apply_mat(inp_img, res_img, generate_saturation_mat(mul));
   }
 }
-inline void saturation_i(simg &inp_img, float mul) {
+static inline void saturation_i(simg &inp_img, float mul) {
   saturation(inp_img, inp_img, mul);
 }
 } // namespace seedimg::filters
 namespace simgdetails {
 #include "rh/from_ycbcr_jpeg_lut.rh"
 
-inline void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
+static inline void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
                            simg_int end) {
   for (; start < end; start++) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
@@ -927,7 +927,7 @@ inline void hsv2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
   }
 }
 
-inline void ycbcr_jpeg2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
+static inline void ycbcr_jpeg2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
                                   simg_int end) {
   for (; start < end; ++start) {
     for (simg_int x = 0; x < inp_img->width(); ++x) {
@@ -945,13 +945,13 @@ inline void ycbcr_jpeg2rgb_worker(simg &inp_img, simg &res_img, simg_int start,
   }
 }
 
-inline float fmodulo(float x, float N) {
+static inline float fmodulo(float x, float N) {
   return std::fmod(x, N) + (std::fmod(x, N) < 0) * N;
 }
 
-inline bool feq(float a, float b) { return std::fabs(a - b) < .0000001f; }
+static inline bool feq(float a, float b) { return std::fabs(a - b) < .0000001f; }
 
-inline void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
+static inline void rgb2hsv_worker(simg &inp_img, simg &res_img, simg_int start,
                            simg_int end) {
   for (; start < end; ++start) {
     for (simg_int x = 0; x < res_img->width(); ++x) {
@@ -1022,7 +1022,7 @@ static constexpr seedimg::lutvec const ycbcr_bt601_rgb_vec = {16, 128, 128};
 static constexpr seedimg::slut<seedimg::smat> const ycbcr_bt601_rgb_lut =
     seedimg::utils::gen_lut(ycbcr_bt601_rgb_mat);
 
-inline void rgb(simg &inp_img, simg &res_img) {
+static inline void rgb(simg &inp_img, simg &res_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
@@ -1039,9 +1039,9 @@ inline void rgb(simg &inp_img, simg &res_img) {
       ->set_colourspace(seedimg::colourspaces::rgb);
 }
 
-inline void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }
+static inline void rgb_i(simg &inp_img) { rgb(inp_img, inp_img); }
 
-inline void hsv(simg &inp_img, simg &res_img) {
+static inline void hsv(simg &inp_img, simg &res_img) {
   if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     return;
   } else if (inp_img->colourspace() == seedimg::colourspaces::rgb) {
@@ -1055,9 +1055,9 @@ inline void hsv(simg &inp_img, simg &res_img) {
   static_cast<seedimg::uimg *>(res_img.get())
       ->set_colourspace(seedimg::colourspaces::hsv);
 }
-inline void hsv_i(simg &inp_img) { hsv(inp_img, inp_img); }
+static inline void hsv_i(simg &inp_img) { hsv(inp_img, inp_img); }
 
-inline void ycbcr(simg &inp_img, simg &res_img, seedimg::colourspaces type) {
+static inline void ycbcr(simg &inp_img, simg &res_img, seedimg::colourspaces type) {
   if (inp_img->colourspace() == seedimg::colourspaces::ycbcr_jpeg ||
       inp_img->colourspace() == seedimg::colourspaces::ycbcr_bt601) {
     return;
@@ -1075,7 +1075,7 @@ inline void ycbcr(simg &inp_img, simg &res_img, seedimg::colourspaces type) {
   }
   static_cast<seedimg::uimg *>(res_img.get())->set_colourspace(type);
 }
-inline void ycbcr_i(simg &inp_img, seedimg::colourspaces type) {
+static inline void ycbcr_i(simg &inp_img, seedimg::colourspaces type) {
   ycbcr(inp_img, inp_img, type);
 }
 

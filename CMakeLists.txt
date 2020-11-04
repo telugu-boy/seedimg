@@ -55,10 +55,6 @@ endif()
 
 set(OPENCL_TESTS_ENABLED ON CACHE BOOL "Enable OpenCL tests")
 
-set(EXTRAS_ENABLED OFF CACHE BOOL "Enable extras (like histogram)")
-
-
-
 option(BUILD_TESTING "" OFF)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)

@@ -37,7 +37,7 @@ namespace irdump {
  * @param input the given image to encode.
  * @return true on success, false on failure.
  */
-inline bool to(const std::string &filename, const simg &input) {
+static inline bool to(const std::string &filename, const simg &input) {
   using namespace simgdetails;
   std::ofstream output(filename);
 
@@ -73,7 +73,7 @@ inline bool to(const std::string &filename, const simg &input) {
  * @param filepath a valid filepath (with/without filextension).
  * @return a non-null image on success, null on failure.
  */
-inline simg from(const std::string &filename) {
+static inline simg from(const std::string &filename) {
   using namespace simgdetails;
   std::ifstream input(filename);
 

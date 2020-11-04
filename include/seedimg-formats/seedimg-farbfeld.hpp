@@ -57,7 +57,7 @@ static inline std::uint16_t dup_8_to_16b(std::uint8_t n) {
 
 namespace seedimg::modules {
 namespace farbfeld {
-inline bool check(const std::string &filename) {
+static inline bool check(const std::string &filename) {
   std::ifstream input(filename);
   char sig[8];
 
@@ -68,7 +68,7 @@ inline bool check(const std::string &filename) {
   }
   return std::memcmp(sig, "farbfeld", 8) == 0;
 }
-inline bool to(const std::string &filename, const simg &inp_img) {
+static inline bool to(const std::string &filename, const simg &inp_img) {
   using namespace simgdetails;
   std::ofstream output(filename);
 
@@ -105,7 +105,7 @@ inline bool to(const std::string &filename, const simg &inp_img) {
   return true;
 }
 
-inline simg from(const std::string &filename) {
+static inline simg from(const std::string &filename) {
   using namespace simgdetails;
   if (!check(filename))
     return nullptr;

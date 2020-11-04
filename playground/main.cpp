@@ -19,7 +19,6 @@ seedimg - module based image manipulation library written in modern
 #include <filesystem>
 #include <iostream>
 
-#define SIMG_OCL_PXAMT 1
 #define SIMG_OCL_LOCAL_WG_SIZE 64
 
 #include <seedimg-autodetect.hpp>
@@ -34,9 +33,8 @@ auto main() -> decltype(
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    ocl::init_ocl_singleton(1, 0);
+    // ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("cat.jpg");
-    // auto b = seedimg::make(a->width(), a->height());
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);
@@ -62,59 +60,66 @@ auto main() -> decltype(
       // cconv::rgb_i(a);
       // cconv::ycbcr_i(a, seedimg::colourspaces::ycbcr_bt601);
       // cconv::rgb_i(a);
+      /*
+              auto inp_img_buf =
+                  new cl::Buffer{ocl::get_context(), CL_MEM_READ_WRITE,
+                                 seedimg::utils::round_up(sizeof(seedimg::pixel)
+      * a->width() * a->height(), SIMG_OCL_BUF_PADDING)}; auto res_img_buf = new
+           cl::Buffer{ocl::get_context(), CL_MEM_READ_WRITE,
+                                 seedimg::utils::round_up(sizeof(seedimg::pixel)
+      * a->width() * a->height(), SIMG_OCL_BUF_PADDING)}; std::random_device rd;
+              std::mt19937 mt(rd());
+              std::uniform_real_distribution<float> sat(-2.5, 2.5);
+              std::uniform_real_distribution<float> br(-1, 1);
+              std::uniform_real_distribution<float> con(0.1f, 2.0f);
+              std::filesystem::create_directory("bibs");
+              auto b = seedimg::make(a->width(), a->height());
+              auto &queue = ocl::get_queue();
+              ocl::write_img_1d(queue, a, *inp_img_buf, true);
 
-      auto inp_img_buf =
-          new cl::Buffer{ocl::get_context(), CL_MEM_READ_WRITE,
-                         seedimg::utils::round_up(sizeof(seedimg::pixel) *
-                                                      a->width() * a->height(),
-                                                  SIMG_OCL_BUF_PADDING)};
-      auto res_img_buf =
-          new cl::Buffer{ocl::get_context(), CL_MEM_READ_WRITE,
-                         seedimg::utils::round_up(sizeof(seedimg::pixel) *
-                                                      a->width() * a->height(),
-                                                  SIMG_OCL_BUF_PADDING)};
-      std::random_device rd;
-      std::mt19937 mt(rd());
-      std::uniform_real_distribution<float> sat(-3, 3);
-      std::uniform_real_distribution<float> br(-1, 1);
-      std::uniform_real_distribution<float> con(0.1f, 1.5f);
-      std::filesystem::create_directory("bibs");
-      auto &queue = ocl::get_queue();
-      ocl::write_img_1d(queue, a, *inp_img_buf, true);
+              auto start = std::chrono::steady_clock::now();
+              for (int i = 0; i < 360; i++) {
 
-      cl_uchar4 *res = static_cast<cl_uchar4 *>(queue.enqueueMapBuffer(
-          *res_img_buf, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0,
-          seedimg::utils::round_up(sizeof(seedimg::pixel) * a->width() *
-                                       a->height(),
-                                   SIMG_OCL_BUF_PADDING)));
+              apply_mat(a, b,
+                        compose_fsmats(std::array{generate_saturation_mat(sat(mt)),
+                                                  generate_brightness_mat(br(mt)),
+                                                  generate_contrast_mat(con(mt))}));
 
-      auto proc = seedimg::make(a->width(), a->height(),
-                                reinterpret_cast<seedimg::pixel *>(res));
-      proc->set_deleter([] {});
-      for (int i = 0; i < 10; i++) {
-        /*
-      apply_mat(a, b,
-                compose_fsmats(std::array{generate_saturation_mat(sat(mt)),
-                                          generate_brightness_mat(br(mt)),
-                                          generate_contrast_mat(con(mt))}));*/
-        cl_float16 mat{{sat(rd), sat(rd), sat(rd), 0,
+        cl_float16 clmat{{sat(rd), sat(rd), sat(rd), 0,
 
-                        br(rd), br(rd), br(rd), 0,
+                          br(rd), br(rd), br(rd), 0,
 
-                        con(rd), con(rd), con(rd), 0,
+                          con(rd), con(rd), con(rd), 0,
 
-                        sat(rd), br(rd), con(rd), 1}};
+                          sat(rd), br(rd), con(rd), 1}};
 
         ocl::exec_ocl_callback_1d(a->width() * a->height(), inp_img_buf,
-                                  res_img_buf, "apply_mat", true,
-                                  ocl::default_exec_callback, mat);
+                                  res_img_buf, "apply_mat", false,
+                                  ocl::default_exec_callback, clmat);
 
-        // ocl::apply_mat(a, b, mat);
-        // rotate_hue(a, b, i);
-        seedimg::save("bibs/boil" + std::to_string(i) + ".jpg", proc);
+        ocl::exec_ocl_callback_1d(a->width() * a->height(), res_img_buf,
+                                  res_img_buf, "rgb2hsv", false,
+                                  ocl::default_exec_callback);
+
+        ocl::exec_ocl_callback_1d(a->width() * a->height(), res_img_buf,
+                                  res_img_buf, "hsv2rgb", false,
+                                  ocl::default_exec_callback);
+
+        ocl::read_img_1d(queue, b, *res_img_buf, false);
+
+        queue.finish();
+
+        seedimg::save("bibs/boil" + std::to_string(i) + ".jpg", b);
+        // seedimg::save("bibs/boil" + std::to_string(i) + ".jpg", b);
         std::cout << i << std::endl;
       }
-      queue.enqueueUnmapMemObject(*res_img_buf, res);
+      auto end = std::chrono::steady_clock::now();
+      std::cout << "exec:"
+                << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                         start)
+                       .count()
+                << std::endl;
+      */
       // rotate_hue_i(a, 180);
       // ocl::rotate_hue_i(a, 180, inp_img_buf);
       // cconv::hsv_i(a);
@@ -124,6 +129,7 @@ auto main() -> decltype(
       // contrast_i(a, 2.0f);
       // ocl::cconv::hsv_i(a, inp_img_buf);
       // ocl::cconv::rgb_i(a, inp_img_buf);
+
       bool b = seedimg::save("biol.jpg", a);
     } else {
       std::cerr << "failed" << std::endl;

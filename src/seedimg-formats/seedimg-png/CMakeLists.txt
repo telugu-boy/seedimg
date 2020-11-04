@@ -68,6 +68,6 @@ endif()
 
 add_library(seedimg-png ${LIB_TYPE} seedimg-png.cpp)
 
-target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES} seedimg)
+target_link_libraries(seedimg-png PRIVATE ${PNG_LIBRARIES})
 
 target_include_directories(seedimg-png PRIVATE ${PNG_INCLUDE_DIRS})

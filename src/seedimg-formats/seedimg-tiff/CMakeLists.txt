@@ -56,9 +56,9 @@ endif()
 add_library(seedimg-tiff ${LIB_TYPE} seedimg-tiff.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} pthread seedimg)
+    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES})
 else()
-    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES} pthread seedimg )
+    target_link_libraries(seedimg-tiff PRIVATE ${TIFF_LIBRARIES})
 endif()
 
 target_include_directories(seedimg-tiff PRIVATE ${TIFF_INCLUDE_DIRS})

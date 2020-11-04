@@ -1,8 +1,5 @@
 R"(__kernel void hsv2rgb(__global uchar4* inp_pix, __global uchar4* res_pix) {
-    ulong spw = get_global_size(0) / get_num_groups(0);
-      ulong start = spw * get_group_id(0) + get_local_id(0);
-      ulong stop = start + spw;
-      for(ulong num = start; num < stop; num+=get_local_size(0)) {
+        ulong num = get_global_id(0);
         float4 pix = convert_float4(inp_pix[num]);
         pix.x *= 2;
         pix.yz /= 100;
@@ -16,7 +13,6 @@ R"(__kernel void hsv2rgb(__global uchar4* inp_pix, __global uchar4* res_pix) {
         (180 <= pix.x && pix.x < 240) * (float3)(C, X, C) +
         (240 <= pix.x && pix.x < 300) * (float3)(X, 0, C) +
         (300 <= pix.x && pix.x < 360) * (float3)(C, 0, X) + pix.z - C) * 255);
-    }
 }
  
 )"

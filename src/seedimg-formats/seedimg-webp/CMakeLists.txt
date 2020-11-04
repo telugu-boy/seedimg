@@ -53,9 +53,9 @@ endif()
 add_library(seedimg-webp ${LIB_TYPE} seedimg-webp.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-webp PRIVATE ${WebP_LIBRARIES} pthread seedimg)
+    target_link_libraries(seedimg-webp PRIVATE ${WebP_LIBRARIES})
 else()
-    target_link_libraries(seedimg-webp PRIVATE ${WebP_LIBRARIES} pthread seedimg )
+    target_link_libraries(seedimg-webp PRIVATE ${WebP_LIBRARIES})
 endif()
 
 target_include_directories(seedimg-webp PRIVATE ${WebP_INCLUDE_DIRS} seedimg)

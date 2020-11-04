@@ -43,9 +43,9 @@ endif()
 add_library(seedimg-jpeg ${LIB_TYPE} seedimg-jpeg.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES} seedimg)
+    target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES})
 else()
-    target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES} seedimg )
+    target_link_libraries(seedimg-jpeg PRIVATE ${JPEG_LIBRARIES})
 endif()
 
 target_include_directories(seedimg-jpeg PRIVATE ${JPEG_INCLUDE_DIRS})

@@ -22,19 +22,31 @@
 
 #include <array>
 #include <seedimg.hpp>
-#include <thread>
 
 namespace seedimg::extras {
-typedef struct {
+struct histogram_result {
   std::array<std::size_t, 256> r, g, b, a;
-} histogram_result;
+};
 
 /**
  * @brief Calculate how many r, g, b, a components total in an image
  * @param input Input image to do the analysis on.
  * @return a structure of 4 channels as 256-length arrays.
  */
-histogram_result histogram(simg &input);
+static inline histogram_result histogram(simg &input) {
+  histogram_result result;
 
-#endif
+  for (simg_int y = 0; y < input->height(); ++y) {
+    for (simg_int x = 0; x < input->width(); ++x) {
+      auto &pix = input->pixel(x, y);
+
+      ++result.r[pix.r];
+      ++result.g[pix.g];
+      ++result.b[pix.b];
+      ++result.a[pix.a];
+    }
+  }
+  return result;
 }
+} // namespace seedimg::extras
+#endif
