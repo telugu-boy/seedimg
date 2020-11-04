@@ -96,8 +96,8 @@ set_tests_properties(v_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 add_test(h_mirror_test ${TESTS_EXE} h_mirror)
 set_tests_properties(h_mirror_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
-add_test(saturation_test ${TESTS_EXE} saturation)
-set_tests_properties(saturation_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+add_test(saturation_hsv_test ${TESTS_EXE} saturation_hsv)
+set_tests_properties(saturation_hsv_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 
 add_test(saturation_rgb_test ${TESTS_EXE} saturation_rgb)
 set_tests_properties(saturation_rgb_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
@@ -116,4 +116,19 @@ set_tests_properties(grayscale_lum_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "
 
 add_test(sepia_ocl_test ${TESTS_EXE} sepia_ocl)
 set_tests_properties(sepia_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(saturation_hsv_ocl_test ${TESTS_EXE} saturation_hsv_ocl)
+set_tests_properties(saturation_hsv_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(saturation_rgb_ocl_test ${TESTS_EXE} saturation_rgb_ocl)
+set_tests_properties(saturation_rgb_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(contrast_ocl_test ${TESTS_EXE} contrast_ocl)
+set_tests_properties(contrast_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(brightness_ocl_test ${TESTS_EXE} brightness_ocl)
+set_tests_properties(brightness_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+
+add_test(brightness_a_ocl_test ${TESTS_EXE} brightness_a_ocl)
+set_tests_properties(brightness_a_ocl_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
 

@@ -28,6 +28,7 @@
 #ifdef SEEDIMG_TESTS_OCL
 #include <seedimg-filters/seedimg-filters-ocl.hpp>
 #endif
+
 enum class filter_functions {
   GRAYSCALE_LUM,
   GRAYSCALE_AVG,
@@ -49,7 +50,7 @@ enum class filter_functions {
   ROTATE_CCW,
   V_MIRROR,
   H_MIRROR,
-  SATURATION,
+  SATURATION_HSV,
   SATURATION_RGB,
   SEPIA,
   DIFF,
@@ -57,6 +58,11 @@ enum class filter_functions {
   ROTATE_HUE_OCL,
   GRAYSCALE_LUM_OCL,
   SEPIA_OCL,
+  SATURATION_HSV_OCL,
+  SATURATION_RGB_OCL,
+  CONTRAST_OCL,
+  BRIGHTNESS_OCL,
+  BRIGHTNESS_A_OCL,
 #endif
 };
 
@@ -82,7 +88,7 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"rotate_ccw", filter_functions::ROTATE_CCW},
         {"v_mirror", filter_functions::V_MIRROR},
         {"h_mirror", filter_functions::H_MIRROR},
-        {"saturation", filter_functions::SATURATION},
+        {"saturation_hsv", filter_functions::SATURATION_HSV},
         {"saturation_rgb", filter_functions::SATURATION_RGB},
         {"sepia", filter_functions::SEPIA},
         {"diff", filter_functions::DIFF},
@@ -90,6 +96,11 @@ static const std::unordered_map<std::string, filter_functions> filter_mapping =
         {"rotate_hue_ocl", filter_functions::ROTATE_HUE_OCL},
         {"grayscale_lum_ocl", filter_functions::GRAYSCALE_LUM_OCL},
         {"sepia_ocl", filter_functions::SEPIA_OCL},
+        {"saturation_hsv_ocl", filter_functions::SATURATION_HSV_OCL},
+        {"saturation_rgb_ocl", filter_functions::SATURATION_RGB_OCL},
+        {"contrast_ocl", filter_functions::CONTRAST_OCL},
+        {"brightness_ocl", filter_functions::BRIGHTNESS_OCL},
+        {"brightness_a_ocl", filter_functions::BRIGHTNESS_A_OCL},
 #endif
 };
 
@@ -172,7 +183,7 @@ int main(int, char *argv[]) {
   case filter_functions::H_MIRROR:
     seedimg::filters::h_mirror_i(img);
     break;
-  case filter_functions::SATURATION: {
+  case filter_functions::SATURATION_HSV: {
     seedimg::filters::cconv::hsv_i(img);
     seedimg::filters::saturation_i(img, 2.5);
   } break;
@@ -196,6 +207,22 @@ int main(int, char *argv[]) {
     break;
   case filter_functions::SEPIA_OCL:
     seedimg::filters::ocl::sepia_i(img);
+    break;
+  case filter_functions::SATURATION_HSV_OCL: {
+    seedimg::filters::ocl::cconv::hsv_i(img);
+    seedimg::filters::ocl::saturation_i(img, 5.0f);
+  } break;
+  case filter_functions::SATURATION_RGB_OCL:
+    seedimg::filters::ocl::saturation_i(img, 5.0f);
+    break;
+  case filter_functions::CONTRAST_OCL:
+    seedimg::filters::ocl::contrast_i(img, 2.0f);
+    break;
+  case filter_functions::BRIGHTNESS_OCL:
+    seedimg::filters::ocl::brightness_i(img, -10);
+    break;
+  case filter_functions::BRIGHTNESS_A_OCL:
+    seedimg::filters::ocl::brightness_a_i(img, -10);
     break;
 #endif
   }

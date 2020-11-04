@@ -75,10 +75,14 @@ private:
         ,
 #include "cl_kernels/hsv2rgb_kernel.clh"
         ,
+#include "cl_kernels/saturation_hsv_kernel.clh"
+        ,
+#include "cl_kernels/brightness_a_kernel.clh"
+        ,
     };
 
     static constexpr const char *const kernels_names[]{"apply_mat", "rgb2hsv",
-                                                       "hsv2rgb"};
+                                                       "hsv2rgb", "saturation_hsv", "brightness_a"};
 
     // didn't use emplace back because it's slower as they're not
     // large. std::pair<const char*, ::size_t> is the definition of

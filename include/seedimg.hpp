@@ -34,8 +34,6 @@ typedef std::size_t simg_int;
 
 namespace seedimg {
 
-template <class T> using pimpl = std::unique_ptr<T>;
-
 typedef struct point {
   simg_int x;
   simg_int y;

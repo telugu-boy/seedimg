@@ -33,7 +33,7 @@ auto main() -> decltype(
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    // ocl::init_ocl_singleton(1, 0);
+    ocl::init_ocl_singleton(1, 0);
     auto a = seedimg::load("cat.jpg");
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
@@ -129,8 +129,9 @@ auto main() -> decltype(
       // contrast_i(a, 2.0f);
       // ocl::cconv::hsv_i(a, inp_img_buf);
       // ocl::cconv::rgb_i(a, inp_img_buf);
-
-      bool b = seedimg::save("biol.jpg", a);
+      ocl::cconv::hsv_i(a);
+      ocl::saturation_i(a, 5);
+      seedimg::save("biol.jpg", a);
     } else {
       std::cerr << "failed" << std::endl;
     }

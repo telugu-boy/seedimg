@@ -409,7 +409,7 @@ static inline unsigned int clamped_blur_level(unsigned int blur_level,
 
 static inline void brightness_alpha_worker(simg &input, simg &output,
                                            simg_int start_row, simg_int end_row,
-                                           std::uint8_t intensity) {
+                                           int intensity) {
   for (; start_row < end_row; ++start_row) {
     for (simg_int x = 0; x < input->width(); ++x) {
       auto &pix = input->pixel(x, start_row);
@@ -809,18 +809,18 @@ constexpr seedimg::fsmat generate_brightness_mat(float intensity) {
           intensity, intensity, intensity, 1};
 }
 
-static inline void brightness(simg &input, simg &output, float intensity) {
+static inline void brightness(simg &input, simg &output, int intensity) {
   apply_mat(input, output, generate_brightness_mat(intensity));
 }
-static inline void brightness_i(simg &image, float intensity) {
+static inline void brightness_i(simg &image, int intensity) {
   brightness(image, image, intensity);
 }
 
-static inline void brightness_a(simg &input, simg &output, float intensity) {
+static inline void brightness_a(simg &input, simg &output, int intensity) {
   seedimg::utils::hrz_thread(simgdetails::brightness_alpha_worker, input,
                              output, intensity);
 }
-static inline void brightness_a_i(simg &image, float intensity) {
+static inline void brightness_a_i(simg &image, int intensity) {
   brightness_a(image, image, intensity);
 }
 
@@ -896,8 +896,6 @@ static inline void saturation(simg &inp_img, simg &res_img, float mul) {
   if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
     seedimg::utils::hrz_thread(simgdetails::saturation_worker, inp_img, res_img,
                                mul);
-    static_cast<seedimg::uimg *>(res_img.get())
-        ->set_colourspace(seedimg::colourspaces::hsv);
   } else {
     apply_mat(inp_img, res_img, generate_saturation_mat(mul));
   }

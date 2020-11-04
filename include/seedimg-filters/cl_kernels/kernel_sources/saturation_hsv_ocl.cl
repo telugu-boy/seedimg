@@ -1,0 +1,7 @@
+__kernel void saturation_hsv(float intensity, __global uchar4* inp_pix, __global uchar4* res_pix) {
+    
+    ulong num = get_global_id(0);
+    res_pix[num].y = (uchar)
+    clamp((float)inp_pix[num].y*intensity, 0.0f, 255.0f);
+} 
+ 

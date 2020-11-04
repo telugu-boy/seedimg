@@ -272,6 +272,53 @@ static inline void rotate_hue_i(simg &inp_img, float angle,
   rotate_hue(inp_img, inp_img, angle, inp_buf, inp_buf);
 }
 
+static inline void saturation(simg &inp_img, simg &res_img, float mul,
+                              cl::Buffer *inp_buf = nullptr,
+                              cl::Buffer *res_buf = nullptr) {
+  if (inp_img->colourspace() == seedimg::colourspaces::hsv) {
+    exec_ocl_callback_1d(inp_img, res_img, inp_buf, res_buf, "saturation_hsv",
+                         default_exec_callback, mul);
+  } else {
+    apply_mat(inp_img, res_img, generate_saturation_mat(mul), inp_buf, res_buf);
+  }
+}
+static inline void saturation_i(simg &inp_img, float mul,
+                                cl::Buffer *inp_buf = nullptr) {
+  saturation(inp_img, inp_img, mul, inp_buf, inp_buf);
+}
+
+static inline void contrast(simg &input, simg &output, float intensity,
+                            cl::Buffer *inp_buf = nullptr,
+                            cl::Buffer *res_buf = nullptr) {
+  apply_mat(input, output, generate_contrast_mat(intensity), inp_buf, res_buf);
+}
+static inline void contrast_i(simg &image, float intensity,
+                              cl::Buffer *inp_buf = nullptr) {
+  contrast(image, image, intensity, inp_buf, inp_buf);
+}
+
+static inline void brightness(simg &inp_img, simg &res_img, int intensity,
+                              cl::Buffer *inp_buf = nullptr,
+                              cl::Buffer *res_buf = nullptr) {
+  apply_mat(inp_img, res_img, generate_brightness_mat(intensity), inp_buf,
+            res_buf);
+}
+static inline void brightness_i(simg &inp_img, int intensity,
+                                cl::Buffer *inp_buf = nullptr) {
+  brightness(inp_img, inp_img, intensity, inp_buf, inp_buf);
+}
+
+static inline void brightness_a(simg &inp_img, simg &res_img, int intensity,
+                                cl::Buffer *inp_buf = nullptr,
+                                cl::Buffer *res_buf = nullptr) {
+  exec_ocl_callback_1d(inp_img, res_img, inp_buf, res_buf, "brightness_a",
+                       default_exec_callback, intensity);
+}
+static inline void brightness_a_i(simg &inp_img, int intensity,
+                                  cl::Buffer *inp_buf = nullptr) {
+  brightness_a(inp_img, inp_img, intensity, inp_buf, inp_buf);
+}
+
 namespace cconv {
 static inline void rgb(simg &inp_img, simg &res_img,
                        cl::Buffer *inp_buf = nullptr,

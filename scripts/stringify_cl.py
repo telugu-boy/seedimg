@@ -12,6 +12,8 @@ if __name__ == "__main__":
         "apply_mat",
         "rgb2hsv",
         "hsv2rgb",
+        "saturation_hsv",
+        "brightness_a"
     ]
     try:
         os.mkdir("../include/seedimg-filters/cl_kernels")
