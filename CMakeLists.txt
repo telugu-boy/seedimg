@@ -25,15 +25,23 @@ foreach(var ${vars})
     endif()
 endforeach()
 
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/scripts")
+
 project(seedimg LANGUAGES CXX C VERSION 1.0 DESCRIPTION "seedimg module based image manipulation library")
 
 set(CMAKE_CXX_STANDARD          17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
 include(CTest)
-include(ExternalProject)
 include(CheckCXXCompilerFlag)
+
+find_package(JPEG)
+find_package(PNG)
+find_package(TIFF)
+find_package(WebP)
+
+set(SIMG_ALL_IMGFMT_INCLUDE_DIRS ${JPEG_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${TIFF_INCLUDE_DIRS} ${WebP_INCLUDE_DIRS})
+set(SIMG_ALL_IMGFMT_LIBRARIES ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES} ${WebP_LIBRARIES})
 
 set(OPENCL_TESTS_ENABLED ON CACHE BOOL "Enable OpenCL tests")
 
@@ -54,9 +62,10 @@ set(CMAKE_THREAD_LIBS_INIT       "-pthread")
 set(CMAKE_HAVE_THREADS_LIBRARY   1)
 set(CMAKE_USE_WIN32_THREADS_INIT 0)
 set(CMAKE_USE_PTHREADS_INIT      1)
-set(THREADS_PREFER_PTHREAD_FLAG  ON)
 
-add_subdirectory(src)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+link_libraries(Threads::Threads)
 
 CHECK_CXX_COMPILER_FLAG(-Wextra COMPILER_SUPPORTS_WEXTRA)
 if(COMPILER_SUPPORTS_WEXTRA)

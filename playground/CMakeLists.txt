@@ -15,11 +15,18 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License 
 along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 ]]
+
 set(APP_EXE playground)
 
 file(COPY jat.jpg jat.ff DESTINATION "${CMAKE_BINARY_DIR}/${APP_EXE}/")
 
 add_executable(${APP_EXE} main.cpp)
-target_link_libraries(${APP_EXE} seedimg
-    seedimg-autodetect
-    seedimg-filters-core)
+
+target_include_directories(${APP_EXE} PRIVATE ${SIMG_ALL_IMGFMT_INCLUDE_DIRS})
+target_link_libraries(${APP_EXE} PRIVATE ${SIMG_ALL_IMGFMT_LIBRARIES} stdc++fs)
+
+if(OPENCL_TESTS_ENABLED)
+    find_package(OpenCL REQUIRED)
+    target_link_libraries(${APP_EXE} PRIVATE ${OpenCL_LIBRARY})
+    target_compile_definitions(${APP_EXE} PUBLIC -DSEEDIMG_TESTS_OCL)
+endif()

@@ -330,6 +330,11 @@ public:
     return true;
   }
 
+  auto begin() { return data.begin(); }
+  auto end() { return data.end(); }
+
+  auto size() { return data.size(); }
+
 protected:
   std::vector<simg> data;
 };

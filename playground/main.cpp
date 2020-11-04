@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 #include <cassert>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -35,7 +36,7 @@ auto main() -> decltype(
             << std::endl;
   {
     ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("cat.jpg");
+    auto a = seedimg::load("jat.jpg");
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);

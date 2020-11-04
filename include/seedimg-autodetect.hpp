@@ -61,11 +61,11 @@ static const simg_imgfmt_entry farbfeld_det{
 
 static const simg_imgfmt_entry jpeg_det{
     simg_imgfmt::jpeg, 4, [](const char *const h) {
-      return std::memcmp(h, "xFF\xD8\xFF\xE0", 4) == 0;
+      return std::memcmp(h, "\xFF\xD8\xFF\xE0", 4) == 0;
     }};
 static const std::array AUTODETECT_FMT_DETECTORS{farbfeld_det, jpeg_det};
 
-static constexpr auto AUTODETECT_MAX_SIGSIZE = 8;
+static constexpr std::size_t AUTODETECT_MAX_SIGSIZE = 8;
 
 static std::unordered_map<std::string, simg_imgfmt> AUTODETECT_EXT_TO_FMTTYPE =
     {
@@ -76,7 +76,7 @@ static std::unordered_map<std::string, simg_imgfmt> AUTODETECT_EXT_TO_FMTTYPE =
 };
 
 simg_imgfmt autodetect_format(std::istream &buf) {
-  char signature[static_cast<std::size_t>(AUTODETECT_MAX_SIGSIZE)];
+  char signature[AUTODETECT_MAX_SIGSIZE];
   buf.read(
       signature,
       static_cast<long>(
@@ -84,13 +84,14 @@ simg_imgfmt autodetect_format(std::istream &buf) {
 
   auto fmt = simg_imgfmt::unknown;
   for (const auto &fmtdet : AUTODETECT_FMT_DETECTORS) {
-    if (std::invoke(fmtdet.sig_check, signature)) {
+    bool b = fmtdet.sig_check(signature);
+    if (b) {
       fmt = fmtdet.fmt;
       break;
     }
   }
 
-  for (std::streamsize i = 0; i < AUTODETECT_MAX_SIGSIZE; ++i)
+  for (std::size_t i = 0; i < AUTODETECT_MAX_SIGSIZE; ++i)
     buf.unget();
 
   return fmt;
@@ -118,18 +119,16 @@ bool autodetect_write_img(std::ostream &buf, const simg &img) {
 } // namespace impl
 
 simg load(std::istream &buf) {
-#define IN_FORMAT(fmt)                                                         \
-  case simg_imgfmt::fmt:                                                       \
-    return impl::autodetect_read_img<seedimg::modules::fmt::decoder>(buf)
 
   switch (impl::autodetect_format(buf)) {
-    IN_FORMAT(farbfeld);
-    IN_FORMAT(jpeg);
+  case simg_imgfmt::farbfeld:
+    return impl::autodetect_read_img<seedimg::modules::farbfeld::decoder>(buf);
+  case simg_imgfmt::jpeg:
+    return impl::autodetect_read_img<seedimg::modules::jpeg::decoder>(buf);
 
   default:
     return nullptr;
   }
-#undef IN_FORMAT
 }
 
 simg load(const std::string &filename) {
