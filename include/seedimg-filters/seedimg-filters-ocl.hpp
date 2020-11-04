@@ -178,23 +178,22 @@ inline cl::Kernel &get_kernel(const std::string &kernel_name) {
 // accepts them or else undefined behavior
 void default_exec_callback(cl::CommandQueue &queue, cl::Kernel &kern,
                            std::size_t amt, bool blocking, ...) {
-
-  std::cout << "start" << std::endl;
-  for (int i = 0; i < 60; i++) {
-    std::cout << i << std::endl;
-    queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt),
-                               cl::NDRange(SIMG_OCL_LOCAL_WG_SIZE));
-    queue.finish();
-  }
-  std::cout << "end" << std::endl;
-  if (blocking)
-    queue.finish();
-
   /*
-    queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt),
-                               cl::NDRange(64));
+    std::cout << "start" << std::endl;
+    for (int i = 0; i < 60; i++) {
+      std::cout << i << std::endl;
+      queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt),
+                                 cl::NDRange(SIMG_OCL_LOCAL_WG_SIZE));
+      queue.finish();
+    }
+    std::cout << "end" << std::endl;
     if (blocking)
       queue.finish();*/
+
+  queue.enqueueNDRangeKernel(kern, cl::NullRange, cl::NDRange(amt),
+                             cl::NDRange(64));
+  if (blocking)
+    queue.finish();
 } // namespace ocl
 
 template <typename Func, typename... Args>
@@ -263,6 +262,37 @@ void exec_ocl_callback_1d(simg &inp_img, simg &res_img, cl::Buffer *inp_buf,
 
   if (inp_buf == nullptr)
     delete inp_img_buf;
+}
+
+// this will treat inp_buf as a *read only buffer*.
+// amt_pixs is the amount of pixels to process in the buffer. (aka. this value
+// is rounded up to SIMG_OCL_LOCAL_WG_SIZE, then passed to the kernel as the
+// global work size.
+template <typename Func, typename... Args>
+void exec_ocl_callback_1d(std::size_t amt_pixs, cl::Buffer *inp_buf,
+                          cl::Buffer *res_buf, const std::string &kernel_name,
+                          bool blocking, Func &&callback,
+                          Args &&... kernel_args) {
+  auto &queue = get_queue();
+  cl::Buffer *inp_img_buf = inp_buf;
+  cl::Buffer *res_img_buf = inp_buf;
+  if (res_buf != nullptr) {
+    res_img_buf = res_buf;
+  }
+
+  cl::Kernel &kern = get_kernel(kernel_name);
+
+  cl_uint i = 0;
+  (kern.setArg(i++, std::forward<Args>(kernel_args)), ...);
+  // view above overload
+  kern.setArg(i++, *inp_img_buf);
+  kern.setArg(i, *res_img_buf);
+  std::invoke(callback, queue, kern,
+              seedimg::utils::round_up(
+                  amt_pixs, static_cast<std::size_t>(SIMG_OCL_LOCAL_WG_SIZE)),
+              false, std::forward<Args>(kernel_args)...);
+  if (blocking)
+    queue.finish();
 }
 
 // same with filters-core. sepia and rotate_hue internally call this function.
