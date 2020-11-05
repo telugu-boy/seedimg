@@ -167,7 +167,10 @@ public:
   simg_int width() const noexcept { return d.image_width; }
   simg_int height() const noexcept { return d.image_height; }
 
-  bool read(pixel *to) {
+  bool read(pixel *to) noexcept {
+    if(setjmp(err.buf))
+        return false;
+
     if (d.output_scanline >= d.output_height)
       return false;
 
@@ -337,18 +340,33 @@ public:
     jpeg_start_compress(&c, TRUE);
   }
 
-  bool write(const pixel *const from) {
+  bool write(const pixel *const from) noexcept {
+    if(setjmp(err.buf))
+        return false;
+
     auto row = reinterpret_cast<JSAMPROW>(const_cast<pixel *>(from));
     return jpeg_write_scanlines(&c, &row, 1) == 1;
   }
 
-  void flush() { jpeg_finish_compress(&c); }
+  void flush() {
+      // call setjmp again because setjmp at the constructor
+      // site is invalid because the function has returned
+      // already thus undefined behaviour.
+      if (setjmp(err.buf)) {
+        jpeg_destroy_compress(&c);
+        throw output_failure{impl::jpeg_last_error_msg};
+      }
+      jpeg_finish_compress(&c);
+  }
   ~encoder();
 };
 
 encoder::~encoder() {
-  flush();
-  jpeg_destroy_compress(&c);
+    try { flush(); }
+    catch (output_failure& e) {
+        jpeg_destroy_compress(&c);
+        throw e;  // propogate exception.
+    }
 }
 }; // namespace jpeg
 }; // namespace seedimg::modules
