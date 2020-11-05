@@ -36,7 +36,7 @@ class input_abc {
      * @param to buffer to read in, its size must be atleast (4 * width)
      * @return 'true' if succeeded reading a row, 'false' otherwise
      */
-    virtual bool read(pixel* to) = 0;
+    virtual bool read(pixel* to) noexcept = 0;
 
     virtual ~input_abc();
 };
@@ -54,7 +54,7 @@ class output_abc {
      * @param from buffer to read from, its size must be atleast (4 * width)
      * @return 'true' if succeeded writing a row, 'false' otherwise
      */
-    virtual bool write(const pixel* const from) = 0;
+    virtual bool write(const pixel* const from) noexcept = 0;
 
     /**
      * @brief Ensure that data is written to the destination, automatically
