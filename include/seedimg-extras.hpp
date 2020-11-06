@@ -16,7 +16,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-
 #ifndef SEEDIMG_EXTRAS_HPP
 #define SEEDIMG_EXTRAS_HPP
 
@@ -47,5 +46,6 @@ static inline histogram_result histogram(simg &input) {
     }
   }
   return result;
+}
 } // namespace seedimg::extras
 #endif

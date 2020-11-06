@@ -38,6 +38,11 @@ public:
    */
   virtual bool read(pixel *to) = 0;
 
+  /**
+   * @brief Read a row of pixels from input to a buffer.
+   * @param to buffer to read in, its size must be atleast (4 * width)
+   * @return 'true' if succeeded reading a row, 'false' otherwise
+   */
   virtual ~input_abc();
 };
 

@@ -49,7 +49,7 @@ public:
   simg_int width() const noexcept { return width_; }
   simg_int height() const noexcept { return height_; }
 
-  bool read(pixel *to) {
+  bool read(pixel *to) noexcept {
     if (scline == height_)
       return false;
 
@@ -85,7 +85,7 @@ public:
     out.write(reinterpret_cast<char *>(h), 4);
   }
 
-  bool write(const pixel *const from) {
+  bool write(const pixel *const from) noexcept {
     if (scline == height)
       return false;
 

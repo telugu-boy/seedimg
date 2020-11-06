@@ -53,7 +53,7 @@ class decoder : public input_abc {
     simg_int width() const noexcept { return width_; }
     simg_int height() const noexcept { return height_; }
 
-    bool read(pixel* to) {
+    bool read(pixel* to) noexcept {
         if (scline == height_) return false;
 
         for (simg_int i = 0; i < width_; ++i) {
@@ -98,7 +98,7 @@ class encoder : public output_abc {
         out.write(reinterpret_cast<char*>(h), 4);
     }
 
-    bool write(const pixel* const from) {
+    bool write(const pixel* const from) noexcept {
         if (scline == height) return false;
 
         for (simg_int i = 0; i < width; ++i) {

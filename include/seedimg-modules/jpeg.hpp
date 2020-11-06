@@ -77,7 +77,7 @@ private:
 public:
   decoder(std::istream &stream, std::streamsize buffer_size_ = 8192,
           J_COLOR_SPACE out_color_space = JCS_EXT_RGBA,
-          J_DCT_METHOD = JDCT_DEFAULT)
+          J_DCT_METHOD method = JDCT_DEFAULT)
       : in{stream}, buffer_size{buffer_size_} {
     jerr_mgr.error_exit = simg_jpeg_error_exit;
     cinfo.err = jpeg_std_error(&jerr_mgr);
@@ -116,11 +116,6 @@ public:
   simg_int width() const noexcept override { return cinfo.image_width; }
   simg_int height() const noexcept override { return cinfo.image_height; }
 
-  /**
-   * @brief Read a row of pixels from input to a buffer.
-   * @param to buffer to read in, its size must be atleast (4 * width)
-   * @return 'true' if succeeded reading a row, 'false' otherwise
-   */
   bool read(pixel *to) override {}
   ~decoder() override;
 
@@ -168,15 +163,19 @@ private:
   }
 
   static void term_source(j_decompress_ptr) {}
-}; // namespace jpeg
+};
 
 decoder::~decoder() {}
 
 class encoder : public output_abc {
+
+  bool write(const pixel *const from) noexcept {}
+
+  void flush() {}
   ~encoder();
 };
 
 encoder::~encoder() {}
-}; // namespace jpeg
-}; // namespace seedimg::modules
+} // namespace jpeg
+} // namespace seedimg::modules
 #endif

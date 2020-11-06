@@ -16,6 +16,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
+
 #include <cassert>
 #include <filesystem>
 #include <fstream>
@@ -36,7 +37,7 @@ auto main() -> decltype(
             << std::endl;
   {
     // ocl::init_ocl_singleton(1, 0);
-    // auto a = seedimg::load("jat.jpg");
+    auto a = seedimg::load("jat.jpg");
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);
@@ -77,64 +78,7 @@ auto main() -> decltype(
               std::filesystem::create_directory("bibs");
               auto b = seedimg::make(a->width(), a->height());
               auto &queue = ocl::get_queue();
-              ocl::write_img_1d(queue, a, *inp_img_buf, true);
-
-              auto start = std::chrono::steady_clock::now();
-              for (int i = 0; i < 360; i++) {
-
-              apply_mat(a, b,
-                        compose_fsmats(std::array{generate_saturation_mat(sat(mt)),
-                                                  generate_brightness_mat(br(mt)),
-                                                  generate_contrast_mat(con(mt))}));
-
-        cl_float16 clmat{{sat(rd), sat(rd), sat(rd), 0,
-
-                          br(rd), br(rd), br(rd), 0,
-
-                          con(rd), con(rd), con(rd), 0,
-
-                          sat(rd), br(rd), con(rd), 1}};
-
-        ocl::exec_ocl_callback_1d(a->width() * a->height(), inp_img_buf,
-                                  res_img_buf, "apply_mat", false,
-                                  ocl::default_exec_callback, clmat);
-
-        ocl::exec_ocl_callback_1d(a->width() * a->height(), res_img_buf,
-                                  res_img_buf, "rgb2hsv", false,
-                                  ocl::default_exec_callback);
-
-        ocl::exec_ocl_callback_1d(a->width() * a->height(), res_img_buf,
-                                  res_img_buf, "hsv2rgb", false,
-                                  ocl::default_exec_callback);
-
-        ocl::read_img_1d(queue, b, *res_img_buf, false);
-
-        queue.finish();
-
-        seedimg::save("bibs/boil" + std::to_string(i) + ".jpg", b);
-        // seedimg::save("bibs/boil" + std::to_string(i) + ".jpg", b);
-        std::cout << i << std::endl;
-      }
-      auto end = std::chrono::steady_clock::now();
-      std::cout << "exec:"
-                << std::chrono::duration_cast<std::chrono::milliseconds>(end -
-                                                                         start)
-                       .count()
-                << std::endl;
-      */
-      // rotate_hue_i(a, 180);
-      // ocl::rotate_hue_i(a, 180, inp_img_buf);
-      // cconv::hsv_i(a);
-      // cconv::rgb_i(a)
-      // brightness_i(a, 50.0f);
-      // saturation_i(a, 5.0f);
-      // contrast_i(a, 2.0f);
-      // ocl::cconv::hsv_i(a, inp_img_buf);
-      // ocl::cconv::rgb_i(a, inp_img_buf);
-      seedimg::save("biol.jpg", a);
-    } else {
-      std::cerr << "failed" << std::endl;
+              ocl::write_img_1d(queue, a, *inp_img_buf, true);*/
     }
-    std::cerr << "done" << std::endl;
   }
 }
