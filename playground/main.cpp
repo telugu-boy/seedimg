@@ -35,8 +35,8 @@ auto main() -> decltype(
   std::cout << "Current path is " << std::filesystem::current_path()
             << std::endl;
   {
-    ocl::init_ocl_singleton(1, 0);
-    auto a = seedimg::load("jat.jpg");
+    // ocl::init_ocl_singleton(1, 0);
+    // auto a = seedimg::load("jat.jpg");
     if (a != nullptr) {
       // crop_i(a, {0, 0}, {100, 100});
       // grayscale_i(a, true);

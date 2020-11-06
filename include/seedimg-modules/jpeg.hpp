@@ -21,6 +21,7 @@
 
 #include <csetjmp>
 #include <istream>
+#include <memory>
 #include <ostream>
 
 #include <seedimg-modules/modules-abc.hpp>
@@ -33,26 +34,10 @@ extern "C" {
 
 namespace seedimg::modules {
 namespace jpeg {
-namespace impl {
-struct simg_jpeg_error_mgr {
-  struct jpeg_error_mgr pub;
-  jmp_buf buf;
-};
-
-static char jpeg_last_error_msg[JMSG_LENGTH_MAX];
-[[noreturn]] static void jpeg_error_exit(j_common_ptr j) {
-  simg_jpeg_error_mgr *err = reinterpret_cast<simg_jpeg_error_mgr *>(j->err);
-  (*(j->err->format_message))(j, jpeg_last_error_msg);
-  std::longjmp(err->buf, 1);
-}
-
-constexpr const static auto J_BUF_SIZE = 8 * 1024;
-}; // namespace impl
-
 /**
  * @brief Subsampling ratios/schemes to be used in JPEG encoding.
  */
-enum subsampling {
+enum class subsampling {
   YCbCr_444, /* Lossless                              */
   YCbCr_422, /* Cb, Cr horizontally halved            */
   YCbCr_411, /* Cb, Cr horizontally quartered         */
@@ -64,50 +49,113 @@ enum subsampling {
  * transmission protocols where data can be corrupt.
  */
 struct restart_int {
-  bool per_row; /** Treat rows as units, otherwise MCUs. */
-  int val;      /** Put a marker after (val) units. */
+  int per_row = 1; /** 0 for rows as units, otherwise MCUs. */
+  int val;         /** Put a marker after (val) units. */
 };
 
+struct istream_jsrcm {
+  jpeg_source_mgr pub;
+
+  JOCTET *buffer; // track of jpeg buffer start.
+  bool SOF;       // start-of-file indicator.
+};
+
+static char simg_jpeg_error[JMSG_LENGTH_MAX];
+
+[[noreturn]] static void simg_jpeg_error_exit(j_common_ptr cinfo) {
+  (*(cinfo->err->format_message))(cinfo, simg_jpeg_error);
+  throw std::runtime_error(simg_jpeg_error);
+}
+
 class decoder : public input_abc {
-  impl::simg_jpeg_error_mgr err;
-  struct istream_jsrcm {
-    jpeg_source_mgr pub;
-
-    JOCTET *buffer; // track of jpeg buffer start.
-    bool SOF;       // start-of-file indicator.
-  };
-
-  jpeg_decompress_struct d;
+private:
+  jpeg_decompress_struct cinfo;
+  jpeg_error_mgr jerr_mgr;
   std::istream &in;
+  std::streamsize buffer_size;
 
-  static void init_source(j_decompress_ptr) {}
-  static boolean fill_input_buffer(j_decompress_ptr j) {
-    auto self = reinterpret_cast<decoder *>(j->client_data);
-    auto src = reinterpret_cast<istream_jsrcm *>(j->src);
+public:
+  decoder(std::istream &stream, std::streamsize buffer_size_ = 8192,
+          J_COLOR_SPACE out_color_space = JCS_EXT_RGBA,
+          J_DCT_METHOD = JDCT_DEFAULT)
+      : in{stream}, buffer_size{buffer_size_} {
+    jerr_mgr.error_exit = simg_jpeg_error_exit;
+    cinfo.err = jpeg_std_error(&jerr_mgr);
 
-    try {
-      self->in.read(reinterpret_cast<char *>(src->buffer), impl::J_BUF_SIZE);
-    } catch (std::ios_base::failure) {
-      return FALSE; /* fatal IO error */
-    }
-    if (self->in.gcount() <= 0) {
-      if (src->SOF) {
-        j->err->msg_code = JERR_INPUT_EMPTY;
-        (*j->err->error_exit)(reinterpret_cast<j_common_ptr>(j));
+    jpeg_create_decompress(&cinfo);
+
+    auto src = static_cast<istream_jsrcm *>(
+        cinfo.mem->alloc_small(reinterpret_cast<j_common_ptr>(&cinfo),
+                               JPOOL_PERMANENT, sizeof(istream_jsrcm)));
+
+    cinfo.src = reinterpret_cast<jpeg_source_mgr *>(src);
+    cinfo.client_data = this;
+
+    src->buffer = static_cast<JOCTET *>(cinfo.mem->alloc_small(
+        reinterpret_cast<j_common_ptr>(&cinfo), JPOOL_PERMANENT,
+        static_cast<std::size_t>(buffer_size) * sizeof(JOCTET)));
+
+    src->pub.init_source = [](j_decompress_ptr) {};
+    src->pub.fill_input_buffer = fill_input_buffer;
+    src->pub.skip_input_data = skip_input_data;
+    src->pub.resync_to_restart = jpeg_resync_to_restart;
+    src->pub.term_source = term_source;
+
+    src->pub.next_input_byte = nullptr;
+    src->pub.bytes_in_buffer = 0;
+    src->SOF = true;
+
+    jpeg_read_header(&cinfo, FALSE);
+
+    cinfo.out_color_space = JCS_EXT_RGBA;
+    cinfo.dct_method = method;
+
+    jpeg_start_decompress(&cinfo);
+  }
+
+  simg_int width() const noexcept override { return cinfo.image_width; }
+  simg_int height() const noexcept override { return cinfo.image_height; }
+
+  /**
+   * @brief Read a row of pixels from input to a buffer.
+   * @param to buffer to read in, its size must be atleast (4 * width)
+   * @return 'true' if succeeded reading a row, 'false' otherwise
+   */
+  bool read(pixel *to) override {}
+  ~decoder() override;
+
+private:
+  static boolean fill_input_buffer(j_decompress_ptr cinfo) {
+    auto self = reinterpret_cast<decoder *>(cinfo->client_data);
+    auto src = reinterpret_cast<istream_jsrcm *>(cinfo->src);
+
+    /* Official libjpeg docs:
+     *  A FALSE return should only be used when I/O
+        suspension is desired
+     * i'll just let the user deal with the read failing
+     */
+    self->in.read(reinterpret_cast<char *>(src->buffer), self->buffer_size);
+
+    if (self->in.gcount() == 0) {
+      // if this is the first call to this function and we couldn't read
+      // anything, call the error_exit which will just throw an exception
+      if (src->SOF == true) {
+        cinfo->err->msg_code = JERR_INPUT_EMPTY;
+        (*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************cinfo
+                                                                                                                                                                                                                                                                                                                                                                                                                  ->err
+                                                                                                                                                                                                                                                                                                                                                                                                                  ->error_exit)(
+            reinterpret_cast<j_common_ptr>(cinfo));
       }
-
-      src->buffer[0] = 0xFF;
-      src->buffer[1] = JPEG_EOI;
-
-      src->pub.bytes_in_buffer = 2;
-    } else
+    } else {
       src->pub.bytes_in_buffer = static_cast<std::size_t>(self->in.gcount());
+    }
 
-    src->SOF = false;
     src->pub.next_input_byte = src->buffer;
+    src->SOF = false;
 
     return TRUE;
   }
+
   static void skip_input_data(j_decompress_ptr j, long num_bytes) {
     if (num_bytes > 0) {
       while (num_bytes > static_cast<long>(j->src->bytes_in_buffer)) {
@@ -118,238 +166,17 @@ class decoder : public input_abc {
       j->src->bytes_in_buffer -= static_cast<size_t>(num_bytes);
     }
   }
+
   static void term_source(j_decompress_ptr) {}
+}; // namespace jpeg
 
-public:
-  /**
-   * @param method DCT (discrete cosine transform) compuation method to use.
-   */
-  decoder(std::istream &input, J_DCT_METHOD method = JDCT_DEFAULT) : in(input) {
-    d.err = jpeg_std_error(&err.pub);
-    err.pub.error_exit = impl::jpeg_error_exit;
-
-    if (setjmp(err.buf)) {
-      jpeg_destroy_decompress(&d);
-      throw input_failure{impl::jpeg_last_error_msg};
-    }
-
-    jpeg_create_decompress(&d);
-
-    auto src = reinterpret_cast<istream_jsrcm *>(
-        d.mem->alloc_small(reinterpret_cast<j_common_ptr>(&d), JPOOL_PERMANENT,
-                           sizeof(istream_jsrcm)));
-
-    d.client_data = this;
-    d.src = reinterpret_cast<jpeg_source_mgr *>(src);
-
-    src->buffer = reinterpret_cast<JOCTET *>(
-        d.mem->alloc_small(reinterpret_cast<j_common_ptr>(&d), JPOOL_PERMANENT,
-                           impl::J_BUF_SIZE * sizeof(JOCTET)));
-
-    src->pub.init_source = init_source;
-    src->pub.fill_input_buffer = fill_input_buffer;
-    src->pub.skip_input_data = skip_input_data;
-    src->pub.resync_to_restart = jpeg_resync_to_restart;
-    src->pub.term_source = term_source;
-
-    src->pub.next_input_byte = nullptr;
-    src->pub.bytes_in_buffer = 0;
-    src->SOF = true;
-
-    jpeg_read_header(&d, FALSE);
-
-    d.out_color_space = JCS_EXT_RGBA;
-    d.dct_method = method;
-
-    jpeg_start_decompress(&d);
-  }
-
-  simg_int width() const noexcept { return d.image_width; }
-  simg_int height() const noexcept { return d.image_height; }
-
-  bool read(pixel *to) {
-    if (d.output_scanline >= d.output_height)
-      return false;
-
-    auto row = reinterpret_cast<JSAMPROW>(to);
-    return jpeg_read_scanlines(&d, &row, 1) == 1;
-  }
-
-  ~decoder() {
-    jpeg_finish_decompress(&d);
-    jpeg_destroy_decompress(&d);
-  }
-};
+decoder::~decoder() {}
 
 class encoder : public output_abc {
-  jpeg_compress_struct c;
-  impl::simg_jpeg_error_mgr err;
-
-  struct ostream_jdstm {
-    jpeg_destination_mgr pub;
-
-    JOCTET *buffer; // track of jpeg buffer start.
-  };
-
-  static void init_destination(j_compress_ptr j) {
-    auto dest = reinterpret_cast<ostream_jdstm *>(j->dest);
-
-    dest->buffer = reinterpret_cast<JOCTET *>(
-        (*j->mem->alloc_small)(reinterpret_cast<j_common_ptr>(j), JPOOL_IMAGE,
-                               impl::J_BUF_SIZE * sizeof(JOCTET)));
-
-    dest->pub.next_output_byte = dest->buffer;
-    dest->pub.free_in_buffer = impl::J_BUF_SIZE;
-  }
-  static boolean empty_output_buffer(j_compress_ptr j) {
-    auto dest = reinterpret_cast<ostream_jdstm *>(j->dest);
-
-    try {
-      reinterpret_cast<encoder *>(j->client_data)
-          ->out.write(reinterpret_cast<char *>(dest->buffer), impl::J_BUF_SIZE);
-    } catch (std::ios_base::failure) {
-      return FALSE;
-    }
-
-    dest->pub.next_output_byte = dest->buffer;
-    dest->pub.free_in_buffer = impl::J_BUF_SIZE;
-
-    return TRUE;
-  }
-  static void term_destination(j_compress_ptr j) {
-    auto dest = reinterpret_cast<ostream_jdstm *>(j->dest);
-    auto self = reinterpret_cast<encoder *>(j->client_data);
-
-    try {
-      self->out.write(reinterpret_cast<char *>(dest->buffer),
-                      static_cast<std::streamsize>(impl::J_BUF_SIZE -
-                                                   dest->pub.free_in_buffer));
-      self->out.flush();
-    } catch (std::ios_base::failure) {
-      j->err->msg_code = JERR_FILE_WRITE;
-      (*j->err->error_exit)(reinterpret_cast<j_common_ptr>(j));
-    }
-  }
-
-  std::ostream &out;
-
-public:
-  /**
-   * @param quality   IJG quality scale (0..100], though qualities below 25
-   * yield the same result as 25 due to forced baseline constraint.
-   *
-   * @param sumbsamp  Subsampling ratio of luma and chroma channels.
-   * @param optimize  Generate optimistic huffman tables for better compression.
-   * @param arith     Use compression-wise superior arithmetic coding over
-   * Huffman.
-   * @param smoothing Smoothing of input image [0..100].
-   * @param method    DCT (discrete cosine transform) compuation method to use.
-   * @param res_int   Restart interval of MCU blocks or rows.
-   */
-  encoder(std::ostream &output, simg_int width, simg_int height,
-          int quality = 100, subsampling subsamp = YCbCr_444,
-          bool progressive = false, bool optimize = false,
-          bool arithcoding = false, int smoothing = 0,
-          J_DCT_METHOD dct_method = JDCT_DEFAULT,
-          restart_int res_int = {false, 0})
-      : out(output) {
-    c.err = jpeg_std_error(&err.pub);
-    err.pub.error_exit = impl::jpeg_error_exit;
-
-    if (setjmp(err.buf)) {
-      jpeg_destroy_compress(&c);
-      throw output_failure{impl::jpeg_last_error_msg};
-    }
-
-    jpeg_create_compress(&c);
-
-    c.client_data = this;
-    c.dest = reinterpret_cast<jpeg_destination_mgr *>(
-        c.mem->alloc_small(reinterpret_cast<j_common_ptr>(&c), JPOOL_PERMANENT,
-                           sizeof(ostream_jdstm)));
-
-    c.dest->init_destination = init_destination;
-    c.dest->empty_output_buffer = empty_output_buffer;
-    c.dest->term_destination = term_destination;
-
-    c.in_color_space = JCS_EXT_RGBA;
-    c.input_components = 4;
-
-    jpeg_set_defaults(&c);
-
-    c.image_width = static_cast<JDIMENSION>(width);
-    c.image_height = static_cast<JDIMENSION>(height);
-
-    jpeg_set_quality(&c, quality, TRUE);
-
-    switch (subsamp) {
-    case YCbCr_444: // all planes have same resolution.
-      c.comp_info[0].h_samp_factor = 1;
-      c.comp_info[0].v_samp_factor = 1;
-      c.comp_info[1].h_samp_factor = 1;
-      c.comp_info[1].v_samp_factor = 1;
-      c.comp_info[2].h_samp_factor = 1;
-      c.comp_info[2].v_samp_factor = 1;
-      break;
-
-    case YCbCr_422: // both chroma channels are halved horizonally.
-      c.comp_info[0].h_samp_factor = 2;
-      c.comp_info[0].v_samp_factor = 2;
-      c.comp_info[1].h_samp_factor = 1;
-      c.comp_info[1].v_samp_factor = 2;
-      c.comp_info[2].h_samp_factor = 1;
-      c.comp_info[2].v_samp_factor = 2;
-      break;
-
-    case YCbCr_411: // both chroma channels are quartered horizontally.
-      c.comp_info[0].h_samp_factor = 4;
-      c.comp_info[0].v_samp_factor = 4;
-      c.comp_info[1].h_samp_factor = 1;
-      c.comp_info[1].v_samp_factor = 4;
-      c.comp_info[2].h_samp_factor = 1;
-      c.comp_info[2].v_samp_factor = 4;
-      break;
-
-    case YCbCr_420: // both chroma channels are halved vertically and
-                    // horizontally.
-      c.comp_info[0].h_samp_factor = 2;
-      c.comp_info[0].v_samp_factor = 2;
-      c.comp_info[1].h_samp_factor = 1;
-      c.comp_info[1].v_samp_factor = 1;
-      c.comp_info[2].h_samp_factor = 1;
-      c.comp_info[2].v_samp_factor = 1;
-      break;
-    }
-
-    if (progressive)
-      jpeg_simple_progression(&c);
-
-    c.optimize_coding = optimize;
-    c.arith_code = arithcoding;
-    c.smoothing_factor = smoothing;
-    c.dct_method = dct_method;
-
-    if (res_int.per_row)
-      c.restart_in_rows = res_int.val;
-    else
-      c.restart_interval = static_cast<unsigned int>(seedimg::utils::clamp(
-          res_int.val, 0, std::numeric_limits<int>::max()));
-    jpeg_start_compress(&c, TRUE);
-  }
-
-  bool write(const pixel *const from) {
-    auto row = reinterpret_cast<JSAMPROW>(const_cast<pixel *>(from));
-    return jpeg_write_scanlines(&c, &row, 1) == 1;
-  }
-
-  void flush() { jpeg_finish_compress(&c); }
   ~encoder();
 };
 
-encoder::~encoder() {
-  flush();
-  jpeg_destroy_compress(&c);
-}
+encoder::~encoder() {}
 }; // namespace jpeg
 }; // namespace seedimg::modules
 #endif
