@@ -1,4 +1,4 @@
-import posixpath
+import os
 
 
 jpeg_mat = [1.0, 0.0, 1.402, 1.0, -0.34414, -0.71414, 1.0, 1.772, 0.0]
@@ -11,7 +11,7 @@ def write_rh(l, typ, names, filename):
             f"static constexpr {typ} const {names[index]}[] = {{ {', '.join(map(str, inner))} }};"
         )
 
-    with open(posixpath.join("../include/seedimg-filters/rh", filename), "w") as file:
+    with open(os.join("../include/seedimg-filters/rh", filename), "w") as file:
         for s in array:
             file.write(f"{s}\n")
 
