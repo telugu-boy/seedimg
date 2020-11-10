@@ -163,4 +163,4 @@ mark_as_advanced(
 if (WebP_FOUND)
     set(WebP_LIBRARIES ${WebP_LIBRARY} ${WebP_DEMUX_LIBRARY})
     set(WebP_INCLUDE_DIRS ${WebP_INCLUDE_DIR})
-endif ()
+endif () 

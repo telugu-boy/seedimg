@@ -19,16 +19,19 @@ set(TESTS_EXE tests)
 
 add_executable(${TESTS_EXE} test-filters-core.cpp)
 
-target_link_libraries(${TESTS_EXE} seedimg-autodetect)
+target_link_libraries(${TESTS_EXE})
+
+target_include_directories(${TESTS_EXE} PRIVATE ${SIMG_ALL_IMGFMT_INCLUDE_DIRS})
+target_link_libraries(${TESTS_EXE} PRIVATE ${SIMG_ALL_IMGFMT_LIBRARIES})
 
 if(OPENCL_TESTS_ENABLED)
     find_package(OpenCL REQUIRED)
-    target_link_libraries(${TESTS_EXE} ${OpenCL_LIBRARY})
+    target_link_libraries(${TESTS_EXE} PRIVATE ${OpenCL_LIBRARY})
     target_compile_definitions(${TESTS_EXE} PUBLIC -DSEEDIMG_TESTS_OCL)
 endif()
 
 if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_link_libraries(${TESTS_EXE} stdc++fs)
+    target_link_libraries(${TESTS_EXE} PRIVATE stdc++fs)
 endif()
 
 target_include_directories(${TESTS_EXE} PRIVATE "${CMAKE_SOURCE_DIR}/seedimg-filters")
