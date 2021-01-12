@@ -19,17 +19,15 @@
 #ifndef SEEDIMG_WEBP_H
 #define SEEDIMG_WEBP_H
 
-#include <memory>
-#include <optional>
 #include <seedimg.hpp>
 
-namespace seedimg::modules {
+namespace seedimg {
+namespace modules {
 namespace webp {
 bool check(const std::string &filename) noexcept;
-bool to(const std::string &filename, const simg &inp_img,
-        float quality = 100.0);
+bool to(const std::string &filename, const simg &inp_img, float quality = 100.0);
 simg from(const std::string &filename);
-} // namespace webp
+} // namespace seedimg::modules::webp
 } // namespace seedimg::modules
-
+} // namespace seedimg
 #endif

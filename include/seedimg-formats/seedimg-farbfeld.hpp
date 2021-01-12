@@ -55,7 +55,8 @@ static inline std::uint16_t dup_8_to_16b(std::uint8_t n) {
 }
 } // namespace simgdetails
 
-namespace seedimg::modules {
+namespace seedimg {
+namespace modules {
 namespace farbfeld {
 static inline bool check(const std::string &filename) {
   std::ifstream input(filename);
@@ -138,6 +139,7 @@ static inline simg from(const std::string &filename) {
 
   return result;
 }
-} // namespace farbfeld
+} // namespace seedimg::modules::farbfeld
 } // namespace seedimg::modules
+} // namespace seedimg
 #endif

@@ -23,7 +23,8 @@
 #include <array>
 #include <seedimg.hpp>
 
-namespace seedimg::extras {
+namespace seedimg {
+namespace extras {
 struct histogram_result {
   std::array<std::size_t, 256> r, g, b, a;
 };
@@ -49,4 +50,5 @@ static inline histogram_result histogram(simg &input) {
   return result;
 }
 } // namespace seedimg::extras
+} // namespace seedimg
 #endif

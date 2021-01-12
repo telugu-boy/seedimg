@@ -1,7 +1,6 @@
 ﻿#ifndef SEEDIMG_IRDUMP_H
 #define SEEDIMG_IRDUMP_H
 
-#include <filesystem>
 #include <fstream>
 #include <seedimg.hpp>
 
@@ -20,7 +19,8 @@ static inline void to_u32be(simg_int n, std::uint8_t *out) {
 }
 } // namespace simgdetails
 
-namespace seedimg::modules {
+namespace seedimg {
+namespace modules {
 /**
  * Seedimg IR dump format is a custom seedimg-specific format,
  * which is CPU-endianness agnostic made to represent exact
@@ -100,7 +100,7 @@ static inline simg from(const std::string &filename) {
 
   return image;
 }
-} // namespace irdump
+} // namespace seedimg::modules::irdump
 } // namespace seedimg::modules
-
-#endif // IRDUMP_H
+} // namespace seedimg
+#endif // SEEDIMG_IRDUMP_H

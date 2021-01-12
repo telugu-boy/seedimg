@@ -21,12 +21,13 @@
 
 #include <seedimg.hpp>
 
-namespace seedimg::modules {
+namespace seedimg {
+namespace modules {
 namespace png {
 bool check(const std::string &filename) noexcept;
 bool to(const std::string &filename, const simg &inp_img);
 simg from(const std::string &filename);
-} // namespace png
+} // namespace seedimg::modules::png
 } // namespace seedimg::modules
-
+} // namespace seedimg
 #endif
