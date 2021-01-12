@@ -45,7 +45,8 @@ constexpr auto gen_lut(const T &mat) {
 }
 } // namespace seedimg::utils
 
-namespace seedimg::filters {
+namespace seedimg {
+namespace filters {
 static inline smat generate_hue_mat(float angle) {
   const float sinr = static_cast<float>(std::sin(angle * PI / 180));
   const float cosr = static_cast<float>(std::cos(angle * PI / 180));
@@ -115,6 +116,7 @@ constexpr fsmat to_fsmat(const smat &mat) {
   };
 }
 } // namespace seedimg::filters
+} // namespace seedimg
 
 namespace simgdetails {
 static inline void apply_mat_worker(simg &inp_img, simg &res_img,
@@ -591,9 +593,8 @@ static inline bool crop(simg &inp_img, simg &res_img, seedimg::point p1,
       p2 == seedimg::point{inp_img->width(), inp_img->height()}) {
     return true;
   }
-  if (!(seedimg::is_on_rect({0, 0}, {inp_img->width(), inp_img->height()},
-                            p1) &&
-        seedimg::is_on_rect({0, 0}, {inp_img->width(), inp_img->height()}, p2)))
+  if (!(seedimg::utils::is_on_rect({0, 0}, {inp_img->width(), inp_img->height()}, p1) &&
+        seedimg::utils::is_on_rect({0, 0}, {inp_img->width(), inp_img->height()}, p2)))
     return false;
   auto least_crop_x = std::min(p1.x, p2.x);
   auto least_crop_y = std::min(p1.y, p2.y);
@@ -616,16 +617,14 @@ static inline bool crop_i(simg &inp_img, seedimg::point p1, seedimg::point p2) {
       p2 == seedimg::point{unmanaged->width(), unmanaged->height()}) {
     return true;
   }
-  if (!(seedimg::is_on_rect({0, 0}, {unmanaged->width(), unmanaged->height()},
-                            p1) &&
-        seedimg::is_on_rect({0, 0}, {unmanaged->width(), unmanaged->height()},
-                            p2)))
+  if (!(seedimg::utils::is_on_rect({0, 0}, {unmanaged->width(), unmanaged->height()}, p1) &&
+        seedimg::utils::is_on_rect({0, 0}, {unmanaged->width(), unmanaged->height()}, p2)))
     return false;
 
   auto least_crop_x = std::min(p1.x, p2.x);
   auto least_crop_y = std::min(p1.y, p2.y);
 
-  auto dims = get_rect_dimensions(p1, p2);
+  auto dims = seedimg::utils::get_rect_dimensions(p1, p2);
 
   // width is dims.x, height is dims.y.
   for (simg_int y = 0; y < dims.y; ++y) {
