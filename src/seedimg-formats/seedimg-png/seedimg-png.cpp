@@ -16,8 +16,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-// seedimg-png.cpp : Defines the functions for the static library.
-//
 
 #include <cstring>
 #include <filesystem>
@@ -26,15 +24,10 @@
 
 extern "C" {
 #include <pnglibconf.h>
-
 #include <png.h>
 }
 
 #include <seedimg-formats/seedimg-png.hpp>
-
-#ifdef _MSC_VER
-#pragma warning(disable : 4996)
-#endif
 
 namespace seedimg::modules {
 namespace png {
