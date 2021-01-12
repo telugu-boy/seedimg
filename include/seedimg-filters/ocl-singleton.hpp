@@ -20,6 +20,10 @@
 #ifndef SEEDIMG_OCL_SINGLETON
 #define SEEDIMG_OCL_SINGLETON
 
+#ifndef NDEBUG
+#include <iostream>
+#endif
+
 #include <CL/cl2.hpp>
 #include <string>
 #include <unordered_map>
