@@ -4,6 +4,6 @@ executable('playroom', 'main.cpp', dependencies : [
     meson.get_compiler('cpp').find_library('stdc++fs', required : false)
 ])
 
-configure_file(input         : 'cat.jpg',
-               output        : 'cat.jpg',
-               configuration : configuration_data())
+configure_file(input  : 'cat.jpg',
+               output : 'cat.jpg',
+               copy   : true)
