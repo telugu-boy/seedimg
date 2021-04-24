@@ -23,17 +23,14 @@ extern "C" {
 #include <png.h>
 }
 
+#include <cstring>
+#include <fstream>
 #include <seedimg.hpp>
 
 namespace seedimg {
 namespace modules {
 namespace png {
 bool check(const std::string &filename) noexcept {
-  std::error_code ec;
-  std::size_t size = std::filesystem::file_size(filename, ec);
-  if (ec != std::error_code{} || size < 8)
-    return false;
-
   std::ifstream file(filename, std::ios::binary);
   std::uint8_t cmp[8] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
   std::uint8_t header[8] = {};

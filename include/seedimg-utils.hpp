@@ -22,6 +22,7 @@
 
 #include <array>
 #include <seedimg.hpp>
+#include <algorithm>
 #include <thread>
 
 namespace seedimg {
