@@ -106,7 +106,7 @@ int main() {
 //    print_pixel(im_view.pixel(1, 1));
 //    print_pixel(im->pixel(1, 1));
 
-    auto im2    = seedimg::make(im->width() * 16, im->height() * 16);
+    auto im2    = seedimg::make(im->width() * 2, im->height() * 2);
 
     resize(im, im2);
 
