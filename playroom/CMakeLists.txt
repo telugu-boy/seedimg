@@ -32,8 +32,3 @@ if(OPENCL_TESTS_ENABLED)
   target_include_directories(${APP_EXE} PRIVATE ${OpenCL_INCLUDE_DIRS})
   target_link_libraries(${APP_EXE})
 endif()
-
-target_include_directories(${APP_EXE} PRIVATE
-    "${CMAKE_SOURCE_DIR}/seedimg"
-    "${CMAKE_SOURCE_DIR}/seedimg-filters"
-    "${CMAKE_SOURCE_DIR}/seedimg-autodetect")
