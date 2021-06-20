@@ -12,9 +12,9 @@ for jmat in $jpeg_mattype; do
 
     for x in $(seq 1 3 ${#jpeg_matrix[*]})
         for y in $(seq 256); do
-            jpeg_lutout+=( (( $y * $jpeg_matix[$x] )) 
-                           (( ($y-128) * $jpeg_matix[$x + 1] ))
-                           (( ($y-128) * $jpeg_matix[$x + 2] )) )
+            jpeg_lutout+=( (( $y * $jpeg_matrix[$x] )) 
+                           (( ($y-128) * $jpeg_matrix[$x + 1] ))
+                           (( ($y-128) * $jpeg_matrix[$x + 2] )) )
         done
     done
 
